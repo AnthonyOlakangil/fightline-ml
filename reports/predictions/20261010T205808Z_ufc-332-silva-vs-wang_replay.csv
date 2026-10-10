@@ -1,0 +1,14 @@
+logged_at_utc,mode,event,event_date,fight_id,fighter_1,fighter_2,p_model,p_market_vigfree,odds_1,odds_2,result,settled_at_utc,log_loss
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,3f804eec9183e597,natalia silva,wang cong,0.668508,,,,fighter_1,2026-10-10T20:58:09+00:00,0.402707
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,514366f770553cc9,payton talbott,deiveson figueiredo,0.668508,,,,fighter_1,2026-10-10T20:58:09+00:00,0.402707
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,c93d7f60674df307,esteban ribovics,king green,0.417597,,,,fighter_1,2026-10-10T20:58:09+00:00,0.873238
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,a7c8722ad85eee5f,khaos williams,roberto soldic,0.692308,,,,fighter_2,2026-10-10T20:58:09+00:00,1.178656
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,ec45db01699c4b05,ateba gautier,roman kopylov,0.668508,,,,fighter_2,2026-10-10T20:58:09+00:00,1.104152
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,54bbe6d1eb248128,alden coria,imanol rodriguez,0.668508,,,,fighter_2,2026-10-10T20:58:09+00:00,1.104152
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,31b85cd63fb291ed,andrey pulyaev,damian pinas,0.398058,,,,fighter_2,2026-10-10T20:58:09+00:00,0.507594
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,bd673bf80b95d350,lucas armand,anthony wint,0.211538,,,,fighter_2,2026-10-10T20:58:09+00:00,0.237671
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,e92092a37dc1cfc8,mick parkin,johnny walker,0.668508,,,,fighter_2,2026-10-10T20:58:09+00:00,1.104152
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,bc35fb29afba68b9,bruce whitehead,jacobe smith,0.211538,,,,fighter_2,2026-10-10T20:58:09+00:00,0.237671
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,d0d2339f56681707,alexander hernandez,rafael dos anjos,0.556098,,,,fighter_1,2026-10-10T20:58:09+00:00,0.586811
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,bf93e735845cb960,ismail naurdiev,marvin vettori,0.668508,,,,fighter_1,2026-10-10T20:58:09+00:00,0.402707
+2026-10-10T20:58:08+00:00,replay,UFC 332: Silva vs. Wang,2026-10-03,e87db876810cbc3c,court mcgee,eric nolan,0.398058,,,,fighter_2,2026-10-10T20:58:09+00:00,0.507594

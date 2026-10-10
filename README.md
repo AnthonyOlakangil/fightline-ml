@@ -370,6 +370,70 @@ A £1000 bankroll staked this way ends at **£199.29** (-80.1%) with a maximum d
 
 ---
 
+## Interface
+
+### CLI
+
+```bash
+uv run ufc-predictor predict --event "Adesanya vs. Pyfer"   # write a prediction log
+uv run ufc-predictor settle reports/predictions/<log>.csv   # fill results, score it
+uv run ufc-predictor export-app                             # artefacts for the demo
+```
+
+`predict` writes a timestamped CSV — event, fighter pair, model probability, vig-free
+market probability, the real moneylines, and the result once known — plus a JSON sidecar
+recording the git SHA, the seed, and how the probabilities were produced. `settle` fills
+in results, computes per-fight log loss, and reports the model against the market on that
+card.
+
+**Upcoming fights and odds are never invented.** `predict` will only write a log for an
+event that exists in the committed snapshot. No live source of upcoming cards is
+reachable: UFCStats answers with a JavaScript proof-of-work challenge, and the odds
+project's `upcoming.csv` has been stale since 2026-04-04. Every log in this repository is
+therefore a **replay** of a completed event, labelled `mode: replay`.
+
+> **What a replay log does not prove.** The predictions themselves are honest — for any
+> event inside the backtest they come from a model trained only on strictly earlier
+> fights, so they are genuinely out of sample. But the result was already known when the
+> file was written, so **its commit timestamp cannot demonstrate foresight**, and each log
+> records `"proves_advance_commitment": false` to say so. The mechanism is in place for
+> the live case: when a future card becomes reachable, the same command writes
+> `mode: live` with that flag true, and committing the file before the event is what makes
+> the timestamp meaningful. Claiming otherwise for a replay would be the easiest and most
+> tempting dishonesty in this project, so it is called out rather than glossed.
+
+### Streamlit demo
+
+```bash
+make app
+```
+
+Four pages: **Overview** (leads with the negative result), **Matchup** (model vs market
+for any pairing, with hypothetical bouts explicitly marked as having no market price),
+**Backtest** (metrics, calibration, the year-by-year gap) and **Parlay Lab** (predicted
+edge against realised return, framed as a demonstration of selection bias).
+
+The app **loads precomputed artefacts only** — it never trains, scrapes or re-scores, so
+it starts instantly and cannot disagree with the committed results. Its dependencies live
+in `app/requirements.txt` and are a strict subset of the research project's: no DuckDB,
+matplotlib, Typer, requests or BeautifulSoup. A test parses the app's imports with `ast`
+and fails if anything undeclared creeps in.
+
+Verified with Streamlit's own `AppTest` harness (23 tests covering all four pages, the
+persistent banner, the hypothetical-matchup labelling and the selection-bias framing) plus
+manual checks against the Web Interface Guidelines: content reflows with **zero overflow at
+390 px**, headings are hierarchical with a single `h1`, and `color-scheme` and
+`theme-color` are set from the rendered background so dark mode is correct rather than
+merely dark-ish. Charts are drawn natively so they follow the viewer's theme; no
+pre-rendered images with baked-in white backgrounds are embedded.
+
+![Overview page in dark mode](docs/screenshots/app-overview-dark.jpg)
+
+![Parlay Lab in dark mode](docs/screenshots/app-parlay-lab-dark.jpg)
+
+
+---
+
 ## Models
 
 Three models behind one interface — `fit(X, y)` and `predict_proba(X) -> P(fighter_1
