@@ -140,8 +140,18 @@ backtest:
 # Simulation / parlay pricing (research backtest only - not betting advice)
 # ---------------------------------------------------------------------------
 sim:
-  n_sims: 10000
-  kelly_fraction: 0.25
+  n_sims: 10000                # Monte Carlo draws per card
+  kelly_fraction: 0.25         # fractional Kelly; full Kelly is far too aggressive here
   starting_bankroll: 1000.0
   max_parlay_legs: 3
-  min_edge: 0.02               # skip candidate parlays below this modelled edge
+  min_edge: 0.02               # a parlay must clear this modelled EV to be staked
+  # Hard cap on any single stake as a fraction of the current bankroll. Kelly on a
+  # long-shot parlay can recommend an enormous fraction when the modelled edge is
+  # large and wrong; the cap bounds how much a single mispriced parlay can cost.
+  max_bet_fraction: 0.02
+  # Bankroll is counted as ruined if it ever falls to this fraction of its start.
+  ruin_threshold: 0.20
+  # How many top-EV parlays per card enter the predicted-EV-vs-realised-ROI table.
+  top_n_per_card: 3
+  # Resamples for the event-level bankroll bootstrap.
+  bankroll_bootstrap_resamples: 2000

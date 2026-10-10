@@ -202,3 +202,125 @@ def inject(metrics: dict | None = None, cfg: Config | None = None) -> str:
         )
     readme.write_text(updated, encoding="utf-8")
     return block
+
+
+# ---------------------------------------------------------------------------
+# Parlay section (Phase 5), rendered from reports/parlay_metrics.json
+# ---------------------------------------------------------------------------
+
+PARLAY_START = "<!-- PARLAY:START -->"
+PARLAY_END = "<!-- PARLAY:END -->"
+
+
+def render_parlay(m: dict) -> str:
+    """Build the parlay markdown block."""
+    s = m["settings"]
+    lines: list[str] = [PARLAY_START, ""]
+    lines += [
+        "### Parlay pricing — how much of the edge was real?",
+        "",
+        "> **Research backtest only. Not betting advice.** Nothing here should be used to "
+        "wager. The point of this section is to *falsify* an apparent edge, not to find one.",
+        "",
+        f"Priced on the **stored out-of-sample predictions** from the walk-forward backtest "
+        f"— no re-scoring, so the evaluation window was still read exactly once. "
+        f"{m['cards']} cards, {m['fights']:,} fights, "
+        f"{int(s['n_sims']):,} seeded simulations per card, up to {int(s['max_parlay_legs'])} legs, "
+        f"staked at {s['kelly_fraction']}x Kelly capped at {float(s['max_bet_fraction']):.0%} "
+        "of bankroll.",
+        "",
+        f"**Only real moneyline prices are used.** {m['legs_priced']}",
+        "",
+        "Each simulation resolves every fight on the card once and evaluates all legs "
+        "against that same draw, so two legs from one bout are exactly dependent: backing "
+        "both fighters gives a joint probability of zero rather than the product of two "
+        "probabilities. Across different bouts the model treats fights as conditionally "
+        "independent, and that assumption is measured rather than asserted — the "
+        "correlation between same-card residuals is "
+        f"**{m['within_card_residual_correlation']['correlation']:+.4f}** over "
+        f"{m['within_card_residual_correlation']['n_pairs']:,} pairs.",
+        "",
+        "| Ranked by | Candidates | Staked | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+
+    for source in ("lightgbm", "market_plus_model", "market"):
+        res = m["by_source"].get(source, {})
+        if not res.get("n_candidates"):
+            lines.append(f"| {source.replace('_', ' ')} | 0 | 0 | — | — | — | — |")
+            continue
+        pv = res["predicted_vs_realized"]["all_top_ranked"]
+        lines.append(
+            f"| {source.replace('_', ' ')} | {res['n_candidates']:,} | {res['n_staked']:,} | "
+            f"**{pv['mean_predicted_ev']:+.4f}** | **{pv['realized_roi']:+.4f}** | "
+            f"{pv['hit_rate']:.4f} | {pv['mean_predicted_prob']:.4f} |"
+        )
+
+    lg = m["by_source"].get("lightgbm", {})
+    if lg.get("n_candidates"):
+        pv = lg["predicted_vs_realized"]["all_top_ranked"]
+        bk = lg["bankroll"]
+        bs = lg["bankroll_bootstrap"]
+        lines += [
+            "",
+            "**The headline of this section.** Ranking by the model's own expected value "
+            f"selected parlays it priced at **{pv['mean_predicted_ev']:+.1%} expected "
+            f"return**. They actually returned **{pv['realized_roi']:+.1%}** per unit "
+            f"staked. The model expected those parlays to land "
+            f"{pv['mean_predicted_prob']:.1%} of the time; they landed "
+            f"{pv['hit_rate']:.1%} of the time.",
+            "",
+            "That gap is the whole lesson. Ranking by estimated edge does not select the "
+            "best bets — it selects the fights the model is most *wrong* about, because "
+            "the biggest apparent edges come from the largest overestimates. Multiplying "
+            "three such legs together compounds the error, which is why the three-leg "
+            "parlays are the worst of all.",
+            "",
+            f"A £{bk['starting_bankroll']:.0f} bankroll staked this way ends at "
+            f"**£{bk['ending_bankroll']:.2f}** ({bk['total_return']:+.1%}) with a maximum "
+            f"drawdown of {bk['max_drawdown']:.1%}. Resampling whole events "
+            f"{bs['n_resamples']:,} times, **{bs['share_losing_money']:.1%} of histories "
+            f"lose money** and **{bs['ruin_probability']:.1%} hit ruin** "
+            f"(defined as falling to {float(bs['ruin_threshold_fraction']):.0%} of the "
+            "starting bankroll).",
+        ]
+
+    mk = m["by_source"].get("market", {})
+    if not mk.get("n_candidates"):
+        lines += [
+            "",
+            "**The control works.** Ranking by the market's own de-vigged probabilities "
+            "finds **zero** positive-EV parlays, which is exactly right: a de-vigged "
+            "probability priced against the book's vig-inclusive payout cannot show an "
+            "edge. If this row had found value, the pricing code would be wrong.",
+        ]
+
+    lines += [
+        "",
+        "![Predicted EV vs realised ROI](reports/predicted_vs_realized.png)",
+        "",
+        "![Simulated bankroll with bootstrap band](reports/bankroll.png)",
+        "",
+        "*Generated from `reports/parlay_metrics.json` by `make parlay`.*",
+        "",
+        PARLAY_END,
+    ]
+    return "\n".join(lines)
+
+
+def inject_parlay(metrics: dict | None = None, cfg: Config | None = None) -> str:
+    """Write the parlay block into README.md between its markers."""
+    cfg = cfg or get_config()
+    if metrics is None:
+        metrics = json.loads(
+            (cfg.paths.reports_dir / "parlay_metrics.json").read_text(encoding="utf-8")
+        )
+    block = render_parlay(metrics)
+    readme = cfg.paths.raw_dir.parent.parent / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    if PARLAY_START not in text or PARLAY_END not in text:
+        raise RuntimeError(f"README.md is missing the {PARLAY_START} / {PARLAY_END} markers")
+    head, rest = text.split(PARLAY_START, 1)
+    _, tail = rest.split(PARLAY_END, 1)
+    readme.write_text(head + block + tail, encoding="utf-8")
+    return block

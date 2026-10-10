@@ -105,6 +105,17 @@ def report() -> None:
 
 
 @app.command()
+def parlay() -> None:
+    """Price parlays on the stored out-of-sample predictions (no re-scoring).
+
+    Research backtest only - not betting advice.
+    """
+    from ufc_predictor.sim.pipeline import run
+
+    run()
+
+
+@app.command()
 def predict(
     event: str = typer.Option(..., "--event", help="Event name, e.g. 'UFC 332: Silva vs. Wang'."),
 ) -> None:

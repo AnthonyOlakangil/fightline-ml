@@ -6,7 +6,7 @@
 # exist for iteration; the four-command path is the contract.
 
 .DEFAULT_GOAL := help
-.PHONY: help setup data features backtest report test test-leakage lint fmt app clean
+.PHONY: help setup data features backtest parlay report test test-leakage lint fmt app clean
 
 UV ?= uv
 RUN := $(UV) run
@@ -39,6 +39,9 @@ $(FEATURES): | features
 
 backtest: features ## Walk-forward backtest; writes reports/metrics.json
 	$(RUN) ufc-predictor backtest
+
+parlay: ## Price parlays from stored predictions (research backtest, not betting advice)
+	$(RUN) ufc-predictor parlay
 
 report: ## Generate charts and refresh README figures from metrics.json
 	$(RUN) ufc-predictor report
