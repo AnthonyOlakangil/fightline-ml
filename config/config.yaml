@@ -116,7 +116,12 @@ lightgbm_fit:
   # Isotonic calibration, fitted on the holdout tail only -- never on the trees' own
   # training rows (circular) and never on the evaluation period.
   calibrate: true
-  min_validation_rows: 300
+  # A fold whose validation tail would fall below this RAISES rather than fitting the
+  # full n_estimators ceiling unvalidated and uncalibrated. At 300 the three earliest
+  # dev folds silently took that path -- 2,000 trees with no early stopping -- and were
+  # reported in the same column as properly validated folds. Paired with
+  # min_train_fights below, every fold now gets a real holdout.
+  min_validation_rows: 200
 
 # ---------------------------------------------------------------------------
 # Backtest
@@ -125,7 +130,9 @@ backtest:
   # Retrain cadence in events. The per-fold training cutoff is asserted strictly
   # before the predicted event regardless of this value (tests/test_leakage.py).
   retrain_every_n_events: 10
-  min_train_fights: 500
+  # Must be large enough that validation_fraction yields at least min_validation_rows
+  # (1000 * 0.2 = 200), so no fold can end up fitting without a chronological holdout.
+  min_train_fights: 1000
   bootstrap_resamples: 10000
   bootstrap_ci: 0.95
 

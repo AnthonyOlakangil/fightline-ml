@@ -106,8 +106,12 @@ def test_refitting_does_not_accumulate_state(name, cfg, split):
     train, test = split
     a = build_model(name, cfg).fit(train, train["label"].astype(int)).predict_proba(test)
 
+    # The first fit uses 80% of the slice -- enough to satisfy LightGBM's
+    # minimum-validation-tail guard, since the point here is that the second fit fully
+    # replaces the first, not that a tiny slice can be fitted.
     model = build_model(name, cfg)
-    model.fit(train.iloc[: len(train) // 2], train.iloc[: len(train) // 2]["label"].astype(int))
+    warm = train.iloc[: int(len(train) * 0.8)]
+    model.fit(warm, warm["label"].astype(int))
     b = model.fit(train, train["label"].astype(int)).predict_proba(test)
 
     np.testing.assert_allclose(a, b, atol=1e-12)

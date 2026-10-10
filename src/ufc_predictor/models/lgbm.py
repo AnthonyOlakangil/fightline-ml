@@ -97,48 +97,53 @@ class LightGBMModel(Model):
         n_estimators = int(params.pop("n_estimators", 400))
 
         n_val = round(n * self.validation_fraction)
-        use_holdout = n_val >= self.min_validation_rows and n - n_val >= self.min_validation_rows
+        if n_val < self.min_validation_rows or n - n_val < self.min_validation_rows:
+            # Fail loudly. The alternative -- fitting the full n_estimators ceiling with
+            # no early stopping and no calibration -- is silently a different, much less
+            # regularized model, and it would be reported in the same column as the
+            # properly validated folds. The caller should raise min_train_fights instead.
+            raise ValueError(
+                f"training slice of {n} rows yields a {n_val}-row validation tail, below "
+                f"min_validation_rows={self.min_validation_rows}. Refusing to fit without "
+                "a chronological holdout, because that would mean no early stopping and "
+                "no calibration while still being reported as the same model."
+            )
 
-        if use_holdout:
-            # Chronological: the validation slice is the most RECENT part of training.
-            split = n - n_val
-            X_tr, y_tr = self._matrix(X.iloc[:split]), target[:split]
-            X_va, y_va = self._matrix(X.iloc[split:]), target[split:]
-        else:
-            # Too little data to hold out; fit on everything with a fixed tree count.
-            X_tr, y_tr = self._matrix(X), target
-            X_va = y_va = None
+        # Chronological: the validation slice is the most RECENT part of training.
+        split = n - n_val
+        X_tr, y_tr = self._matrix(X.iloc[:split]), target[:split]
+        X_va, y_va = self._matrix(X.iloc[split:]), target[split:]
 
         if len(np.unique(y_tr)) < 2:
             raise ValueError("training slice contains a single outcome class")
 
+        if len(np.unique(y_va)) < 2:
+            raise ValueError(
+                "the chronological validation tail contains a single outcome class, so "
+                "early stopping and calibration are impossible"
+            )
+
         model = lgb.LGBMClassifier(n_estimators=n_estimators, **params)
-        if X_va is not None and len(np.unique(y_va)) == 2:
-            # eval_X / eval_y, not the deprecated eval_set (LightGBM >= 4.7).
-            model.fit(
-                X_tr,
-                y_tr,
-                eval_X=X_va,
-                eval_y=y_va,
-                eval_metric="binary_logloss",
-                callbacks=[
-                    lgb.early_stopping(self.early_stopping_rounds, verbose=False),
-                    lgb.log_evaluation(0),
-                ],
-            )
-            self.best_iteration_ = int(
-                getattr(model, "best_iteration_", n_estimators) or n_estimators
-            )
-        else:
-            model.fit(X_tr, y_tr)
-            self.best_iteration_ = n_estimators
+        # eval_X / eval_y, not the deprecated eval_set (LightGBM >= 4.7).
+        model.fit(
+            X_tr,
+            y_tr,
+            eval_X=X_va,
+            eval_y=y_va,
+            eval_metric="binary_logloss",
+            callbacks=[
+                lgb.early_stopping(self.early_stopping_rounds, verbose=False),
+                lgb.log_evaluation(0),
+            ],
+        )
+        self.best_iteration_ = int(getattr(model, "best_iteration_", n_estimators) or n_estimators)
 
         self._booster = model
 
         # Calibrate on the held-out tail only. Fitting isotonic on the trees' own
         # training rows would be circular and would look better than it is.
         self._calibrator = None
-        if self.calibrate and X_va is not None and len(np.unique(y_va)) == 2:
+        if self.calibrate:
             raw_va = model.predict_proba(X_va)[:, 1]
             iso = IsotonicRegression(out_of_bounds="clip", y_min=0.0, y_max=1.0)
             iso.fit(raw_va, y_va)
