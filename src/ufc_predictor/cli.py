@@ -86,14 +86,22 @@ def tune() -> None:
 
 @app.command()
 def backtest() -> None:
-    """Run the walk-forward backtest and write reports/metrics.json."""
-    _not_yet("backtest", "Phase 4")
+    """Run the walk-forward backtest and write reports/metrics.json.
+
+    This is the only command that scores the evaluation window, and each invocation
+    appends to reports/eval_runs.json.
+    """
+    from ufc_predictor.backtest.report import run
+
+    run()
 
 
 @app.command()
 def report() -> None:
-    """Generate charts and refresh README figures from metrics.json."""
-    _not_yet("report", "Phase 4")
+    """Redraw charts and refresh the README from metrics.json (no re-scoring)."""
+    from ufc_predictor.backtest.report import regenerate
+
+    regenerate()
 
 
 @app.command()
