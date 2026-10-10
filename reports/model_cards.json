@@ -1,0 +1,88 @@
+{
+  "dev_window": [
+    "2010-01-01",
+    "2015-12-31"
+  ],
+  "holdout_span": [
+    "2013-10-26",
+    "2015-12-19"
+  ],
+  "models": {
+    "elo": {
+      "dev_holdout": {
+        "accuracy": 0.5475728155339806,
+        "auc": 0.5954568599717114,
+        "brier": 0.2438789020433904,
+        "log_loss": 0.680691093937684,
+        "mean_prediction": 0.5214844071801177,
+        "n": 1030
+      },
+      "hyperparams": {
+        "initial_rating": 1500.0,
+        "k_factor": 32.0,
+        "scale": 400.0
+      },
+      "inputs": [
+        "elo_diff"
+      ],
+      "n_features": 1,
+      "name": "elo",
+      "requires_fit": true
+    },
+    "lightgbm": {
+      "calibrated": true,
+      "dev_holdout": {
+        "accuracy": 0.6106796116504855,
+        "auc": 0.674883545497407,
+        "brier": 0.22392932417598313,
+        "log_loss": 0.6457924368933139,
+        "mean_prediction": 0.5258391297221082,
+        "n": 1030
+      },
+      "fit_regime": {
+        "calibrate": true,
+        "early_stopping_rounds": 50,
+        "min_validation_rows": 300,
+        "validation_fraction": 0.2
+      },
+      "hyperparams": {
+        "colsample_bytree": 0.7,
+        "learning_rate": 0.02,
+        "max_depth": 3,
+        "min_child_samples": 80,
+        "n_estimators": 2000,
+        "num_leaves": 7,
+        "reg_alpha": 0.1,
+        "reg_lambda": 5.0,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "verbosity": -1
+      },
+      "n_features": 126,
+      "name": "lightgbm",
+      "requires_fit": true,
+      "trees_after_early_stopping": 332
+    },
+    "market": {
+      "dev_holdout": {
+        "accuracy": 0.6504854368932039,
+        "auc": 0.7208071664309288,
+        "brier": 0.2131016190672835,
+        "log_loss": 0.613294584676637,
+        "mean_prediction": 0.5024051051939977,
+        "n": 1030
+      },
+      "inputs": [
+        "p1_market (de-vigged closing line)"
+      ],
+      "n_features": 0,
+      "name": "market",
+      "requires_fit": false
+    }
+  },
+  "note": "Dev-window chronological holdout only. Not project results: the evaluation window is untouched until the walk-forward backtest writes metrics.json.",
+  "scored_rows_priced_only": 1030,
+  "seed": 42,
+  "total_features_available": 126,
+  "train_rows_all_decisive": 2408
+}

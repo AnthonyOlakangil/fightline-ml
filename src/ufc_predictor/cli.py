@@ -69,6 +69,22 @@ def features() -> None:
 
 
 @app.command()
+def models() -> None:
+    """Fit each model on the dev window and write reports/model_cards.json."""
+    from ufc_predictor.models.cards import run
+
+    run()
+
+
+@app.command()
+def tune() -> None:
+    """Search LightGBM hyperparameters inside the dev window only."""
+    from ufc_predictor.models.tune import search
+
+    search()
+
+
+@app.command()
 def backtest() -> None:
     """Run the walk-forward backtest and write reports/metrics.json."""
     _not_yet("backtest", "Phase 4")
