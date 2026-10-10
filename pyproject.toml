@@ -71,7 +71,9 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["B011"]
+# The leakage tests mutate single cells to prove the past does not move; `.at` is the
+# correct idiom for that, and `.values` is what pandas' own hashing helper returns.
+"tests/*" = ["B011", "PD008", "PD011"]
 
 # ----------------------------------------------------------------------------
 # pytest
