@@ -43,8 +43,14 @@ def test_windows_parse_to_dates():
     assert cfg.windows.eval_end == dt.date(2026, 10, 3)
 
 
+@pytest.mark.leakage
 def test_dev_and_eval_windows_are_disjoint():
-    """A dev window overlapping the held-out window would leak tuning information."""
+    """A dev window overlapping the held-out window would leak tuning information.
+
+    Marked `leakage`: this is a point-in-time correctness invariant, not a style
+    preference. If the dev window ever reaches into the eval period, every reported
+    metric becomes a partly in-sample number.
+    """
     cfg = load_config()
     assert cfg.windows.dev_end < cfg.windows.eval_start
 
@@ -72,8 +78,13 @@ def test_missing_seed_raises(tmp_path):
         load_config(p)
 
 
+@pytest.mark.leakage
 def test_overlapping_windows_raise(tmp_path):
-    """The headline result is only honest if tuning never saw the eval period."""
+    """The headline result is only honest if tuning never saw the eval period.
+
+    Marked `leakage`: an edit to config.yaml must not be able to quietly create an
+    overlap. The loader rejects it at load time rather than letting the backtest run.
+    """
     base = yaml.safe_load(DEFAULT_CONFIG_PATH.read_text(encoding="utf-8"))
     base["windows"]["dev_end"] = "2018-01-01"  # now overlaps eval_start 2016-01-01
     p = tmp_path / "config.yaml"

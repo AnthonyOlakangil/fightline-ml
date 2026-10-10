@@ -47,5 +47,9 @@ jobs:
       - name: Test (offline; leakage suite included)
         run: uv run pytest -m "not network" --cov=ufc_predictor --cov-report=term-missing
 
-      - name: Point-in-time correctness suite
+      # Deliberately strict: pytest exits 5 when no tests are collected, so this step
+      # fails if the leakage suite is ever empty. That is the point -- a regression that
+      # deletes or unmarks the point-in-time tests must break the build loudly rather
+      # than pass as a vacuous success.
+      - name: Point-in-time correctness suite (must be non-empty)
         run: uv run pytest -m leakage -v

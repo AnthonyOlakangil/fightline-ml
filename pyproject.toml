@@ -87,6 +87,9 @@ markers = [
     "network: requires network access; never on the graded path",
 ]
 filterwarnings = [
+    # pandas raises FutureWarning for silent behaviour changes in groupby/shift/rolling,
+    # which is exactly where point-in-time feature bugs hide. Treat those as errors.
     "error::FutureWarning",
-    "error::DeprecationWarning",
+    # DeprecationWarning is left at default: third-party libraries (streamlit, jax)
+    # emit these routinely and failing on them would make CI brittle for no safety gain.
 ]
