@@ -1,0 +1,30 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- Tooling caches ---
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# --- Secrets: never commit ---
+.env
+.env.*
+*.pem
+secrets.yaml
+
+# --- Data ---
+# data/raw/ IS committed: dated snapshots make the repo runnable without re-scraping
+# (CLAUDE.md "Cache raw data in the repo"). Derived tables are not committed.
+data/processed/
+# On-disk HTTP response cache for the optional live scraper (never on the graded path).
+data/cache/
+
+# --- OS ---
+.DS_Store
+Thumbs.db

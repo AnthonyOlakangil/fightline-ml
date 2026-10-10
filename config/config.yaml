@@ -1,0 +1,86 @@
+# ufc-predictor configuration
+#
+# Single source of truth for seeds, paths, date windows, and hyperparameters.
+# CLAUDE.md non-negotiable: "All randomness takes a seed. Same seed -> same numbers.
+# Seeds live in config, not scattered literals." Nothing in src/ may hardcode a seed.
+
+# ---------------------------------------------------------------------------
+# Determinism
+# ---------------------------------------------------------------------------
+seed: 42
+
+# ---------------------------------------------------------------------------
+# Paths (relative to the repo root)
+# ---------------------------------------------------------------------------
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  reports_dir: reports
+  # Dated snapshot directories. Bumping these is an explicit, reviewable change.
+  ufcstats_snapshot: data/raw/ufcstats_snapshot_2026-10-09
+  odds_snapshot: data/raw/odds_snapshot_2026-10-09
+  aliases: src/ufc_predictor/ingest/aliases.csv
+
+# ---------------------------------------------------------------------------
+# Evaluation windows
+#
+# dev_window  : the ONLY period hyperparameters may be tuned against.
+# eval_window : held-out walk-forward period. Never touched during development.
+#
+# Odds coverage runs 2010-03-21 .. 2026-03-28, so fights after that are unpriced
+# and excluded from market comparison (documented in the README).
+# ---------------------------------------------------------------------------
+windows:
+  dev_start: "2010-01-01"
+  dev_end: "2015-12-31"
+  eval_start: "2016-01-01"
+  eval_end: "2026-10-03"
+
+# ---------------------------------------------------------------------------
+# Features
+# ---------------------------------------------------------------------------
+features:
+  rolling_windows: [3, 5]      # last-N-fight windows, plus career-to-date
+  min_prior_fights: 1          # below this, rolling features stay NaN (never backfilled)
+
+elo:
+  initial_rating: 1500.0
+  k_factor: 32.0
+  scale: 400.0
+
+# ---------------------------------------------------------------------------
+# Models
+# ---------------------------------------------------------------------------
+lightgbm:
+  n_estimators: 400
+  learning_rate: 0.03
+  num_leaves: 15
+  max_depth: 4
+  min_child_samples: 40
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.7
+  reg_alpha: 0.1
+  reg_lambda: 1.0
+  verbosity: -1
+
+# ---------------------------------------------------------------------------
+# Backtest
+# ---------------------------------------------------------------------------
+backtest:
+  # Retrain cadence in events. The per-fold training cutoff is asserted strictly
+  # before the predicted event regardless of this value (tests/test_leakage.py).
+  retrain_every_n_events: 10
+  min_train_fights: 500
+  bootstrap_resamples: 10000
+  bootstrap_ci: 0.95
+
+# ---------------------------------------------------------------------------
+# Simulation / parlay pricing (research backtest only - not betting advice)
+# ---------------------------------------------------------------------------
+sim:
+  n_sims: 10000
+  kelly_fraction: 0.25
+  starting_bankroll: 1000.0
+  max_parlay_legs: 3
+  min_edge: 0.02               # skip candidate parlays below this modelled edge

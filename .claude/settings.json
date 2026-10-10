@@ -1,0 +1,12 @@
+{
+  "model": "opus",
+  "effortLevel": "high",
+  "promptCacheTtl": "1h",
+  "subagentPromptCacheTtl": "1h",
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "ask": ["Bash(git push *)", "Bash(gh repo create *)"],
+    "deny": ["Read(./.env)", "Read(./**/.env)"]
+  }
+}
