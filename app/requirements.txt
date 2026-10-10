@@ -1,0 +1,13 @@
+# Minimal runtime for the deployed demo.
+#
+# The app loads precomputed artefacts and never trains, scrapes, or re-scores, so it
+# needs far less than the research project: no duckdb, matplotlib, typer, requests or
+# beautifulsoup4. lightgbm and scikit-learn appear only because the saved model and its
+# isotonic calibrator must be unpickled to score a hypothetical matchup.
+streamlit>=1.37
+pandas>=2.2
+pyarrow>=16.0
+numpy>=1.26
+joblib>=1.4
+lightgbm>=4.3
+scikit-learn>=1.5

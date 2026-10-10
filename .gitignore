@@ -28,3 +28,6 @@ data/cache/
 # --- OS ---
 .DS_Store
 Thumbs.db
+
+# app/artifacts/ IS committed: Streamlit Community Cloud deploys straight from the repo,
+# so the demo must find its precomputed inputs without a build step.

@@ -1,0 +1,8 @@
+# No [theme] base is set on purpose: Streamlit then follows the viewer's system
+# light/dark preference, and every chart in the app is drawn natively so it inherits
+# that theme. Hardcoding a base would break dark mode for half of readers.
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
