@@ -1078,6 +1078,7 @@ source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "duckdb" },
+    { name = "joblib" },
     { name = "lightgbm" },
     { name = "matplotlib" },
     { name = "numpy" },
@@ -1108,6 +1109,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.12" },
     { name = "duckdb", specifier = ">=1.0" },
     { name = "jax", marker = "extra == 'bayes'", specifier = ">=0.4.30" },
+    { name = "joblib", specifier = ">=1.6.0" },
     { name = "lightgbm", specifier = ">=4.3" },
     { name = "matplotlib", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26" },

@@ -119,8 +119,42 @@ def parlay() -> None:
 def predict(
     event: str = typer.Option(..., "--event", help="Event name, e.g. 'UFC 332: Silva vs. Wang'."),
 ) -> None:
-    """Predict a card and write a prediction-log CSV."""
-    _not_yet(f"predict --event {event!r}", "Phase 6")
+    """Write a timestamped prediction log for one event.
+
+    Events come from the committed snapshot only; upcoming cards are never invented.
+    A completed event is logged as mode=replay and flagged as not proving advance
+    commitment. Research backtest only - not betting advice.
+    """
+    from ufc_predictor.predict import PredictError, predict_event
+
+    try:
+        predict_event(event)
+    except PredictError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@app.command()
+def settle(
+    log: str = typer.Argument(..., help="Path to a prediction-log CSV."),
+) -> None:
+    """Fill in results for a prediction log and compute its log loss."""
+    from ufc_predictor.predict import PredictError
+    from ufc_predictor.predict import settle as settle_log
+
+    try:
+        settle_log(log)
+    except PredictError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@app.command("export-app")
+def export_app_cmd() -> None:
+    """Export precomputed artefacts the Streamlit demo loads at startup."""
+    from ufc_predictor.export_app import run
+
+    run()
 
 
 if __name__ == "__main__":  # pragma: no cover

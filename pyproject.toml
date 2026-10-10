@@ -20,6 +20,7 @@ dependencies = [
     "requests>=2.32",
     "beautifulsoup4>=4.12",
     "streamlit>=1.37",
+    "joblib>=1.6.0",
 ]
 
 [project.optional-dependencies]
@@ -74,6 +75,11 @@ ignore = [
 # The leakage tests mutate single cells to prove the past does not move; `.at` is the
 # correct idiom for that, and `.values` is what pandas' own hashing helper returns.
 "tests/*" = ["B011", "PD008", "PD011"]
+# The demo's user-facing copy uses real typographic characters -- a true minus sign in
+# "Model − market" and × for a multiplier -- which is what the web interface guidelines
+# ask for. RUF001 flags them as ambiguous, which is the right call for identifiers and
+# the wrong one for display text.
+"app/streamlit_app.py" = ["RUF001"]
 
 # ----------------------------------------------------------------------------
 # pytest

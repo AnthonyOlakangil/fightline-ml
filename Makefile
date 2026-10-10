@@ -6,7 +6,7 @@
 # exist for iteration; the four-command path is the contract.
 
 .DEFAULT_GOAL := help
-.PHONY: help setup data features backtest parlay report test test-leakage lint fmt app clean
+.PHONY: help setup data features backtest parlay report test test-leakage lint fmt export-app app clean
 
 UV ?= uv
 RUN := $(UV) run
@@ -60,7 +60,10 @@ fmt: ## Apply formatting and autofixes
 	$(RUN) ruff format .
 	$(RUN) ruff check --fix .
 
-app: ## Run the Streamlit demo locally
+export-app: ## Build the precomputed artefacts the demo loads
+	$(RUN) ufc-predictor export-app
+
+app: export-app ## Run the Streamlit demo locally
 	$(RUN) streamlit run app/streamlit_app.py
 
 clean: ## Remove derived data, reports, and caches (never touches data/raw)
