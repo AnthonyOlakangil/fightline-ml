@@ -85,6 +85,27 @@ license are recorded in the snapshot's `SOURCE.md`.
 | **License** | Apache-2.0 |
 | **Coverage** | 2010-03-21 → 2026-03-28 |
 | **Committed at** | `data/raw/odds_snapshot_2026-10-09/` |
+| **Line type** | **Closing** — verified independently, see below |
+
+#### Verifying these are closing lines
+
+The upstream dataset documents neither the sportsbook nor when the price was captured,
+and "the market baseline" means nothing if the prices are opening lines or, worse,
+assigned after the fact. So the timing was established empirically rather than assumed:
+
+- **Not post-fight.** Structurally, the upstream project publishes odds for bouts that
+  have not happened yet. Empirically, the favourite wins about 67% of the time — if the
+  prices encoded known results it would be ~100%.
+- **Closing, not opening.** Matched against an independent source of per-sportsbook
+  *at-close* moneylines ([`iankotliar/UFC_Final`](https://github.com/iankotliar/UFC_Final),
+  `moneyline_data_at_close.zip`, derived from BestFightOdds across 12 books) over
+  **3,812 jointly-covered fights**, these prices agree with the closing consensus to a
+  **median absolute difference of 5 American odds points** — 71.5% within 10 points,
+  88.2% within 25, and 97.4% agreement on which fighter was favoured.
+- **Contrast with mid-week prices.** The same upstream project's `upcoming.csv`, captured
+  during fight week, diverges much further from the committed values (Oliveira vs
+  Chandler at UFC 309: −258 mid-week against −130 final), confirming the committed file
+  is not a mid-week capture.
 
 That dataset ships 118 columns, most of them precomputed career aggregates. Those are
 **not used** — they are a leakage hazard, since it cannot be established that they exclude
@@ -96,14 +117,54 @@ UFCStats with an explicit as-of join.
 American odds are converted to implied probabilities and de-vigged by two-sided
 normalization before any comparison. The market baseline is the vig-free favorite.
 
+### Joining the two sources
+
+Both sources key fights on fighter *names*, so the join is a correctness problem rather
+than a formatting one: attaching one fighter's closing line to another fighter's result
+would corrupt the market baseline without changing any row count. The policy is that a
+**dropped row always beats a guessed pairing**, implemented as three tiers:
+
+1. **Exact** match on (event date, normalized fighter pair) — 6,527 fights.
+2. **Alias table** (`src/ufc_predictor/ingest/aliases.csv`) — 296 fights. The two sources
+   disagree on names for three reasons: legal and married name changes (UFCStats carries
+   a fighter's *current* name while the odds data uses the name used at the time, so
+   "Tecia Torres" is "Tecia Pennington", "Cris Cyborg" is "Cristiane Justino", "Katlyn
+   Chookagian" is "Katlyn Cerminara"), differing word order for many Chinese and
+   Mongolian names, and ring names ("Rampage Jackson" / "Quinton Jackson").
+   Each of the 64 aliases is **corroborated by at least two independent fights against
+   different opponents** — Bobby Green → King Green is implied by 19 — and any name
+   implying two different targets is rejected outright. Proposals are generated with
+   evidence by `python -m ufc_predictor.ingest.propose_aliases` and reviewed by hand;
+   single-evidence proposals were **not** accepted.
+3. **Fuzzy**, a near-inert backstop requiring 0.92 similarity on *both* fighters plus a
+   margin over the runner-up candidate. It resolves **1** fight in the whole dataset. A
+   one-character surname typo scores ≈0.74 and is deliberately rejected, because a
+   corroborated alias is far safer than a similarity score.
+
+Every fuzzy match is logged to `reports/fuzzy_matched_odds.csv` and every failure to
+`reports/unjoined_odds.csv`, both for audit. **80 priced fights (1.16%) remain unjoined**
+and are dropped with a logged count; the pipeline raises if that share exceeds 5%.
+
 ### Known coverage limits
 
-- Odds end 2026-03-28, so fights after that date are unpriced and excluded from market
-  comparison.
-- Odds join to UFCStats on (date, fighter pair) at 95.1% exactly. All unmatched rows are
-  name variants, not date mismatches; they are resolved via a hand-reviewed alias table,
-  and anything still unresolved is written to `reports/unjoined_odds.csv` and dropped with
-  a logged count — never silently fuzzy-matched.
+Reported honestly because they bound what the results can claim:
+
+- **Odds end 2026-03-28** (the upstream project's last update was 2026-04-01), so fights
+  after that date are unpriced and excluded from any market comparison.
+- **56 bouts** are dropped because a fighter's name maps to several UFCStats ids (nine
+  names are shared by multiple fighters, e.g. two different "Mike Davis"). Merging two
+  careers would corrupt every point-in-time feature for both, so these are dropped rather
+  than guessed.
+- **27 bouts** are dropped because the upstream event file omits three events that its own
+  fight file references (`Road to UFC 4.6`, `Fight Night: Grasso vs. Shevchenko 2`,
+  `Fight Night: Lopes vs. Silva`). Without an event date a fight cannot be placed in time,
+  and no date is invented.
+- **20 priced rows** are dropped for an arithmetically impossible overround — both sides
+  quoted plus-money (e.g. +176 / +275, a notional 37% arbitrage). A real two-sided book
+  must price above 100%, so these are corrupted quotes.
+- **30 fighter slots** use a name-derived id because the fighter is absent from the
+  tale-of-the-tape table. At worst this splits one career into two, understating history
+  rather than inventing it.
 
 ---
 
