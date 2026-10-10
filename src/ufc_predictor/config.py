@@ -103,6 +103,7 @@ class Config:
     features: dict[str, Any] = field(default_factory=dict)
     elo: dict[str, Any] = field(default_factory=dict)
     lightgbm: dict[str, Any] = field(default_factory=dict)
+    lightgbm_fit: dict[str, Any] = field(default_factory=dict)
     backtest: dict[str, Any] = field(default_factory=dict)
     sim: dict[str, Any] = field(default_factory=dict)
 
@@ -158,6 +159,7 @@ def load_config(path: str | Path | None = None) -> Config:
         features=raw.get("features", {}),
         elo=raw.get("elo", {}),
         lightgbm=raw.get("lightgbm", {}),
+        lightgbm_fit=raw.get("lightgbm_fit", {}),
         backtest=raw.get("backtest", {}),
         sim=raw.get("sim", {}),
     )
