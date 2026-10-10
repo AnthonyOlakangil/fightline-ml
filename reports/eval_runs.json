@@ -1,0 +1,16 @@
+{
+  "runs": [
+    {
+      "git_sha": "1c1e1f0",
+      "headline": {
+        "elo": 0.6849,
+        "lightgbm": 0.6772,
+        "market": 0.6063,
+        "market_plus_model": 0.603
+      },
+      "run": 1,
+      "seed": 42,
+      "timestamp_utc": "2026-10-10T11:47:52+00:00"
+    }
+  ]
+}
