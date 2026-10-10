@@ -229,7 +229,9 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
     """
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
     feats = build_features(
-        fights, stats, fighters,
+        fights,
+        stats,
+        fighters,
         rolling_windows=tuple(cfg.features["rolling_windows"]),
         elo_params=cfg.elo,
     )
@@ -251,15 +253,8 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
         rows = f.loc[f.index.intersection(ids)]
         if len(rows) < 2:
             continue
-        # Every bout that night must report the same pre-fight state for this fighter.
-        for col in ("n_prior_fights_1", "n_prior_fights_2", "elo_1", "elo_2"):
-            vals = [
-                rows.iloc[i][col]
-                for i in range(len(rows))
-                if feats.set_index("fight_id").loc[rows.index[i], "fighter_1"] == fid
-                or feats.set_index("fight_id").loc[rows.index[i], "fighter_2"] == fid
-            ]
-            del vals  # per-slot comparison is done below
+        # Every bout that night must report the same pre-fight state for this fighter,
+        # read from whichever slot (1 or 2) that fighter occupies in each bout.
         slot_vals = []
         for fight_id in rows.index:
             row = f.loc[fight_id]
@@ -310,7 +305,7 @@ def test_history_for_a_fight_contains_only_strictly_earlier_fights(tables, cfg):
     """Direct provenance check on the history index used to build the features."""
     fights, stats = tables["fights"], tables["fight_stats"]
     history = fighter_fight_history(fights, stats)
-    by_fighter = {fid: g for fid, g in history.groupby("fighter_id")}
+    by_fighter = dict(iter(history.groupby("fighter_id")))
 
     rng = np.random.default_rng(get_config().seed)
     sample = fights.sample(min(300, len(fights)), random_state=int(rng.integers(1 << 30)))
@@ -385,7 +380,7 @@ def test_missing_history_is_never_silently_zero(features):
 def test_age_is_computed_at_the_event_date(tables, features):
     """Age must be as of the fight, not as of today, or every historical row drifts."""
     fights, fighters = tables["fights"], tables["fighters"]
-    dob = dict(zip(fighters["fighter_id"], fighters["dob"]))
+    dob = dict(zip(fighters["fighter_id"], fighters["dob"], strict=True))
     merged = features.merge(fights[["fight_id", "date"]], on="fight_id", suffixes=("", "_f"))
 
     checked = 0
@@ -464,7 +459,9 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     )
 
     feats = build_features(
-        shuffled, stats, fighters,
+        shuffled,
+        stats,
+        fighters,
         rolling_windows=tuple(cfg.features["rolling_windows"]),
         elo_params=cfg.elo,
     )
@@ -472,7 +469,7 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     split = int(len(usable) * 0.7)
     train, test = usable.iloc[:split], usable.iloc[split:]
 
-    params = {k: v for k, v in cfg.lightgbm.items()}
+    params = dict(cfg.lightgbm)
     params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
     model = lgb.LGBMClassifier(**params)
     model.fit(train[FEATURE_COLS], train["label"].astype(int))
@@ -499,7 +496,9 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     from sklearn.metrics import roc_auc_score
 
     feats = build_features(
-        tables["fights"], tables["fight_stats"], tables["fighters"],
+        tables["fights"],
+        tables["fight_stats"],
+        tables["fighters"],
         rolling_windows=tuple(cfg.features["rolling_windows"]),
         elo_params=cfg.elo,
     )
@@ -507,7 +506,7 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     split = int(len(usable) * 0.7)
     train, test = usable.iloc[:split], usable.iloc[split:]
 
-    params = {k: v for k, v in cfg.lightgbm.items()}
+    params = dict(cfg.lightgbm)
     params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
     model = lgb.LGBMClassifier(**params)
     model.fit(train[FEATURE_COLS], train["label"].astype(int))
