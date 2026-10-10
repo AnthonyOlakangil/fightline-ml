@@ -145,6 +145,111 @@ Every fuzzy match is logged to `reports/fuzzy_matched_odds.csv` and every failur
 `reports/unjoined_odds.csv`, both for audit. **80 priced fights (1.16%) remain unjoined**
 and are dropped with a logged count; the pipeline raises if that share exceeds 5%.
 
+---
+
+## Point-in-time features
+
+Every feature for a fight is computed from that fighter's bouts dated **strictly before**
+the fight's event date. The builder makes this structural rather than incidental: state
+is snapshotted per event-date, every fight on that date is described from the snapshot,
+and only afterwards is the date's history folded in. Three consequences, each pinned by
+a test:
+
+- **Fights on the same card cannot see each other.** A card is simultaneous for a
+  forecaster, so Elo and rolling statistics advance only once the whole event is
+  processed. Flipping one bout's result changes no other bout on that date.
+- **One-night tournaments are handled.** 67 fighter-days in this dataset hold more than
+  one fight (up to four, in the 1994–99 format). A plain `shift(1)` over a fighter's
+  fight sequence would leak the first bout of the night into the second; grouping by
+  date does not.
+- **A fight's own per-round statistics never enter its own features.** Scrambling one
+  fight's round stats leaves that fight's feature row byte-identical.
+
+**126 features**, all from the fight record: Elo (pre-fight), height/reach/age and their
+differences, prior-fight count, win rate, win and loss streaks, days since last fight,
+finish rate, and ten rate metrics — significant strikes landed and absorbed per minute,
+striking accuracy and defence, takedowns per 15 minutes, takedown accuracy and defence,
+submission attempts and knockdowns per 15 minutes, and control time per minute — each
+over last-3, last-5, and career-to-date windows, for both fighters plus the difference.
+Age is computed at the event date, not today.
+
+### What is *not* modelled, and why
+
+There are **no injury, training-camp, short-notice, weight-cut, or social-media
+features** in this project. Not because they would not help — several probably would —
+but because **there is no data for them here.** Adding them would mean inventing numbers
+and calling them measurements. The feature set is exactly what the committed fight
+record supports, and nothing else.
+
+**The closing line is never a feature.** The market is the baseline this project is
+measured against, so letting it into the feature set would make "the model beats the
+market" circular. A test asserts no odds-derived column can reach the feature table.
+
+### Missing history is flagged, never zeroed
+
+A debut fighter has no history. Encoding that as `0.0` strikes per minute would not read
+as "unknown" to a model — it would read as "this fighter lands nothing", which is a
+different and false claim. So every rate is `NaN` when its denominator is absent, and
+two explicit flags carry the reason:
+
+- `is_debut_{1,2}` — the fighter has no prior UFC bout (**2,812 fighter-slots**).
+- `has_stats_history_{1,2}` — the fighter has prior bouts but no per-round statistics for
+  them, which is common before 2001.
+
+LightGBM splits on `NaN` natively, so missingness is information rather than a gap to be
+filled. Backfilling from career totals was rejected outright: career totals include the
+fight being predicted and every fight after it.
+
+### How the 56 dropped ambiguous-name bouts affect opponents' histories
+
+Nine fighter names in this snapshot are shared by more than one UFCStats fighter (two
+different Mike Davises, two Bruno Silvas, and so on), so 56 bouts are dropped because the
+participant cannot be identified. The effect on the fighters who *remain* was measured
+rather than assumed:
+
+- **Exactly 56 fighters each lose exactly one fight** from their recorded history — no
+  fighter loses two.
+- That is **56 of 17,734 fighter-slots (0.32%)**. The worst-affected fighter retains 75%
+  of their history (3 of 4 bouts); most retain 85–95%.
+- The error direction is **always understatement**: an affected fighter's prior-fight
+  count, streaks, and rolling averages are computed from one fewer bout. No fight is
+  fabricated and no future data is introduced, so the features stay point-in-time
+  correct — they are simply built on marginally less history.
+
+Dropping was preferred to guessing because merging two fighters' careers under one id
+would corrupt every point-in-time feature for both, and would do so invisibly.
+
+### Verifying there is no leakage
+
+`tests/test_leakage.py` is the file that gates this project. Two tests carry most of the
+weight because they are *behavioural* — they make no claim about the implementation and
+cannot be satisfied by a convincing-looking code path:
+
+**The mutation test.** Change a later fight's winner *and* scramble its per-round
+statistics, rebuild everything, and assert that every feature row for a fight on or
+before that date is **byte-identical**. It also asserts the mutation propagates *forward*,
+so the test cannot pass by doing nothing.
+
+**The shuffle test.** Randomize who won every fight, rebuild all 126 features from the
+shuffled results — Elo, streaks, win rates, rolling statistics and all — then train and
+evaluate. If any feature peeked at the fight it describes, the model would still predict
+the shuffled outcome:
+
+| Outcomes | AUC | Log loss | Accuracy |
+|---|---|---|---|
+| **Shuffled** | **0.4923** | 0.7036 | 0.4925 |
+| *Chance* | *0.5000* | *0.6931* | *0.5000* |
+| **Real (control)** | **0.6489** | 0.6685 | 0.6087 |
+
+Performance on shuffled outcomes collapses to chance, while real outcomes remain
+learnable. The control matters as much as the test: without it, a broken pipeline
+producing pure noise would pass the shuffle test trivially.
+
+*(Those figures come from a simple chronological 70/30 split for leakage-checking only.
+They are **not** the project's results — the honest evaluation is the walk-forward
+backtest, and the model's real comparison against the market's 0.6063 log loss is
+Phase 4's job.)*
+
 ### Known coverage limits
 
 Reported honestly because they bound what the results can claim:
@@ -165,6 +270,12 @@ Reported honestly because they bound what the results can claim:
 - **30 fighter slots** use a name-derived id because the fighter is absent from the
   tale-of-the-tape table. At worst this splits one career into two, understating history
   rather than inventing it.
+- **The backtest scoring set is 6,790 fights, not 6,824.** 6,824 fights carry a closing
+  line, but 34 of those have no binary winner — 16 disqualifications, 11 overturned
+  results, 4 draws, and 3 stopped as "could not continue". Model and market are scored on
+  **exactly the same 6,790 fights** so the comparison is like-for-like. Training uses all
+  8,689 decisive fights, including unpriced ones, since the market baseline is unaffected
+  by what the model learns from.
 
 ---
 
@@ -181,8 +292,13 @@ make backtest   # walk-forward evaluation -> reports/metrics.json
 make report     # charts + README figures
 ```
 
-Other targets: `make test` (full suite), `make test-leakage` (point-in-time suite only),
-`make lint`, `make app` (Streamlit demo). `make help` lists everything.
+Other targets: `make features`, `make test` (full suite), `make test-leakage`
+(point-in-time suite only), `make lint`, `make app` (Streamlit demo). `make help` lists
+everything.
+
+**macOS only:** LightGBM needs the OpenMP runtime, which Apple's toolchain does not ship.
+If `import lightgbm` fails with `Library not loaded: @rpath/libomp.dylib`, install it once
+with `brew install libomp`. Linux wheels bundle it, so CI needs nothing extra.
 
 ---
 
