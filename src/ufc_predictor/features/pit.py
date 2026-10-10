@@ -45,15 +45,16 @@ ROUND_SECONDS = 300
 
 # Per-fighter rate metrics, each computed over several history windows.
 RATE_METRICS = (
-    "sig_str_landed_pm",     # significant strikes landed per minute
-    "sig_str_absorbed_pm",   # significant strikes absorbed per minute
-    "sig_str_acc",           # landed / attempted
-    "sig_str_def",           # 1 - (opponent landed / opponent attempted)
-    "td_landed_p15",         # takedowns landed per 15 minutes
-    "td_def",                # 1 - (opponent takedowns landed / attempted)
+    "sig_str_landed_pm",  # significant strikes landed per minute
+    "sig_str_absorbed_pm",  # significant strikes absorbed per minute
+    "sig_str_acc",  # landed / attempted
+    "sig_str_def",  # 1 - (opponent landed / opponent attempted)
+    "td_landed_p15",  # takedowns landed per 15 minutes
+    "td_acc",  # landed / attempted
+    "td_def",  # 1 - (opponent takedowns landed / attempted)
     "sub_att_p15",
     "kd_p15",
-    "ctrl_pm",               # control-time seconds per minute of fight
+    "ctrl_pm",  # control-time seconds per minute of fight
 )
 
 CAREER = "career"
@@ -66,19 +67,42 @@ def _windows(rolling_windows: Sequence[int]) -> list[str]:
 def feature_columns(rolling_windows: Sequence[int] = (3, 5)) -> list[str]:
     """The exact feature column list, in a stable order."""
     cols: list[str] = [
-        "elo_1", "elo_2", "elo_diff",
-        "height_1", "height_2", "height_diff",
-        "reach_1", "reach_2", "reach_diff",
-        "age_1", "age_2", "age_diff",
-        "n_prior_fights_1", "n_prior_fights_2", "n_prior_fights_diff",
-        "win_rate_1", "win_rate_2", "win_rate_diff",
-        "win_streak_1", "win_streak_2", "win_streak_diff",
-        "loss_streak_1", "loss_streak_2", "loss_streak_diff",
-        "days_since_last_1", "days_since_last_2", "days_since_last_diff",
-        "finish_rate_1", "finish_rate_2", "finish_rate_diff",
-        "is_debut_1", "is_debut_2",
-        "has_stats_history_1", "has_stats_history_2",
-        "title_bout", "scheduled_rounds",
+        "elo_1",
+        "elo_2",
+        "elo_diff",
+        "height_1",
+        "height_2",
+        "height_diff",
+        "reach_1",
+        "reach_2",
+        "reach_diff",
+        "age_1",
+        "age_2",
+        "age_diff",
+        "n_prior_fights_1",
+        "n_prior_fights_2",
+        "n_prior_fights_diff",
+        "win_rate_1",
+        "win_rate_2",
+        "win_rate_diff",
+        "win_streak_1",
+        "win_streak_2",
+        "win_streak_diff",
+        "loss_streak_1",
+        "loss_streak_2",
+        "loss_streak_diff",
+        "days_since_last_1",
+        "days_since_last_2",
+        "days_since_last_diff",
+        "finish_rate_1",
+        "finish_rate_2",
+        "finish_rate_diff",
+        "is_debut_1",
+        "is_debut_2",
+        "has_stats_history_1",
+        "has_stats_history_2",
+        "title_bout",
+        "scheduled_rounds",
     ]
     for win in _windows(rolling_windows):
         for metric in RATE_METRICS:
@@ -124,14 +148,30 @@ def fighter_fight_history(fights: pd.DataFrame, fight_stats: pd.DataFrame) -> pd
 
     # Per-fighter totals across rounds of that bout.
     stat_cols = [
-        "sig_str_landed", "sig_str_att", "td_landed", "td_att",
-        "sub_att", "kd", "ctrl_sec",
+        "sig_str_landed",
+        "sig_str_att",
+        "td_landed",
+        "td_att",
+        "sub_att",
+        "kd",
+        "ctrl_sec",
     ]
     present = [c for c in stat_cols if c in fight_stats.columns]
-    totals = (
-        fight_stats.groupby(["fight_id", "fighter_norm"], as_index=False)[present]
-        .sum(min_count=1)
-    )
+
+    if fight_stats.empty or not present:
+        # Legitimate case, not an error: pre-2001 UFC fights carry no per-round
+        # statistics at all. Those fighters still have a record, a layoff and an Elo,
+        # so history is built with the statistical columns absent and every derived
+        # rate left as NaN -- never as zero.
+        totals = pd.DataFrame(
+            {"fight_id": pd.Series(dtype="object"), "fighter_id": pd.Series(dtype="object")}
+            | {c: pd.Series(dtype="float64") for c in stat_cols}
+        )
+        present = stat_cols
+    else:
+        totals = fight_stats.groupby(["fight_id", "fighter_norm"], as_index=False)[present].sum(
+            min_count=1
+        )
 
     # fight_stats keys fighters by normalized name; map that onto canonical ids using
     # the name/id alignment stored on the fights table.
@@ -146,17 +186,22 @@ def fighter_fight_history(fights: pd.DataFrame, fight_stats: pd.DataFrame) -> pd
         ],
         ignore_index=True,
     )
-    totals = totals.merge(name_to_id, on=["fight_id", "fighter_norm"], how="inner")
-    totals = totals.drop(columns=["fighter_norm"])
+    if "fighter_norm" in totals.columns:
+        totals = totals.merge(name_to_id, on=["fight_id", "fighter_norm"], how="inner")
+        totals = totals.drop(columns=["fighter_norm"])
 
     own = totals.rename(columns={c: f"own_{c}" for c in present})
-    opp = totals.rename(
-        columns={**{c: f"opp_{c}" for c in present}, "fighter_id": "opponent_id"}
-    )
+    opp = totals.rename(columns={**{c: f"opp_{c}" for c in present}, "fighter_id": "opponent_id"})
 
     keep = [
-        "fight_id", "date", "fighter_id", "opponent_id",
-        "won", "won_by_finish", "duration_sec", "method_class",
+        "fight_id",
+        "date",
+        "fighter_id",
+        "opponent_id",
+        "won",
+        "won_by_finish",
+        "duration_sec",
+        "method_class",
     ]
     hist = long.loc[:, keep].merge(own, on=["fight_id", "fighter_id"], how="left")
     hist = hist.merge(opp, on=["fight_id", "opponent_id"], how="left")
@@ -175,7 +220,7 @@ def fighter_fight_history(fights: pd.DataFrame, fight_stats: pd.DataFrame) -> pd
 class _FighterState:
     """Running history for one fighter, advanced only at event-date boundaries."""
 
-    __slots__ = ("fights", "last_date", "n", "wins", "win_streak", "loss_streak", "finishes")
+    __slots__ = ("fights", "finishes", "last_date", "loss_streak", "n", "win_streak", "wins")
 
     def __init__(self) -> None:
         self.fights: deque[dict] = deque(maxlen=64)
@@ -234,10 +279,9 @@ def _rate_block(records: list[dict], prefix_suffix: str) -> dict[str, float]:
     out[f"sig_str_landed_pm_{prefix_suffix}"] = ratio(own_landed, minutes)
     out[f"sig_str_absorbed_pm_{prefix_suffix}"] = ratio(opp_landed, minutes)
     out[f"sig_str_acc_{prefix_suffix}"] = ratio(own_landed, own_att)
-    out[f"sig_str_def_{prefix_suffix}"] = (
-        1.0 - opp_landed / opp_att if opp_att > 0 else np.nan
-    )
+    out[f"sig_str_def_{prefix_suffix}"] = 1.0 - opp_landed / opp_att if opp_att > 0 else np.nan
     out[f"td_landed_p15_{prefix_suffix}"] = ratio(own_td * 15.0, minutes)
+    out[f"td_acc_{prefix_suffix}"] = ratio(own_td, own_td_att)
     out[f"td_def_{prefix_suffix}"] = 1.0 - opp_td / opp_td_att if opp_td_att > 0 else np.nan
     out[f"sub_att_p15_{prefix_suffix}"] = ratio(s("own_sub_att") * 15.0, minutes)
     out[f"kd_p15_{prefix_suffix}"] = ratio(s("own_kd") * 15.0, minutes)
@@ -349,8 +393,16 @@ def build_features(
 
     # Differences, computed after both sides exist.
     diff_bases = [
-        "elo", "height", "reach", "age", "n_prior_fights", "win_rate",
-        "win_streak", "loss_streak", "days_since_last", "finish_rate",
+        "elo",
+        "height",
+        "reach",
+        "age",
+        "n_prior_fights",
+        "win_rate",
+        "win_streak",
+        "loss_streak",
+        "days_since_last",
+        "finish_rate",
     ]
     elo = build_elo(
         fights,
@@ -366,17 +418,13 @@ def build_features(
         feats[f"{base}_diff"] = feats[f"{base}_1"] - feats[f"{base}_2"]
     for win in _windows(windows):
         for metric in RATE_METRICS:
-            feats[f"{metric}_{win}_diff"] = (
-                feats[f"{metric}_{win}_1"] - feats[f"{metric}_{win}_2"]
-            )
+            feats[f"{metric}_{win}_diff"] = feats[f"{metric}_{win}_1"] - feats[f"{metric}_{win}_2"]
 
     cols = feature_columns(windows)
     missing = [c for c in cols if c not in feats.columns]
     if missing:
         raise RuntimeError(f"feature builder did not produce expected columns: {missing}")
 
-    ordered_cols = [
-        "fight_id", "date", "fighter_1", "fighter_2", "label", "is_decisive", *cols
-    ]
+    ordered_cols = ["fight_id", "date", "fighter_1", "fighter_2", "label", "is_decisive", *cols]
     out = feats.loc[:, ordered_cols].sort_values(["date", "fight_id"], kind="stable")
     return out.reset_index(drop=True)
