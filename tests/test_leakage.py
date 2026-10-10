@@ -433,6 +433,32 @@ def test_label_base_rate_is_balanced(features):
 # ---------------------------------------------------------------------------
 
 
+def _dev_only_split(feats: pd.DataFrame, cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Chronological 70/30 split **confined to the dev window**.
+
+    These diagnostics must never touch the held-out period. They make no tuning
+    decision, but a performance number measured on the eval window is an eval-window
+    number regardless of intent, and reporting one before the walk-forward backtest
+    exists would spend the held-out set on a side check.
+    """
+    usable = feats.loc[feats["label"].notna() & (feats["date"] <= cfg.windows.dev_end)].sort_values(
+        "date"
+    )
+    split = int(len(usable) * 0.7)
+    return usable.iloc[:split], usable.iloc[split:]
+
+
+def _fit_predict_dev(train, test, cfg):
+    """Fit a fixed, un-tuned LightGBM for diagnostic purposes only."""
+    import lightgbm as lgb
+
+    params = dict(cfg.lightgbm)
+    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
+    model = lgb.LGBMClassifier(**params)
+    model.fit(train[FEATURE_COLS], train["label"].astype(int))
+    return model.predict_proba(test[FEATURE_COLS])[:, 1]
+
+
 @pytest.mark.slow
 def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     """Randomize who won, rebuild every feature from scratch, then train and evaluate.
@@ -442,47 +468,57 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     peeks at the fight it describes, the model will still predict the shuffled outcome
     and score above chance. With an honest point-in-time builder there is nothing to
     learn and performance must collapse to a coin flip.
+
+    Confined to the dev window, so the held-out period is never spent on a diagnostic.
+    That leaves ~1,000 test fights, where a single AUC estimate carries a standard error
+    around 0.016 -- one unlucky draw can read 0.53 with no leakage whatsoever. The test
+    therefore averages several independent shuffles and leans on log loss, which is the
+    stricter statement: a model exploiting leaked information would beat chance log loss,
+    not merely drift above 0.5 AUC.
     """
-    import lightgbm as lgb
     from sklearn.metrics import log_loss, roc_auc_score
 
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    rng = np.random.default_rng(cfg.seed)
+    n_shuffles = 3
+    aucs: list[float] = []
+    lls: list[float] = []
 
-    shuffled = fights.copy()
-    decisive = shuffled["is_decisive"].to_numpy()
-    pick_first = rng.random(len(shuffled)) < 0.5
-    shuffled.loc[decisive, "winner_id"] = np.where(
-        pick_first[decisive],
-        shuffled.loc[decisive, "fighter_1"],
-        shuffled.loc[decisive, "fighter_2"],
+    for offset in range(n_shuffles):
+        rng = np.random.default_rng(cfg.seed + offset)
+        shuffled = fights.copy()
+        decisive = shuffled["is_decisive"].to_numpy()
+        pick_first = rng.random(len(shuffled)) < 0.5
+        shuffled.loc[decisive, "winner_id"] = np.where(
+            pick_first[decisive],
+            shuffled.loc[decisive, "fighter_1"],
+            shuffled.loc[decisive, "fighter_2"],
+        )
+
+        feats = build_features(
+            shuffled,
+            stats,
+            fighters,
+            rolling_windows=tuple(cfg.features["rolling_windows"]),
+            elo_params=cfg.elo,
+        )
+        train, test = _dev_only_split(feats, cfg)
+        assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
+
+        p = _fit_predict_dev(train, test, cfg)
+        y = test["label"].astype(int)
+        aucs.append(roc_auc_score(y, p))
+        lls.append(log_loss(y, p, labels=[0, 1]))
+
+    mean_auc = float(np.mean(aucs))
+    # Chance log loss is ln(2) = 0.6931. Every shuffle must be at least as bad as that.
+    assert min(lls) > 0.68, (
+        f"log losses {[round(x, 4) for x in lls]} on randomized outcomes approach or beat "
+        "chance; the features carry information about the very fight they describe"
     )
-
-    feats = build_features(
-        shuffled,
-        stats,
-        fighters,
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
+    assert 0.46 <= mean_auc <= 0.54, (
+        f"mean AUC {mean_auc:.4f} over {n_shuffles} shuffles (individual: "
+        f"{[round(a, 4) for a in aucs]}) is away from chance on randomized outcomes"
     )
-    usable = feats.loc[feats["label"].notna()].sort_values("date")
-    split = int(len(usable) * 0.7)
-    train, test = usable.iloc[:split], usable.iloc[split:]
-
-    params = dict(cfg.lightgbm)
-    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
-    model = lgb.LGBMClassifier(**params)
-    model.fit(train[FEATURE_COLS], train["label"].astype(int))
-    p = model.predict_proba(test[FEATURE_COLS])[:, 1]
-
-    auc = roc_auc_score(test["label"].astype(int), p)
-    ll = log_loss(test["label"].astype(int), p, labels=[0, 1])
-
-    assert 0.44 <= auc <= 0.56, (
-        f"AUC {auc:.4f} on randomized outcomes: the features carry information about "
-        "the very fight they describe"
-    )
-    assert ll > 0.66, f"log loss {ll:.4f} beats chance on randomized outcomes"
 
 
 @pytest.mark.slow
@@ -492,7 +528,6 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     If the shuffle test passed only because the pipeline is broken and the features are
     noise, this would fail too. Real outcomes must be learnable to a modest degree.
     """
-    import lightgbm as lgb
     from sklearn.metrics import roc_auc_score
 
     feats = build_features(
@@ -502,18 +537,12 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
         rolling_windows=tuple(cfg.features["rolling_windows"]),
         elo_params=cfg.elo,
     )
-    usable = feats.loc[feats["label"].notna()].sort_values("date")
-    split = int(len(usable) * 0.7)
-    train, test = usable.iloc[:split], usable.iloc[split:]
+    train, test = _dev_only_split(feats, cfg)
+    assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
 
-    params = dict(cfg.lightgbm)
-    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
-    model = lgb.LGBMClassifier(**params)
-    model.fit(train[FEATURE_COLS], train["label"].astype(int))
-    p = model.predict_proba(test[FEATURE_COLS])[:, 1]
-
+    p = _fit_predict_dev(train, test, cfg)
     auc = roc_auc_score(test["label"].astype(int), p)
-    assert auc > 0.56, (
+    assert auc > 0.55, (
         f"AUC {auc:.4f} on real outcomes is near chance; the features carry almost no "
         "signal, which would make the shuffle test vacuous"
     )

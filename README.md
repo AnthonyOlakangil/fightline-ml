@@ -94,8 +94,10 @@ and "the market baseline" means nothing if the prices are opening lines or, wors
 assigned after the fact. So the timing was established empirically rather than assumed:
 
 - **Not post-fight.** Structurally, the upstream project publishes odds for bouts that
-  have not happened yet. Empirically, the favourite wins about 67% of the time — if the
-  prices encoded known results it would be ~100%.
+  have not happened yet. Empirically, the closing favourite wins 66.5% of the time across
+  all 6,790 priced decisive fights — if the prices encoded known results it would be
+  ~100%. (A full-sample property of the odds data, included as provenance evidence; it is
+  not a model result, and no model metric is reported before Phase 4.)
 - **Closing, not opening.** Matched against an independent source of per-sportsbook
   *at-close* moneylines ([`iankotliar/UFC_Final`](https://github.com/iankotliar/UFC_Final),
   `moneyline_data_at_close.zip`, derived from BestFightOdds across 12 books) over
@@ -233,22 +235,31 @@ so the test cannot pass by doing nothing.
 **The shuffle test.** Randomize who won every fight, rebuild all 126 features from the
 shuffled results — Elo, streaks, win rates, rolling statistics and all — then train and
 evaluate. If any feature peeked at the fight it describes, the model would still predict
-the shuffled outcome:
+the shuffled outcome.
 
-| Outcomes | AUC | Log loss | Accuracy |
-|---|---|---|---|
-| **Shuffled** | **0.4923** | 0.7036 | 0.4925 |
-| *Chance* | *0.5000* | *0.6931* | *0.5000* |
-| **Real (control)** | **0.6489** | 0.6685 | 0.6087 |
+Run **entirely inside the dev window** (train 1994 → 2013-10, test 2013-10 → 2015-12,
+n = 1,033). The held-out period is never touched by a diagnostic:
 
-Performance on shuffled outcomes collapses to chance, while real outcomes remain
-learnable. The control matters as much as the test: without it, a broken pipeline
-producing pure noise would pass the shuffle test trivially.
+| Outcomes | AUC | Log loss |
+|---|---|---|
+| **Shuffled** (mean of 8 draws) | **0.4969** (sd 0.0090, range 0.486–0.534) | **0.705** (range 0.696–0.712) |
+| *Chance* | *0.5000* | *0.6931* |
+| **Real (control)** | **0.6919** | **0.6277** |
 
-*(Those figures come from a simple chronological 70/30 split for leakage-checking only.
-They are **not** the project's results — the honest evaluation is the walk-forward
-backtest, and the model's real comparison against the market's 0.6063 log loss is
-Phase 4's job.)*
+Shuffled outcomes collapse to chance and log loss is **worse than chance in every single
+draw** — the stricter statement, since a model exploiting leaked information would beat
+chance log loss rather than merely drift above 0.5 AUC. Real outcomes stay learnable.
+The control matters as much as the test: without it, a broken pipeline producing pure
+noise would pass the shuffle test trivially.
+
+At n ≈ 1,000 a single AUC estimate carries a standard error of about 0.016, so one draw
+can read 0.53 with no leakage at all (the `seed=42` draw does exactly that, at 0.5335).
+The committed test therefore averages three independent shuffles and asserts on log loss,
+rather than resting on one draw.
+
+*These are leakage diagnostics on a simple chronological split, **not** project results.*
+The honest evaluation is Phase 4's walk-forward backtest, which is also the first thing
+permitted to report an eval-window number.
 
 ### Known coverage limits
 
