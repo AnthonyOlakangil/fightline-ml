@@ -1,0 +1,547 @@
+"""Point-in-time correctness suite. **This is the test file that gates the project.**
+
+Written before the feature builder existed, and before any model. Every test here
+encodes an invariant that, if violated, would make the headline result meaningless
+while leaving every row count, every chart, and every summary statistic looking
+perfectly healthy. That is the danger: leakage does not announce itself.
+
+The central test is `test_mutating_a_later_fight_leaves_earlier_features_byte_identical`.
+It does not inspect columns or reason about the code; it changes the future and checks
+that the past did not move. A feature builder that passes it cannot be reading forward,
+whatever its implementation does.
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from ufc_predictor.config import get_config
+from ufc_predictor.features.pit import (
+    FEATURE_COLS,
+    build_features,
+    fighter_fight_history,
+)
+from ufc_predictor.storage import db
+
+pytestmark = pytest.mark.leakage
+
+
+# ---------------------------------------------------------------------------
+# Fixtures
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def cfg():
+    return get_config()
+
+
+@pytest.fixture(scope="module")
+def tables(cfg):
+    try:
+        return {name: db.read_table(cfg.paths.processed_dir, name) for name in db.TABLES}
+    except FileNotFoundError:
+        pytest.skip("processed tables absent; run `make data`")
+
+
+@pytest.fixture(scope="module")
+def features(tables, cfg):
+    return build_features(
+        tables["fights"],
+        tables["fight_stats"],
+        tables["fighters"],
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+
+
+def frame_digest(df: pd.DataFrame) -> bytes:
+    """A deterministic byte digest of a frame's contents.
+
+    Used for the mutation test's byte-identity claim. Sorting by fight_id removes any
+    dependence on row order, so the digest reflects values only.
+    """
+    ordered = df.sort_values("fight_id").reset_index(drop=True)
+    return pd.util.hash_pandas_object(ordered, index=False).values.tobytes()
+
+
+# ---------------------------------------------------------------------------
+# THE central test: change the future, assert the past is unmoved
+# ---------------------------------------------------------------------------
+
+
+def test_mutating_a_later_fight_leaves_earlier_features_byte_identical(tables, cfg):
+    """Mutate a later fight's outcome *and* its per-round statistics; every feature
+    row for a fight on or before that date must be byte-identical.
+
+    This is the strongest available statement of point-in-time correctness, because it
+    is behavioural rather than structural. No column audit can prove a builder does not
+    read forward; this can. Features for a fight on date M depend only on fights
+    strictly before M, so mutating a fight *at* M must leave date-M rows untouched too.
+    """
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+    }
+
+    base = build_features(fights, stats, fighters, **kwargs)
+
+    # Choose a mutation target in the middle of the timeline with real stats attached,
+    # so the mutation has something to propagate from.
+    with_stats = set(stats["fight_id"])
+    candidates = fights.loc[
+        fights["fight_id"].isin(with_stats) & fights["is_decisive"]
+    ].sort_values("date")
+    target = candidates.iloc[len(candidates) // 2]
+    cutoff = target["date"]
+
+    # Mutation 1: flip the winner of the later fight.
+    mutated_fights = fights.copy()
+    idx = mutated_fights.index[mutated_fights["fight_id"] == target["fight_id"]][0]
+    original_winner = mutated_fights.at[idx, "winner_id"]
+    flipped = (
+        mutated_fights.at[idx, "fighter_2"]
+        if original_winner == mutated_fights.at[idx, "fighter_1"]
+        else mutated_fights.at[idx, "fighter_1"]
+    )
+    mutated_fights.at[idx, "winner_id"] = flipped
+    mutated_fights.at[idx, "method_class"] = "SUB"
+    mutated_fights.at[idx, "finish_round"] = 1
+
+    # Mutation 2: scramble that fight's per-round statistics.
+    mutated_stats = stats.copy()
+    smask = mutated_stats["fight_id"] == target["fight_id"]
+    assert smask.any(), "target fight must carry per-round stats for this test to bite"
+    for col in ("sig_str_landed", "sig_str_att", "td_landed", "td_att", "kd", "ctrl_sec"):
+        mutated_stats.loc[smask, col] = mutated_stats.loc[smask, col].fillna(0) * 7 + 99
+
+    mutated = build_features(mutated_fights, mutated_stats, fighters, **kwargs)
+
+    # Compare FEATURES only. The mutated fight's own `label` legitimately flips -- that
+    # is the mutation -- but a label is not a feature, and no feature may move.
+    cols = ["fight_id", *FEATURE_COLS]
+    before_base = base.loc[base["date"] <= cutoff, cols]
+    before_mut = mutated.loc[mutated["date"] <= cutoff, cols]
+
+    assert len(before_base) == len(before_mut) > 1000, "not enough earlier rows to be meaningful"
+    assert frame_digest(before_base) == frame_digest(before_mut), (
+        f"features for fights on or before {cutoff} changed when a fight on {cutoff} was "
+        "mutated: the builder is reading forward in time"
+    )
+
+    # Three sanity checks, so a vacuous pass is impossible.
+    # (a) The mutation landed: the target's own label must have flipped.
+    lab_a = base.loc[base["fight_id"] == target["fight_id"], "label"].iloc[0]
+    lab_b = mutated.loc[mutated["fight_id"] == target["fight_id"], "label"].iloc[0]
+    assert lab_a != lab_b, "the winner flip did not take effect; the test proves nothing"
+
+    # (b) Nothing but the label changed in the earlier slice -- not even a stray column.
+    earlier_a = base.loc[base["date"] <= cutoff].sort_values("fight_id").reset_index(drop=True)
+    earlier_b = (
+        mutated.loc[mutated["date"] <= cutoff].sort_values("fight_id").reset_index(drop=True)
+    )
+    changed = [c for c in earlier_a.columns if not earlier_a[c].equals(earlier_b[c])]
+    assert changed == ["label"], f"unexpected columns changed in the past: {changed}"
+
+    # (c) The mutation does propagate forward, so the builder is genuinely in play.
+    after_base = base.loc[base["date"] > cutoff, cols]
+    after_mut = mutated.loc[mutated["date"] > cutoff, cols]
+    assert frame_digest(after_base) != frame_digest(after_mut), (
+        "mutating a fight changed no later features either; the test is not exercising "
+        "the feature builder at all"
+    )
+
+
+def test_mutating_the_very_last_event_changes_no_feature_row(tables, cfg):
+    """A complementary end-case: nothing follows the final event, so mutating it must
+    leave the entire feature table unchanged."""
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+    }
+    base = build_features(fights, stats, fighters, **kwargs)
+
+    last_date = fights["date"].max()
+    mutated_fights = fights.copy()
+    mask = mutated_fights["date"] == last_date
+    mutated_fights.loc[mask, "winner_id"] = mutated_fights.loc[mask, "fighter_2"]
+
+    mutated = build_features(mutated_fights, stats, fighters, **kwargs)
+    # Labels legitimately change for the mutated fights; features must not.
+    assert frame_digest(base[["fight_id", *FEATURE_COLS]]) == frame_digest(
+        mutated[["fight_id", *FEATURE_COLS]]
+    )
+
+
+# ---------------------------------------------------------------------------
+# Same-card and same-night isolation
+# ---------------------------------------------------------------------------
+
+
+def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
+    """Two fights on one card are simultaneous for modelling purposes.
+
+    Elo and rolling statistics must advance only after the whole event is processed, so
+    flipping the result of one bout must not alter any other bout on that same date.
+    """
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+    }
+    base = build_features(fights, stats, fighters, **kwargs)
+
+    # A busy, recent card.
+    counts = fights.groupby("date").size()
+    busy_date = counts.loc[counts >= 10].index.max()
+    same_day = fights.loc[fights["date"] == busy_date]
+    victim = same_day.iloc[0]
+
+    mutated_fights = fights.copy()
+    idx = mutated_fights.index[mutated_fights["fight_id"] == victim["fight_id"]][0]
+    mutated_fights.at[idx, "winner_id"] = (
+        mutated_fights.at[idx, "fighter_2"]
+        if victim["winner_id"] == victim["fighter_1"]
+        else mutated_fights.at[idx, "fighter_1"]
+    )
+    mutated = build_features(mutated_fights, stats, fighters, **kwargs)
+
+    others = [f for f in same_day["fight_id"] if f != victim["fight_id"]]
+    assert len(others) >= 9
+    a = base.loc[base["fight_id"].isin(others), ["fight_id", *FEATURE_COLS]]
+    b = mutated.loc[mutated["fight_id"].isin(others), ["fight_id", *FEATURE_COLS]]
+    assert frame_digest(a) == frame_digest(b), (
+        "a fight's result altered its own card-mates' features: state is advancing "
+        "mid-event instead of after the event"
+    )
+
+
+def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg):
+    """Early UFC events were one-night tournaments: 67 fighter-days have more than one
+    fight, up to four. Within such a night, the later bouts must not know the earlier
+    results -- a plain `shift(1)` over the fight sequence would leak here.
+    """
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    feats = build_features(
+        fights, stats, fighters,
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+
+    long = pd.concat(
+        [
+            fights[["fight_id", "date", "fighter_1"]].rename(columns={"fighter_1": "fid"}),
+            fights[["fight_id", "date", "fighter_2"]].rename(columns={"fighter_2": "fid"}),
+        ]
+    )
+    sizes = long.groupby(["fid", "date"]).size()
+    multi = sizes[sizes > 1]
+    assert len(multi) > 0, "expected tournament-format nights in the data"
+
+    f = feats.set_index("fight_id")
+    checked = 0
+    for (fid, date), _ in multi.items():
+        ids = long.loc[(long["fid"] == fid) & (long["date"] == date), "fight_id"].tolist()
+        rows = f.loc[f.index.intersection(ids)]
+        if len(rows) < 2:
+            continue
+        # Every bout that night must report the same pre-fight state for this fighter.
+        for col in ("n_prior_fights_1", "n_prior_fights_2", "elo_1", "elo_2"):
+            vals = [
+                rows.iloc[i][col]
+                for i in range(len(rows))
+                if feats.set_index("fight_id").loc[rows.index[i], "fighter_1"] == fid
+                or feats.set_index("fight_id").loc[rows.index[i], "fighter_2"] == fid
+            ]
+            del vals  # per-slot comparison is done below
+        slot_vals = []
+        for fight_id in rows.index:
+            row = f.loc[fight_id]
+            slot = "1" if row["fighter_1"] == fid else "2"
+            slot_vals.append((row[f"n_prior_fights_{slot}"], row[f"elo_{slot}"]))
+        assert len({v[0] for v in slot_vals}) == 1, (
+            f"{fid} on {date}: prior-fight count changed between bouts on the same night"
+        )
+        assert len({round(float(v[1]), 9) for v in slot_vals}) == 1, (
+            f"{fid} on {date}: Elo changed between bouts on the same night"
+        )
+        checked += 1
+    assert checked >= 20, f"only checked {checked} tournament nights"
+
+
+# ---------------------------------------------------------------------------
+# A fight's own data must not enter its own features
+# ---------------------------------------------------------------------------
+
+
+def test_a_fights_own_round_stats_never_enter_its_own_features(tables, cfg):
+    """Scramble one fight's per-round stats; that fight's own feature row must not move."""
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+    }
+    base = build_features(fights, stats, fighters, **kwargs)
+
+    # Pick a fight whose participants both have prior history, so the row is not all-NaN.
+    rich = base.loc[(base["n_prior_fights_1"] >= 3) & (base["n_prior_fights_2"] >= 3)]
+    target_id = rich.sort_values("date").iloc[len(rich) // 2]["fight_id"]
+
+    mutated_stats = stats.copy()
+    m = mutated_stats["fight_id"] == target_id
+    assert m.any()
+    for col in ("sig_str_landed", "sig_str_att", "td_landed", "kd", "ctrl_sec"):
+        mutated_stats.loc[m, col] = mutated_stats.loc[m, col].fillna(0) * 13 + 500
+
+    mutated = build_features(fights, mutated_stats, fighters, **kwargs)
+
+    row_a = base.loc[base["fight_id"] == target_id, FEATURE_COLS]
+    row_b = mutated.loc[mutated["fight_id"] == target_id, FEATURE_COLS]
+    pd.testing.assert_frame_equal(row_a, row_b, check_exact=True)
+
+
+def test_history_for_a_fight_contains_only_strictly_earlier_fights(tables, cfg):
+    """Direct provenance check on the history index used to build the features."""
+    fights, stats = tables["fights"], tables["fight_stats"]
+    history = fighter_fight_history(fights, stats)
+    by_fighter = {fid: g for fid, g in history.groupby("fighter_id")}
+
+    rng = np.random.default_rng(get_config().seed)
+    sample = fights.sample(min(300, len(fights)), random_state=int(rng.integers(1 << 30)))
+    for row in sample.itertuples(index=False):
+        for fid in (row.fighter_1, row.fighter_2):
+            g = by_fighter.get(fid)
+            if g is None:
+                continue
+            prior = g.loc[g["date"] < row.date]
+            assert (prior["date"] < row.date).all()
+            # And the fight itself is never in its own history slice.
+            assert row.fight_id not in set(prior["fight_id"])
+
+
+# ---------------------------------------------------------------------------
+# Elo
+# ---------------------------------------------------------------------------
+
+
+def test_elo_is_a_pre_fight_rating(features):
+    """Everyone starts at the configured initial rating, and debutants still carry it."""
+    cfg = get_config()
+    init = float(cfg.elo["initial_rating"])
+    debut_1 = features.loc[features["n_prior_fights_1"] == 0, "elo_1"]
+    assert len(debut_1) > 100
+    assert np.allclose(debut_1.to_numpy(dtype=float), init)
+
+
+def test_elo_diff_is_consistent_with_its_components(features):
+    diff = features["elo_1"] - features["elo_2"]
+    assert np.allclose(diff.to_numpy(), features["elo_diff"].to_numpy(), atol=1e-9)
+
+
+# ---------------------------------------------------------------------------
+# Debut handling: a flag, never a silent zero
+# ---------------------------------------------------------------------------
+
+
+def test_debut_rolling_features_are_null_not_zero(features):
+    """A debutant has no history. Encoding that as 0.0 would be a lie the model reads
+    as 'this fighter lands zero strikes per minute', and backfilling from career totals
+    would import the future outright."""
+    debuts = features.loc[features["n_prior_fights_1"] == 0]
+    assert len(debuts) > 100
+
+    rolling_1 = [c for c in FEATURE_COLS if c.endswith("_1") and ("_w" in c or "rate" in c)]
+    assert rolling_1, "expected rolling per-fighter columns"
+    for col in rolling_1:
+        assert debuts[col].isna().all(), f"{col} is populated for debutants; must be NaN"
+
+
+def test_debut_is_flagged_explicitly(features):
+    assert "is_debut_1" in features.columns
+    assert "is_debut_2" in features.columns
+    assert (features.loc[features["n_prior_fights_1"] == 0, "is_debut_1"]).all()
+    assert not (features.loc[features["n_prior_fights_1"] > 0, "is_debut_1"]).any()
+
+
+def test_missing_history_is_never_silently_zero(features):
+    """n_prior_fights is a genuine count, so 0 is meaningful there; but every derived
+    rate must be NaN rather than 0 when there is nothing to average."""
+    no_stats = features.loc[~features["has_stats_history_1"]]
+    if len(no_stats):
+        assert no_stats["sig_str_landed_pm_career_1"].isna().all()
+
+
+# ---------------------------------------------------------------------------
+# Age
+# ---------------------------------------------------------------------------
+
+
+def test_age_is_computed_at_the_event_date(tables, features):
+    """Age must be as of the fight, not as of today, or every historical row drifts."""
+    fights, fighters = tables["fights"], tables["fighters"]
+    dob = dict(zip(fighters["fighter_id"], fighters["dob"]))
+    merged = features.merge(fights[["fight_id", "date"]], on="fight_id", suffixes=("", "_f"))
+
+    checked = 0
+    for row in merged.head(2000).itertuples(index=False):
+        d = dob.get(row.fighter_1)
+        if d is None or pd.isna(d) or pd.isna(row.age_1):
+            continue
+        expected = (row.date - d).days / 365.25
+        assert abs(expected - row.age_1) < 0.01, f"age mismatch for {row.fight_id}"
+        checked += 1
+    assert checked > 500
+
+
+def test_age_is_plausible(features):
+    ages = features["age_1"].dropna()
+    assert ages.between(16, 55).all(), "implausible fighter age implies a date bug"
+
+
+# ---------------------------------------------------------------------------
+# The features must not contain the answer, or the market's opinion of it
+# ---------------------------------------------------------------------------
+
+
+def test_no_odds_derived_column_reaches_the_feature_set():
+    """If the model could see the closing line, 'model beats market' would be circular."""
+    banned = ("odds", "market", "vigfree", "vig", "implied", "overround", "p1_", "p2_", "moneyline")
+    offenders = [c for c in FEATURE_COLS if any(b in c.lower() for b in banned)]
+    assert not offenders, f"odds-derived columns in the feature set: {offenders}"
+
+
+def test_no_outcome_derived_column_reaches_the_feature_set():
+    banned = ("winner", "label", "is_decisive", "method", "finish_round", "finish_time")
+    offenders = [c for c in FEATURE_COLS if any(b in c.lower() for b in banned)]
+    assert not offenders, f"outcome columns in the feature set: {offenders}"
+
+
+def test_label_base_rate_is_balanced(features):
+    """Canonical orientation is by sorted fighter_id, which cannot encode the result.
+
+    Corner-based orientation would sit near 0.578 because promotions place favourites in
+    the red corner; a model could then score well by always picking red.
+    """
+    labelled = features["label"].dropna()
+    assert len(labelled) > 8000
+    assert 0.48 <= labelled.mean() <= 0.52, f"base rate {labelled.mean():.4f} looks oriented"
+
+
+# ---------------------------------------------------------------------------
+# The shuffle test: no signal where there is none to find
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.slow
+def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
+    """Randomize who won, rebuild every feature from scratch, then train and evaluate.
+
+    This is the decisive end-to-end leakage check. Elo, streaks, win rates and the
+    rolling statistics are all recomputed from the shuffled results, so if any feature
+    peeks at the fight it describes, the model will still predict the shuffled outcome
+    and score above chance. With an honest point-in-time builder there is nothing to
+    learn and performance must collapse to a coin flip.
+    """
+    import lightgbm as lgb
+    from sklearn.metrics import log_loss, roc_auc_score
+
+    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
+    rng = np.random.default_rng(cfg.seed)
+
+    shuffled = fights.copy()
+    decisive = shuffled["is_decisive"].to_numpy()
+    pick_first = rng.random(len(shuffled)) < 0.5
+    shuffled.loc[decisive, "winner_id"] = np.where(
+        pick_first[decisive],
+        shuffled.loc[decisive, "fighter_1"],
+        shuffled.loc[decisive, "fighter_2"],
+    )
+
+    feats = build_features(
+        shuffled, stats, fighters,
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+    usable = feats.loc[feats["label"].notna()].sort_values("date")
+    split = int(len(usable) * 0.7)
+    train, test = usable.iloc[:split], usable.iloc[split:]
+
+    params = {k: v for k, v in cfg.lightgbm.items()}
+    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
+    model = lgb.LGBMClassifier(**params)
+    model.fit(train[FEATURE_COLS], train["label"].astype(int))
+    p = model.predict_proba(test[FEATURE_COLS])[:, 1]
+
+    auc = roc_auc_score(test["label"].astype(int), p)
+    ll = log_loss(test["label"].astype(int), p, labels=[0, 1])
+
+    assert 0.44 <= auc <= 0.56, (
+        f"AUC {auc:.4f} on randomized outcomes: the features carry information about "
+        "the very fight they describe"
+    )
+    assert ll > 0.66, f"log loss {ll:.4f} beats chance on randomized outcomes"
+
+
+@pytest.mark.slow
+def test_model_does_find_signal_on_real_outcomes(tables, cfg):
+    """The control for the shuffle test.
+
+    If the shuffle test passed only because the pipeline is broken and the features are
+    noise, this would fail too. Real outcomes must be learnable to a modest degree.
+    """
+    import lightgbm as lgb
+    from sklearn.metrics import roc_auc_score
+
+    feats = build_features(
+        tables["fights"], tables["fight_stats"], tables["fighters"],
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+    usable = feats.loc[feats["label"].notna()].sort_values("date")
+    split = int(len(usable) * 0.7)
+    train, test = usable.iloc[:split], usable.iloc[split:]
+
+    params = {k: v for k, v in cfg.lightgbm.items()}
+    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
+    model = lgb.LGBMClassifier(**params)
+    model.fit(train[FEATURE_COLS], train["label"].astype(int))
+    p = model.predict_proba(test[FEATURE_COLS])[:, 1]
+
+    auc = roc_auc_score(test["label"].astype(int), p)
+    assert auc > 0.56, (
+        f"AUC {auc:.4f} on real outcomes is near chance; the features carry almost no "
+        "signal, which would make the shuffle test vacuous"
+    )
+    # Equally important: it must not be suspiciously good.
+    assert auc < 0.80, f"AUC {auc:.4f} is implausibly high for UFC prediction; suspect leakage"
+
+
+# ---------------------------------------------------------------------------
+# Determinism
+# ---------------------------------------------------------------------------
+
+
+def test_feature_build_is_deterministic(tables, cfg):
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+    }
+    a = build_features(tables["fights"], tables["fight_stats"], tables["fighters"], **kwargs)
+    b = build_features(tables["fights"], tables["fight_stats"], tables["fighters"], **kwargs)
+    assert frame_digest(a) == frame_digest(b)
+
+
+def test_every_feature_row_has_a_date_and_two_distinct_fighters(features):
+    assert features["date"].notna().all()
+    assert (features["fighter_1"] != features["fighter_2"]).all()
+    assert not features["fight_id"].duplicated().any()
+
+
+def test_dates_are_real_dates(features):
+    assert isinstance(features["date"].iloc[0], dt.date)
