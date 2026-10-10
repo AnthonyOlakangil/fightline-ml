@@ -99,6 +99,7 @@ class Config:
     seed: int
     paths: Paths
     windows: Windows
+    ingest: dict[str, Any] = field(default_factory=dict)
     features: dict[str, Any] = field(default_factory=dict)
     elo: dict[str, Any] = field(default_factory=dict)
     lightgbm: dict[str, Any] = field(default_factory=dict)
@@ -153,6 +154,7 @@ def load_config(path: str | Path | None = None) -> Config:
         seed=seed,
         paths=paths,
         windows=windows,
+        ingest=raw.get("ingest", {}),
         features=raw.get("features", {}),
         elo=raw.get("elo", {}),
         lightgbm=raw.get("lightgbm", {}),

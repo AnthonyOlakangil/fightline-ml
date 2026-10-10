@@ -37,6 +37,37 @@ windows:
   eval_end: "2026-10-03"
 
 # ---------------------------------------------------------------------------
+# Ingest / joining
+#
+# A wrong fighter pairing is worse than a dropped row: a mispaired fight attaches
+# one fighter's odds to another's result, which corrupts the market baseline silently.
+# So matching is deliberately conservative and every non-exact decision is logged.
+# ---------------------------------------------------------------------------
+ingest:
+  # Fuzzy name matching is a last resort, after exact and alias-table matching.
+  # Both fighters must clear this similarity, on the same event date.
+  fuzzy_threshold: 0.92
+  # The best candidate must beat the runner-up by this margin, or the match is
+  # ambiguous and the row is dropped rather than guessed.
+  fuzzy_ambiguity_margin: 0.05
+  # Hard ceiling on the share of priced fights left unjoined. Exceeding it raises:
+  # a silent drop in join quality would quietly shrink and bias the eval set.
+  max_unmatched_share: 0.05
+  # Fighters whose name maps to several UFCStats ids cannot be identified from this
+  # snapshot. Merging two careers would corrupt point-in-time features, so their
+  # bouts are dropped. This caps how many such drops are tolerated.
+  max_ambiguous_share: 0.02
+  # Sanity bounds on the bookmaker's overround (implied probabilities summing above 1).
+  # A real two-sided market must price above 100%, so a non-positive overround is
+  # arithmetically impossible and indicates corrupted prices (e.g. +176 / +275, a
+  # notional 37% arbitrage). Typical UFC moneyline vig is 2-8%; the 99.9th percentile
+  # in this snapshot is 21.6%, so anything above 25% is treated as corrupt too.
+  # Such rows are dropped with a logged count rather than allowed to distort the
+  # market baseline.
+  min_overround_exclusive: 0.0
+  max_overround: 0.25
+
+# ---------------------------------------------------------------------------
 # Features
 # ---------------------------------------------------------------------------
 features:

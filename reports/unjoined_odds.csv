@@ -1,0 +1,81 @@
+date,R_fighter,B_fighter,R_odds,B_odds,match_method,match_score,match_runner_up,match_candidate
+2011-03-26,Michael McDonald,Edwin Figueroa,-460.0,365.0,unmatched_no_candidate,0.25,0.1925925925925926,phil davis vs rogerio nogueira
+2011-05-28,Michael McDonald,Chris Cariaso,-380.0,340.0,unmatched_no_candidate,0.2689655172413793,0.25161290322580643,cole escovedo vs renan barao
+2011-11-19,Michael McDonald,Alex Soto,-410.0,365.0,unmatched_no_candidate,0.284375,0.22608695652173913,gleison tibau vs rafael dos anjos
+2012-04-21,Miguel Torres,Michael McDonald,-105.0,-105.0,unmatched_no_candidate,0.2363636363636364,0.2241379310344828,che mills vs rory macdonald
+2013-02-16,Renan Barao,Michael McDonald,-295.0,265.0,unmatched_no_candidate,0.25,0.2241379310344828,cyrille diabate vs jimi manuwa
+2013-08-17,Brad Pickett,Michael McDonald,290.0,-320.0,unmatched_no_candidate,0.20800000000000002,0.18571428571428572,daniel pineda vs diego brandao
+2013-12-14,Urijah Faber,Michael McDonald,-150.0,130.0,unmatched_no_candidate,0.1925925925925926,0.1911764705882353,court mcgee vs ryan laflare
+2014-11-08,Diego Rivas,Rodolfo Rubio,-150.0,140.0,unmatched_no_candidate,0.7614583333333333,0.21666666666666667,diego rivas vs rodolfo rubio perez
+2014-11-15,Gabriel Benitez,Humberto Brown,-600.0,450.0,unmatched_no_candidate,0.7252252252252253,0.21666666666666667,gabriel benitez vs humberto brown morrison
+2015-11-21,Vernon Ramos,Alvaro Herrera,-170.0,150.0,unmatched_no_candidate,0.811111111111111,0.2394736842105263,alvaro herrera mendoza vs vernon ramos ho
+2016-01-02,Michael McDonald,Masanori Kanehara,-600.0,450.0,unmatched_no_candidate,0.2,0.18571428571428572,alex morono vs kyle noke
+2016-01-17,Rob Font,Joey Gomez,-220.0,180.0,unmatched_no_candidate,0.17727272727272728,0.17727272727272728,francisco trinaldo vs ross pearson
+2016-07-13,Michael McDonald,John Lineker,-115.0,-105.0,unmatched_no_candidate,0.22941176470588237,0.22608695652173913,aleksei oleinik vs daniel omielanczuk
+2016-09-17,Jose Quinonez,Joey Gomez,125.0,-145.0,unmatched_no_candidate,0.22941176470588237,0.21666666666666667,antonio carlos junior vs leonardo guimaraes
+2017-09-16,Justin Ledet,Zu Anyanwu,-470.0,375.0,unmatched_no_candidate,0.6583333333333334,0.21666666666666667,azunna anyanwu vs justin ledet
+2019-04-27,Gilbert Burns,Mike Davis,-245.0,205.0,unmatched_no_candidate,0.17727272727272728,0.17727272727272728,jacare souza vs jack hermansson
+2019-07-06,Caludia Gadelha,Randa Markos,-200.0,170.0,unmatched_no_candidate,0.7233333333333334,0.2241379310344828,claudia gadelha vs randa markos
+2019-07-13,Livinha Souza,Brianna Van Buren,-115.0,-105.0,unmatched_no_candidate,0.453125,0.21666666666666667,brianna fortino vs livinha souza
+2019-07-27,Marc-Andre Barriault,Krzystof Jotko,145.0,-165.0,unmatched_no_candidate,0.7442528735632185,0.20800000000000002,krzysztof jotko vs marc andre barriault
+2019-08-10,Luiz Garagorri,Humberto Bandenay,-145.0,125.0,unmatched_no_candidate,0.5779569892473119,0.2241379310344828,eduardo garagorri vs humberto bandenay
+2019-08-10,Vincente Luque,Mike Perry,-250.0,210.0,unmatched_no_candidate,0.7425925925925926,0.20967741935483872,mike perry vs vicente luque
+2019-08-31,Song Kenan,Derrick,-110.0,-110.0,unmatched_no_candidate,0.6083333333333334,0.2,derrick krantz vs song kenan
+2019-09-21,Caludio Puelles,Marcos Mariano,-400.0,325.0,unmatched_no_candidate,0.7233333333333334,0.25,claudio puelles vs marcos mariano
+2019-10-05,Khalid Taha,Bruno Silva,-220.0,180.0,unmatched_no_candidate,0.312,0.24074074074074073,serghei spivac vs tai tuivasa
+2019-10-12,Mike Davis,Thomas Gifford,-290.0,245.0,unmatched_no_candidate,0.195,0.1925925925925926,james vick vs niko price
+2019-11-09,Alekander Volkov,Greg Hardy,-270.0,230.0,unmatched_no_candidate,0.7260416666666667,0.20967741935483872,alexander volkov vs greg hardy
+2019-11-16,Ariane Lipski,Isabela De Pauda,-260.0,220.0,unmatched_no_candidate,0.784375,0.2241379310344828,ariane da silva vs isabela de padua
+2019-12-14,Peter Yan,Urijah Faber,-470.0,375.0,unmatched_no_candidate,0.7284313725490197,0.21666666666666667,petr yan vs urijah faber
+2019-12-21, Jun Yong Park,Marc-Andre Barriault,-138.0,105.0,unmatched_no_candidate,0.7115,0.24375000000000002,junyong park vs marc andre barriault
+2019-12-21,Dong Hyun Ma,Omar Antonio Morales Ferrer,150.0,-200.0,unmatched_no_candidate,0.575,0.27083333333333337,dong hyun ma vs omar morales
+2020-01-18,Brian Kelleher,Ode Obsourne,125.0,-135.0,unmatched_no_candidate,0.7125,0.21666666666666667,brian kelleher vs ode osbourne
+2020-01-25,Justine Kish,Luci Pudilova,150.0,-170.0,unmatched_no_candidate,0.7425925925925926,0.25,justine kish vs lucie pudilova
+2020-02-08,Alex Morono,Kalinn Williams,-345.0,285.0,unmatched_no_candidate,0.6097701149425288,0.23214285714285715,alex morono vs khaos williams
+2020-02-08,Austin Lingo,Youssef Zalel,-210.0,175.0,unmatched_no_candidate,0.7166666666666668,0.20800000000000002,austin lingo vs youssef zalal
+2020-02-22,Jalin Turner,Joshua Culibao,-210.0,175.0,unmatched_no_candidate,0.7166666666666668,0.2363636363636364,jalin turner vs josh culibao
+2020-02-22,Jim Crute,Michal Oleksiejczuk,100.0,-120.0,unmatched_no_candidate,0.7016666666666668,0.2363636363636364,jimmy crute vs michal oleksiejczuk
+2020-03-14,Bruno Silva,David Dvorak,-110.0,100.0,unmatched_no_candidate,0.21666666666666667,0.21666666666666667,amanda ribas vs randa markos
+2020-05-09,Uriah Hall,Jacare Souza,115.0,-135.0,unmatched_no_candidate,0.27083333333333337,0.2363636363636364,bryce mitchell vs charles rosa
+2020-06-20,Tecia Torres,Brianna Van Buren,175.0,-210.0,unmatched_no_candidate,0.453125,0.30333333333333334,brianna fortino vs tecia pennington
+2020-06-27,Mara Romero Borella,Miranda Maverick,230.0,-305.0,unmatched_no_candidate,0.2241379310344828,0.20967741935483872,gian villante vs maurice greene
+2020-07-11,Raulian Paiva,Zhalgas Zhamagulov,-180.0,142.0,unmatched_no_candidate,0.7305555555555556,0.21162790697674422,raulian paiva vs zhalgas zhumagulov
+2020-08-08,Irwin Rivera,Ali Qaisi,-186.0,148.0,unmatched_no_candidate,0.7016666666666668,0.20800000000000002,ali alqaisi vs irwin rivera
+2020-08-08,Nasrat Haqparast,Alex Munoz,-240.0,188.0,unmatched_no_candidate,0.6366666666666667,0.23214285714285715,alexander munoz vs nasrat haqparast
+2020-10-10,Bruno Silva,Tagir Ulanbekov,321.0,-455.0,unmatched_no_candidate,0.20967741935483872,0.20800000000000002,edson barboza vs makwan amirkhani
+2020-10-24,Jacob Malkoun,Phillip Hawes,195.0,-250.0,unmatched_no_candidate,0.6818840579710145,0.2241379310344828,jacob malkoun vs phil hawes
+2021-01-20,Mike Davis,Mason Jones,-175.0,135.0,unmatched_no_candidate,0.24761904761904763,0.24074074074074073,omari akhmedov vs tom breese
+2021-02-13,Gabe Green,Philip Rowe,-138.0,120.0,unmatched_no_candidate,0.7016666666666668,0.25,gabe green vs phil rowe
+2021-03-20,Bruno Silva,JP Buys,115.0,-135.0,unmatched_no_candidate,0.21666666666666667,0.2,derek brunson vs kevin holland
+2021-03-20,Cheyanne Buys,Montserrat Conejo,-260.0,220.0,unmatched_no_candidate,0.5649425287356322,0.2,cheyanne vlismas vs montserrat conejo ruiz
+2021-04-24,Aori Qileng,Jeff Molina,100.0,-120.0,unmatched_no_candidate,0.6190476190476191,0.23214285714285715,aoriqileng vs jeff molina
+2021-05-22,Bruno Silva,Victor Rodriguez,-355.0,295.0,unmatched_no_candidate,0.24761904761904763,0.24074074074074073,bill algeo vs ricardo ramos
+2021-06-19,Wellington Turman,Bruno Silva,100.0,-125.0,unmatched_no_candidate,0.2689655172413793,0.23214285714285715,julian erosa vs seungwoo choi
+2021-07-17,Amanda Lemos,Montserrat Conejo,-600.0,435.0,unmatched_no_candidate,0.7999999999999999,0.22608695652173913,amanda lemos vs montserrat conejo ruiz
+2021-07-31,Cheyanne Buys,Gloria de Paula,-145.0,125.0,unmatched_no_candidate,0.5649425287356322,0.20800000000000002,cheyanne vlismas vs gloria de paula
+2021-10-16,Andrew Sanchez,Bruno Silva,135.0,-155.0,unmatched_no_candidate,0.21666666666666667,0.21666666666666667,danny roberts vs ramazan emeev
+2021-12-11,Jordan Wright,Bruno Silva,245.0,-310.0,unmatched_no_candidate,0.24074074074074073,0.21666666666666667,charles oliveira vs dustin poirier
+2022-03-12,Alex Pereira,Bruno Silva,-220.0,180.0,unmatched_no_candidate,0.21666666666666667,0.2,cody brundage vs dalcha lungiambula
+2022-08-13,Bruno Silva,Gerald Meerschaert,-295.0,245.0,unmatched_no_candidate,0.18571428571428572,0.18571428571428572,charlie ontiveros vs gabriel benitez
+2022-10-01,Mike Davis,Viacheslav Borshchev,-190.0,160.0,unmatched_no_candidate,0.1911764705882353,0.16956521739130434,raoni barcelos vs trevin jones
+2023-03-11,Tyson Nam,Bruno Silva,152.0,-180.0,unmatched_no_candidate,0.22941176470588237,0.2,merab dvalishvili vs petr yan
+2023-04-22,Brad Tavares,Bruno Silva,-162.0,136.0,unmatched_no_candidate,0.21666666666666667,0.20800000000000002,karol rosa vs norma dumont
+2023-06-24,Brendan Allen,Bruno Silva,-225.0,188.0,unmatched_no_candidate,0.2363636363636364,0.21666666666666667,austen lane vs justin tafa
+2024-01-13,Westin Wilson,Jean Silva,625.0,-950.0,unmatched_no_candidate,0.21666666666666667,0.21666666666666667,mario bautista vs ricky simon
+2024-03-30,Chris Weidman,Bruno Silva,145.0,-175.0,unmatched_no_candidate,0.2241379310344828,0.20800000000000002,erin blanchfield vs manon fiorot
+2024-06-29,Charles Jourdain,Jean Silva,-135.0,114.0,unmatched_no_candidate,0.2689655172413793,0.26,macy chiasson vs mayra bueno silva
+2024-07-13,Drew Dober,Jean Silva,-110.0,-110.0,unmatched_no_candidate,0.26,0.21666666666666667,darrius flowers vs evan elder
+2024-07-20,Cody Durden,Bruno Silva,124.0,-160.0,unmatched_no_candidate,0.26,0.20800000000000002,brian kelleher vs cody gibson
+2024-10-26,Ismail Naurdiev,Bruno Silva,-148.0,124.0,unmatched_no_candidate,0.27575757575757576,0.25161290322580643,carlos leal vs rinat fakhretdinov
+2024-12-14,Manel Kape,Bruno Silva,-395.0,310.0,unmatched_no_candidate,0.22608695652173913,0.22608695652173913,drakkar klose vs joel alvarez
+2025-02-01,Fares Ziam,Mike Davis,122.0,-144.0,unmatched_no_candidate,0.28888888888888886,0.20800000000000002,jasmine jasudavicius vs mayra bueno silva
+2025-02-22,Jean Silva,Melsik Baghdasaryan,-490.0,380.0,unmatched_no_candidate,0.2363636363636364,0.1925925925925926,ibo aslan vs ion cutelaba
+2025-04-12,Bryce Mitchell,Jean Silva,172.0,-205.0,unmatched_no_candidate,0.25,0.24074074074074073,chase hooper vs jim miller
+2025-05-10,Marc-Andre Barriault,Bruno Silva,-162.0,136.0,unmatched_no_candidate,0.20800000000000002,0.195,daniel santos vs jeongyeong lee
+2025-06-07,Bruno Silva,Joshua Van,520.0,-720.0,unmatched_no_candidate,0.21666666666666667,0.1925925925925926,julianna pena vs kayla harrison
+2025-07-12,Mitch Ramirez,Mike Davis,520.0,-900.0,unmatched_no_candidate,0.24074074074074073,0.18571428571428572,chidi njokuani vs jake matthews
+2025-09-13,Diego Lopes,Jean Silva,176.0,-210.0,unmatched_no_candidate,0.35,0.2736842105263158,claudio puelles vs joaquim silva
+2025-10-18,Bruno Silva,HyunSung Park,188.0,-225.0,unmatched_no_candidate,0.21666666666666667,0.20800000000000002,kyle nelson vs matt frevola
+2026-01-24,Arnold Allen,Jean Silva,184.0,-220.0,unmatched_no_candidate,0.22608695652173913,0.18571428571428572,andrey pulyaev vs ateba gautier
+2026-03-14,Charles Johnson,Bruno Silva,-178.0,150.0,unmatched_no_candidate,0.24074074074074073,0.21666666666666667,bolaji oki vs manoel sousa
+2026-03-28,Chase Hooper,Lance Gibson Jr.,-280.0,210.0,unmatched_no_candidate,0.26,0.20967741935483872,alexa grasso vs maycee barber

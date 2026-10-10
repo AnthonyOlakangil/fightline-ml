@@ -55,7 +55,9 @@ def config() -> None:
 @app.command()
 def data() -> None:
     """Build normalized Parquet tables from the committed snapshot (no network)."""
-    _not_yet("data", "Phase 1")
+    from ufc_predictor.ingest.pipeline import run
+
+    run()
 
 
 @app.command()
