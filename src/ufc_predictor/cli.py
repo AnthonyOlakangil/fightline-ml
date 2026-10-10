@@ -63,7 +63,9 @@ def data() -> None:
 @app.command()
 def features() -> None:
     """Build the point-in-time feature table."""
-    _not_yet("features", "Phase 2")
+    from ufc_predictor.features.pipeline import run
+
+    run()
 
 
 @app.command()

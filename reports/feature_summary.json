@@ -1,0 +1,19 @@
+{
+  "date_max": "2026-10-03",
+  "date_min": "1994-03-11",
+  "debut_slots": 2812,
+  "feature_count": 126,
+  "highest_null_rate_features": {
+    "td_acc_career_diff": 0.38073756625690763,
+    "td_acc_w3_diff": 0.44084808841772866,
+    "td_acc_w5_diff": 0.3987820006766663,
+    "td_def_w3_diff": 0.402841998421112,
+    "td_def_w5_diff": 0.36269313183714896
+  },
+  "label_base_rate": 0.5006329842329382,
+  "labelled_rows": 8689,
+  "priced_and_labelled": 6790,
+  "priced_rows": 6824,
+  "rows": 8867,
+  "unlabelled_draws_and_nc": 178
+}
