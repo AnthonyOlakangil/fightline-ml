@@ -261,6 +261,76 @@ rather than resting on one draw.
 The honest evaluation is Phase 4's walk-forward backtest, which is also the first thing
 permitted to report an eval-window number.
 
+---
+
+## Models
+
+Three models behind one interface — `fit(X, y)` and `predict_proba(X) -> P(fighter_1
+wins)`. The shared interface is a fairness mechanism, not tidiness: the backtest cannot
+give one model a different fitting regime, a different clipping rule, or a different set
+of fights to be scored on.
+
+| Model | What it uses | Fitted? |
+|---|---|---|
+| **Market baseline** | the de-vigged closing line | No — the price is an observation, not something learned |
+| **Elo** | pre-fight rating gap | A single logistic coefficient |
+| **LightGBM** | all 126 point-in-time features | Yes, with early stopping and calibration |
+
+Elo deliberately does *not* use the raw `1 / (1 + 10^(-gap/400))` curve: that curve's
+sharpness depends on the K-factor chosen when building the ratings, not on how predictive
+a rating gap turns out to be. A one-feature logistic lets the data set that.
+
+### Tuning discipline
+
+Hyperparameters were selected **inside the dev window only** (2010 → 2015), by
+`uv run ufc-predictor tune`, then **frozen in `config/config.yaml`**. The backtest reads
+them and never re-tunes — hyperparameters chosen against the evaluation period would turn
+it into a second training set.
+
+- **No random cross-validation anywhere.** Validation is always a chronological holdout:
+  the most recent slice of the training data. Random K-fold would put future fights in
+  the training folds of past ones, and the resulting score would be optimistic in a way
+  that does not survive deployment. `LightGBMModel.fit` *raises* if given unsorted rows
+  or a frame with no `date` column, so a random split cannot happen silently.
+- **216 candidates searched**, biased toward strong regularization. The selected model is
+  small: `max_depth=3`, `num_leaves=7`, `min_child_samples=80`, `learning_rate=0.02`,
+  `colsample_bytree=0.7`, `reg_lambda=5.0`.
+- **The winner was not simply taken.** Nine candidates scored within 0.001 log loss of
+  the best, which is noise at 860 validation fights, so a coded selection rule picks the
+  *most regularized* model among those tied. Chasing a 0.0002 difference would be fitting
+  the tuning split. (Note `num_leaves` 15 and 31 scored identically, because `max_depth=3`
+  caps a tree at 8 leaves and makes the parameter inactive.)
+- **Tree count is not hand-set.** `n_estimators: 2000` is only a ceiling; early stopping
+  on the chronological tail selects it (≈243 trees).
+- **Calibration is fitted on the holdout tail**, never on the trees' own training rows
+  (circular) and never on the evaluation period.
+- All seeds come from `config/config.yaml`. A test asserts two fits with the same seed
+  produce bit-identical predictions, and that refitting accumulates no state across folds
+  — which would leak information between walk-forward steps.
+
+### Dev-window sanity check — *not results*
+
+For reference only, on a chronological dev-window holdout (train 2,408 decisive fights
+1994→2013-10; score the 1,030 **priced** fights 2013-10→2015-12, identical rows for every
+model):
+
+| Model | Log loss | Brier | AUC | Accuracy |
+|---|---|---|---|---|
+| Market | **0.6133** | **0.2131** | **0.7208** | **0.6505** |
+| LightGBM | 0.6458 | 0.2239 | 0.6749 | 0.6107 |
+| Elo | 0.6807 | 0.2439 | 0.5955 | 0.5476 |
+
+Training uses every decisive fight, priced or not — withholding unpriced fights would
+discard real signal, and the market baseline is an input unaffected by what the model
+learns from. Scoring is restricted to priced fights so all three models are measured on
+exactly the same rows.
+
+**On this dev holdout the closing line beats both models.** That is the expected shape of
+the problem and the reason the project is framed as a measurement rather than a product.
+Whether it holds on the held-out period is Phase 4's question, and **no evaluation-window
+number appears anywhere in this repository until the walk-forward backtest generates it**
+into `reports/metrics.json`, with the exact `n` stated there.
+
 ### Known coverage limits
 
 Reported honestly because they bound what the results can claim:
