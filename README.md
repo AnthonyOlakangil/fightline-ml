@@ -334,6 +334,42 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 ---
 
+<!-- PARLAY:START -->
+
+### Parlay pricing — how much of the edge was real?
+
+> **Research backtest only. Not betting advice.** Nothing here should be used to wager. The point of this section is to *falsify* an apparent edge, not to find one.
+
+Priced on the **stored out-of-sample predictions** from the walk-forward backtest — no re-scoring, so the evaluation window was still read exactly once. 421 cards, 4,636 fights, 10,000 seeded simulations per card, up to 3 legs, staked at 0.25x Kelly capped at 2% of bankroll.
+
+**Only real moneyline prices are used.** Moneyline only. The odds snapshot contains no method-of-victory or round prices, and none were invented.
+
+Each simulation resolves every fight on the card once and evaluates all legs against that same draw, so two legs from one bout are exactly dependent: backing both fighters gives a joint probability of zero rather than the product of two probabilities. Across different bouts the model treats fights as conditionally independent, and that assumption is measured rather than asserted — the correlation between same-card residuals is **+0.0028** over 24,069 pairs.
+
+| Ranked by | Candidates | Staked | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |
+|---|---:|---:|---:|---:|---:|---:|
+| lightgbm | 82,511 | 1,262 | **+5.6203** | **-0.2250** | 0.0317 | 0.1466 |
+| market plus model | 12,807 | 1,124 | **+0.2709** | **-0.0732** | 0.2099 | 0.2543 |
+| market | 0 | 0 | — | — | — | — |
+
+**The headline of this section.** Ranking by the model's own expected value selected parlays it priced at **+562.0% expected return**. They actually returned **-22.5%** per unit staked. The model expected those parlays to land 14.7% of the time; they landed 3.2% of the time.
+
+That gap is the whole lesson. Ranking by estimated edge does not select the best bets — it selects the fights the model is most *wrong* about, because the biggest apparent edges come from the largest overestimates. Multiplying three such legs together compounds the error, which is why the three-leg parlays are the worst of all.
+
+A £1000 bankroll staked this way ends at **£199.29** (-80.1%) with a maximum drawdown of 90.3%. Resampling whole events 2,000 times, **99.8% of histories lose money** and **99.3% hit ruin** (defined as falling to 20% of the starting bankroll).
+
+**The control works.** Ranking by the market's own de-vigged probabilities finds **zero** positive-EV parlays, which is exactly right: a de-vigged probability priced against the book's vig-inclusive payout cannot show an edge. If this row had found value, the pricing code would be wrong.
+
+![Predicted EV vs realised ROI](reports/predicted_vs_realized.png)
+
+![Simulated bankroll with bootstrap band](reports/bankroll.png)
+
+*Generated from `reports/parlay_metrics.json` by `make parlay`.*
+
+<!-- PARLAY:END -->
+
+---
+
 ## Models
 
 Three models behind one interface — `fit(X, y)` and `predict_proba(X) -> P(fighter_1
