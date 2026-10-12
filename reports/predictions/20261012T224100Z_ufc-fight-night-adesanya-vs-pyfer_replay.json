@@ -3,8 +3,8 @@
   "disclaimer": "Research backtest only. Not betting advice.",
   "event": "UFC Fight Night: Adesanya vs. Pyfer",
   "event_date": "2026-03-28",
-  "git_sha": "e53fa55",
-  "logged_at_utc": "2026-10-10T20:59:02+00:00",
+  "git_sha": "b12ea61",
+  "logged_at_utc": "2026-10-12T22:41:00+00:00",
   "mode": "replay",
   "n_fights": 11,
   "n_priced": 11,
@@ -12,16 +12,16 @@
   "proves_advance_commitment": false,
   "seed": 42,
   "settlement": {
-    "log": "reports/predictions/20261010T205902Z_ufc-fight-night-adesanya-vs-pyfer_replay.csv",
+    "log": "reports/predictions/20261012T224100Z_ufc-fight-night-adesanya-vs-pyfer_replay.csv",
     "market_log_loss": 0.6022656917250002,
-    "model_log_loss": 0.6453578575524148,
-    "model_minus_market": 0.0430921658274146,
+    "model_log_loss": 0.5931593256867868,
+    "model_minus_market": -0.009106366038213465,
     "n_priced": 11,
     "n_rows": 11,
     "n_settled": 11,
-    "settled_at_utc": "2026-10-10T20:59:04+00:00"
+    "settled_at_utc": "2026-10-12T22:41:04+00:00"
   },
-  "today_utc": "2026-10-10",
+  "today_utc": "2026-10-12",
   "upcoming_data_available": false,
   "upcoming_data_note": "No live source of upcoming cards is reachable: UFCStats serves a JavaScript proof-of-work challenge, and the odds project's upcoming.csv has been stale since 2026-04-04. Rather than invent fixtures or prices, completed events are replayed and labelled."
 }

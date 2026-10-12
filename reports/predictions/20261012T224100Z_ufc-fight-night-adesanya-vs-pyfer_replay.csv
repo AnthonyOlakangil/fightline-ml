@@ -1,0 +1,12 @@
+logged_at_utc,mode,event,event_date,fight_id,fighter_1,fighter_2,p_model,p_market_vigfree,odds_1,odds_2,result,settled_at_utc,log_loss
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,85e94a6c071fd9fa,israel adesanya,joe pyfer,0.302885,0.53309,-130.0,102.0,fighter_2,2026-10-12T22:41:04+00:00,0.360805
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,9a0ecee6e8ca173f,maycee barber,alexa grasso,0.673469,0.578376,-158.0,124.0,fighter_2,2026-10-12T22:41:04+00:00,1.119230
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,6102e7a6dcbc62f0,michael chiesa,niko price,0.673469,0.854028,-901.0,550.0,fighter_1,2026-10-12T22:41:04+00:00,0.395313
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,f9f5071b993a5f4b,lerryan douglas,julian erosa,0.437186,0.718499,-320.0,235.0,fighter_1,2026-10-12T22:41:04+00:00,0.827397
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,e32dc26b11d1f81d,yousri belgaroui,mansur abdul malik,0.670886,0.421624,124.0,-158.0,fighter_1,2026-10-12T22:41:04+00:00,0.399156
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,a76e14495e61cf19,kyle nelson,terrance mckinney,0.437186,0.433276,118.0,-150.0,fighter_2,2026-10-12T22:41:04+00:00,0.574806
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,fa96d6252579b51e,tofiq musayev,ignacio bahamondes,0.437186,0.294996,220.0,-295.0,fighter_1,2026-10-12T22:41:04+00:00,0.827397
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,08d4e3864c44f8a5,marcin tybura,tyrell fortune,0.452532,0.481241,-104.0,-122.0,fighter_2,2026-10-12T22:41:04+00:00,0.602451
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,1c50e43770ba84fc,casey o neill,gabriella fernandes,0.591592,0.5,-113.0,-113.0,fighter_1,2026-10-12T22:41:04+00:00,0.524938
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,dbf1ee1a1912c735,bruno lopes,navajo stirling,0.437186,0.230375,310.0,-440.0,fighter_2,2026-10-12T22:41:04+00:00,0.574806
+2026-10-12T22:41:00+00:00,replay,UFC Fight Night: Adesanya vs. Pyfer,2026-03-28,796e1151896195aa,alexia thainara,bruna brasil,0.727273,0.780635,-480.0,330.0,fighter_1,2026-10-12T22:41:04+00:00,0.318453

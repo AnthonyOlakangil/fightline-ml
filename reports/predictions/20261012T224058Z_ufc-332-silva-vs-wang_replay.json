@@ -3,8 +3,8 @@
   "disclaimer": "Research backtest only. Not betting advice.",
   "event": "UFC 332: Silva vs. Wang",
   "event_date": "2026-10-03",
-  "git_sha": "e53fa55",
-  "logged_at_utc": "2026-10-10T20:58:08+00:00",
+  "git_sha": "b12ea61",
+  "logged_at_utc": "2026-10-12T22:40:58+00:00",
   "mode": "replay",
   "n_fights": 13,
   "n_priced": 0,
@@ -12,15 +12,15 @@
   "proves_advance_commitment": false,
   "seed": 42,
   "settlement": {
-    "log": "reports/predictions/20261010T205808Z_ufc-332-silva-vs-wang_replay.csv",
+    "log": "reports/predictions/20261012T224058Z_ufc-332-silva-vs-wang_replay.csv",
     "market_log_loss": null,
-    "model_log_loss": 0.6653700936952874,
+    "model_log_loss": 0.628707640431451,
     "n_priced": 0,
     "n_rows": 13,
     "n_settled": 13,
-    "settled_at_utc": "2026-10-10T20:58:09+00:00"
+    "settled_at_utc": "2026-10-12T22:41:02+00:00"
   },
-  "today_utc": "2026-10-10",
+  "today_utc": "2026-10-12",
   "upcoming_data_available": false,
   "upcoming_data_note": "No live source of upcoming cards is reachable: UFCStats serves a JavaScript proof-of-work challenge, and the odds project's upcoming.csv has been stale since 2026-04-04. Rather than invent fixtures or prices, completed events are replayed and labelled."
 }
