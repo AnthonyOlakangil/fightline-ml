@@ -4,10 +4,14 @@
 # needs far less than the research project: no duckdb, matplotlib, typer, requests or
 # beautifulsoup4. lightgbm and scikit-learn appear only because the saved model and its
 # isotonic calibrator must be unpickled to score a hypothetical matchup.
-streamlit>=1.37
-pandas>=2.2
-pyarrow>=16.0
-numpy>=1.26
-joblib>=1.4
-lightgbm>=4.3
-scikit-learn>=1.5
+#
+# Versions are pinned to exactly what uv.lock resolves: the model is a pickle, and an
+# unpickle across scikit-learn/LightGBM versions is not guaranteed to load or to score
+# identically. tests/test_app.py fails if these drift from the lock.
+streamlit==1.65.0
+pandas==3.0.6
+pyarrow==25.0.1
+numpy==2.4.6
+joblib==1.6.0
+lightgbm==4.7.0
+scikit-learn==1.9.1

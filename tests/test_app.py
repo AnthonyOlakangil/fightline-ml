@@ -153,6 +153,25 @@ def test_requirements_are_minimal_and_exclude_research_only_packages():
     assert len(lines) <= 10, f"{len(lines)} dependencies is not minimal"
 
 
+def test_requirements_pin_exactly_what_the_lock_resolves():
+    """The deployed app unpickles a model trained under uv.lock. A floating `>=` would
+    let the deploy host install a newer scikit-learn or LightGBM than the pickle was
+    written with, so every line must be an exact pin that agrees with the lock."""
+    import tomllib
+
+    lock = tomllib.loads((Path(APP).parent.parent / "uv.lock").read_text(encoding="utf-8"))
+    locked = {pkg["name"]: pkg["version"] for pkg in lock["package"] if "version" in pkg}
+    for ln in (Path(APP).parent / "requirements.txt").read_text(encoding="utf-8").splitlines():
+        ln = ln.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        assert "==" in ln, f"{ln!r} is not an exact pin"
+        name, version = (part.strip() for part in ln.split("=="))
+        assert locked.get(name) == version, (
+            f"app pins {name}=={version} but uv.lock resolves {locked.get(name)}"
+        )
+
+
 # ---------------------------------------------------------------------------
 # The framing, on every page
 # ---------------------------------------------------------------------------
