@@ -411,6 +411,36 @@ def test_features_ignore_the_scrape_time_fighter_attributes(tables, cfg, feature
     assert frame_digest(features) == frame_digest(rebuilt)
 
 
+def test_features_ignore_which_fighters_the_snapshot_contains(tables, cfg, features):
+    """Blanking columns cannot catch a feature built from *row presence* -- "is this
+    fighter in the 2026 roster at all?" -- which would leak the same way. With an empty
+    fighters table, every feature must still be byte-identical."""
+    empty = tables["fighters"].iloc[0:0].copy()
+    rebuilt = build_features(
+        tables["fights"],
+        tables["fight_stats"],
+        empty,
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+    assert frame_digest(features) == frame_digest(rebuilt)
+
+
+def test_no_scrape_time_attribute_is_routed_through_the_fight_tables(tables):
+    """The builder could also read an attribute that normalization had joined onto the
+    fights or round-statistics tables. Neither may carry one."""
+    # Whole name tokens, so `distance_landed` is not mistaken for `stance` and the
+    # bout's own `weight_class` (a fact of the fight, not the fighter) is allowed.
+    tokens = {"height", "reach", "stance", "dob", "age"}
+    for name in ("fights", "fight_stats"):
+        offenders = [
+            c
+            for c in tables[name].columns
+            if c in SCRAPE_TIME_ATTRIBUTES or tokens & set(c.lower().split("_"))
+        ]
+        assert not offenders, f"{name} carries scrape-time attributes: {offenders}"
+
+
 # Debutants legitimately have blank history and win about 42-46% of dev-window bouts.
 # A blank that predicts the result far more strongly than that is carrying information
 # from somewhere other than the fighter's past.
