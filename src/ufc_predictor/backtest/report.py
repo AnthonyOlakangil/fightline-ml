@@ -49,13 +49,21 @@ COLOURS = {
 }
 
 
-def _git_sha() -> str:
+def _git_state() -> dict:
+    """Full HEAD commit, its short form, and whether the working tree matches it.
+
+    Untracked files count as dirty: an uncommitted module is still uncommitted code.
+    """
     try:
-        return subprocess.check_output(
-            ["git", "rev-parse", "--short", "HEAD"], text=True, stderr=subprocess.DEVNULL
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
         ).strip()
+        status = subprocess.check_output(
+            ["git", "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL
+        )
     except Exception:  # pragma: no cover - git may be absent
-        return "unknown"
+        return {"commit": "unknown", "short": "unknown", "clean": False}
+    return {"commit": commit, "short": commit[:7], "clean": status.strip() == ""}
 
 
 def _window_slice(predictions: pd.DataFrame, start: dt.date, end: dt.date) -> pd.DataFrame:
@@ -255,8 +263,12 @@ def _eval_run_count(cfg: Config) -> int:
     return len(json.loads(path.read_text(encoding="utf-8")).get("runs", []))
 
 
-def _append_eval_ledger(cfg: Config, summary: dict) -> int:
-    """Append to the eval-run ledger and return the new run count."""
+def _append_eval_ledger(cfg: Config, summary: dict, *, git: dict, reason: str) -> int:
+    """Append to the eval-run ledger and return the new run count.
+
+    ``git`` is the state captured *before* the walk-forward started, so the entry names
+    the commit whose code and frozen settings produced these numbers.
+    """
     path = cfg.paths.reports_dir / "eval_runs.json"
     entries: list[dict] = []
     if path.is_file():
@@ -265,7 +277,10 @@ def _append_eval_ledger(cfg: Config, summary: dict) -> int:
         {
             "run": len(entries) + 1,
             "timestamp_utc": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-            "git_sha": _git_sha(),
+            "git_sha": git["short"],
+            "git_commit": git["commit"],
+            "worktree_clean": git["clean"],
+            "reason": reason,
             "seed": cfg.seed,
             "headline": summary,
         }
@@ -282,6 +297,7 @@ def run(
     *,
     verbose: bool = True,
     through: dt.date | None = None,
+    reason: str = "reproduction",
 ) -> dict:
     """Run the walk-forward backtest, score it, and write every artefact.
 
@@ -291,10 +307,23 @@ def run(
             report before the single scored eval run, so that bugs are not paid for
             out of the held-out period. In that mode nothing is appended to the
             eval-run ledger and no eval figure is written.
+        reason: why the evaluation window is being scored, recorded in the ledger.
+
+    Scoring the evaluation window is refused from a dirty working tree: the ledger entry
+    must name a commit that contains exactly the code and frozen settings that ran.
     """
     cfg = cfg or get_config()
-    predictions, folds = run_walk_forward(cfg, verbose=verbose, through=through)
     dry_run = through is not None and through <= cfg.windows.dev_end
+    git = _git_state()
+    if not dry_run:
+        if not reason or not reason.strip():
+            raise ValueError("scoring the evaluation window needs a reason for the ledger")
+        if not git["clean"]:
+            raise RuntimeError(
+                "refusing to score the evaluation window with uncommitted changes: commit "
+                "the code and settings first so the eval ledger can name the exact commit"
+            )
+    predictions, folds = run_walk_forward(cfg, verbose=verbose, through=through)
 
     reports = cfg.paths.reports_dir
     reports.mkdir(parents=True, exist_ok=True)
@@ -357,12 +386,13 @@ def run(
         run_count = _eval_run_count(cfg)
     else:
         headline = {name: round(results["eval"][name]["log_loss"], 4) for name in results["eval"]}
-        run_count = _append_eval_ledger(cfg, headline)
+        run_count = _append_eval_ledger(cfg, headline, git=git, reason=reason)
 
     payload = {
         "dry_run_dev_only": dry_run,
         "generated_at_utc": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-        "git_sha": _git_sha(),
+        "git_sha": git["short"],
+        "git_commit": git["commit"],
         "seed": cfg.seed,
         "eval_run_count": run_count,
         "windows": {

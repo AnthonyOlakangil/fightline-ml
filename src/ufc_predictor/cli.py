@@ -85,15 +85,20 @@ def tune() -> None:
 
 
 @app.command()
-def backtest() -> None:
+def backtest(
+    reason: str = typer.Option(
+        "reproduction", "--reason", help="Why the evaluation window is being scored (ledgered)."
+    ),
+) -> None:
     """Run the walk-forward backtest and write reports/metrics.json.
 
-    This is the only command that scores the evaluation window, and each invocation
-    appends to reports/eval_runs.json.
+    This is the only command that scores the evaluation window. Each invocation appends
+    to reports/eval_runs.json with the full commit and the reason, and it refuses to run
+    from a working tree with uncommitted changes.
     """
     from ufc_predictor.backtest.report import run
 
-    run()
+    run(reason=reason)
 
 
 @app.command()

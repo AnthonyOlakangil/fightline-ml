@@ -195,3 +195,74 @@ def test_readme_states_the_exact_eval_n(metrics, readme):
 
 def test_readme_no_longer_claims_to_be_metric_free(readme):
     assert "No metrics appear below yet" not in readme
+
+
+# ---------------------------------------------------------------------------
+# Eval-ledger provenance: the settings must be committed before the window is scored
+# ---------------------------------------------------------------------------
+
+
+def _cfg_with_reports(cfg, path):
+    import dataclasses
+
+    return dataclasses.replace(cfg, paths=dataclasses.replace(cfg.paths, reports_dir=path))
+
+
+def test_ledger_entry_records_the_full_commit_a_clean_tree_and_a_reason(cfg, tmp_path):
+    """A short SHA stamped on a dirty tree proves nothing about which code produced the
+    numbers. Each entry carries the full commit, whether the tree matched it, and why the
+    held-out window was scored."""
+    from ufc_predictor.backtest import report
+
+    git = {"commit": "a" * 40, "short": "a" * 7, "clean": True}
+    count = report._append_eval_ledger(
+        _cfg_with_reports(cfg, tmp_path), {"market": 0.6}, git=git, reason="why"
+    )
+    entry = json.loads((tmp_path / "eval_runs.json").read_text(encoding="utf-8"))["runs"][-1]
+    assert count == 1
+    assert entry["git_commit"] == "a" * 40
+    assert entry["git_sha"] == "a" * 7
+    assert entry["worktree_clean"] is True
+    assert entry["reason"] == "why"
+
+
+def test_scoring_the_eval_window_from_a_dirty_tree_is_refused(cfg, tmp_path, monkeypatch):
+    """Refused before the walk-forward starts, so nothing is scored or written."""
+    from ufc_predictor.backtest import report
+
+    monkeypatch.setattr(
+        report, "_git_state", lambda: {"commit": "b" * 40, "short": "b" * 7, "clean": False}
+    )
+
+    def must_not_run(*args, **kwargs):
+        raise AssertionError("the walk-forward ran from a dirty tree")
+
+    monkeypatch.setattr(report, "run_walk_forward", must_not_run)
+    with pytest.raises(RuntimeError, match="uncommitted"):
+        report.run(_cfg_with_reports(cfg, tmp_path), verbose=False, reason="test")
+    assert not (tmp_path / "eval_runs.json").exists()
+
+
+def test_scoring_the_eval_window_requires_a_reason(cfg, tmp_path, monkeypatch):
+    from ufc_predictor.backtest import report
+
+    monkeypatch.setattr(
+        report, "_git_state", lambda: {"commit": "c" * 40, "short": "c" * 7, "clean": True}
+    )
+    monkeypatch.setattr(
+        report, "run_walk_forward", lambda *a, **k: (_ for _ in ()).throw(AssertionError)
+    )
+    with pytest.raises(ValueError, match="reason"):
+        report.run(_cfg_with_reports(cfg, tmp_path), verbose=False, reason="  ")
+
+
+def test_every_ledger_entry_after_the_first_is_fully_provenanced(cfg):
+    """Run 1 predates this check and is reported as such in the README. Every later run
+    must name its full commit, have been scored from a clean tree, and say why."""
+    path = cfg.paths.reports_dir / "eval_runs.json"
+    if not path.is_file():
+        pytest.skip("no eval ledger")
+    for entry in json.loads(path.read_text(encoding="utf-8"))["runs"][1:]:
+        assert len(entry["git_commit"]) == 40, entry
+        assert entry["worktree_clean"] is True, entry
+        assert entry["reason"].strip(), entry
