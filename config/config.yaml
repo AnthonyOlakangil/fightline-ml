@@ -82,29 +82,32 @@ elo:
 # ---------------------------------------------------------------------------
 # Models
 # ---------------------------------------------------------------------------
-# Selected by `python -m ufc_predictor.models.tune` on 2026-10-10, using a chronological
-# holdout INSIDE the dev window only (train 2,581 fights to 2014-03, validate 860 fights
+# Selected by `uv run ufc-predictor tune` on 2026-10-12, using a chronological holdout
+# INSIDE the dev window only (train 2,581 fights to 2014-03, validate 860 fights
 # 2014-03..2015-12). No random cross-validation: random folds would let later fights
 # inform the model predicting earlier ones.
 #
-# 216 candidates were searched. Nine scored within 0.001 log loss of the best, which is
-# noise at 860 validation rows, so the most regularized of those was taken rather than
-# the nominal winner -- chasing a 0.0002 difference would be fitting the tuning split.
-# Dev-window validation log loss 0.6147, against 0.6200 for the pre-tuning defaults.
+# RE-TUNED after the scrape-time attribute leak was removed (reports/review.md,
+# finding 1). The previous selection (depth 3, 7 leaves, lr 0.02, lambda 5.0; dev
+# validation log loss 0.6147) was tuned on features where a blank reach meant "this
+# fighter was later cut", so its objective rewarded the leak. Same 216-candidate grid,
+# same tie rule. Without the leak the best dev validation log loss is 0.6775 (a coin
+# flip scores 0.6931); the previous settings score 0.6825 on the same split. Two
+# candidates were within 0.001 of the best, and the rule took the first of them.
 #
-# These are now FROZEN. The walk-forward backtest reads them from here and never
-# re-tunes; re-tuning against the evaluation period would make it a second training set.
+# These are now FROZEN, and were committed and pushed before evaluation run 2 was
+# scored. The walk-forward backtest reads them from here and never re-tunes.
 lightgbm:
-  n_estimators: 2000          # an upper bound; early stopping picks the real count (~243)
-  learning_rate: 0.02
-  num_leaves: 7
-  max_depth: 3
+  n_estimators: 2000          # an upper bound; early stopping picks the real count (31 on the tuning split)
+  learning_rate: 0.05
+  num_leaves: 31
+  max_depth: 6
   min_child_samples: 80
   subsample: 0.8
   subsample_freq: 1
   colsample_bytree: 0.7
   reg_alpha: 0.1
-  reg_lambda: 5.0
+  reg_lambda: 1.0
   verbosity: -1
 
 # Fitting regime for LightGBM, applied identically on every walk-forward fold.

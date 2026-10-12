@@ -437,13 +437,17 @@ def test_model_cards_report_no_eval_window_numbers(cfg):
 
 
 def test_config_holds_the_tuned_and_frozen_parameters(cfg):
-    """The backtest reads these from config and must never re-tune."""
+    """The backtest reads these from config and must never re-tune. Config must hold
+    exactly what the dev-only search selected, as recorded in reports/tuning.json."""
+    import json
+
+    tuning = json.loads((cfg.paths.reports_dir / "tuning.json").read_text(encoding="utf-8"))
+    selected = tuning["selected"]
+    assert tuning["dev_window"][1] == str(cfg.windows.dev_end)
     p = cfg.lightgbm
-    assert p["max_depth"] == 3
-    assert p["num_leaves"] == 7
-    assert p["min_child_samples"] == 80
-    assert p["learning_rate"] == 0.02
-    assert p["reg_lambda"] == 5.0
+    for key in ("max_depth", "num_leaves", "min_child_samples", "learning_rate", "reg_lambda"):
+        assert p[key] == selected[key], f"config {key}={p[key]} but tuning selected {selected[key]}"
+    assert p["colsample_bytree"] == selected["colsample_bytree"]
     # n_estimators is a cap for early stopping, not a fitted count.
     assert p["n_estimators"] >= 1000
 

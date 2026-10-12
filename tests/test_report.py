@@ -69,11 +69,33 @@ def test_reconciliation_adds_up(metrics):
     assert r["unscored_warmup"] == 0
 
 
-def test_hyperparameters_in_metrics_match_frozen_config(metrics, cfg):
-    """Proof the backtest did not re-tune on the evaluation window."""
+def test_hyperparameters_in_metrics_match_the_config_at_the_ledgered_commit(metrics):
+    """Proof the settings that produced the result were committed *before* it existed.
+
+    The scored run names the commit it ran from; that commit, which is in the pushed
+    history, must hold exactly the hyperparameters and fitting regime the run reports.
+    Comparing against the commit rather than the working copy is deliberate: the
+    re-tuned settings are committed and pushed before the evaluation window is scored,
+    so for that one commit the config is ahead of metrics.json by design.
+    """
+    import subprocess
+
+    import yaml
+
     assert metrics["walk_forward"]["hyperparameters_frozen_from_dev"] is True
-    assert metrics["walk_forward"]["lightgbm"] == dict(cfg.lightgbm)
-    assert metrics["walk_forward"]["lightgbm_fit"] == dict(cfg.lightgbm_fit)
+    if "git_commit" not in metrics:
+        pytest.skip("evaluation run 1 predates full-commit provenance; disclosed in the README")
+    commit = metrics["git_commit"]
+    subprocess.run(
+        ["git", "merge-base", "--is-ancestor", commit, "HEAD"], check=True, cwd=REPO_ROOT
+    )
+    at_commit = yaml.safe_load(
+        subprocess.check_output(
+            ["git", "show", f"{commit}:config/config.yaml"], text=True, cwd=REPO_ROOT
+        )
+    )
+    assert metrics["walk_forward"]["lightgbm"] == at_commit["lightgbm"]
+    assert metrics["walk_forward"]["lightgbm_fit"] == at_commit["lightgbm_fit"]
 
 
 def test_every_model_scored_the_same_eval_fights(metrics):
