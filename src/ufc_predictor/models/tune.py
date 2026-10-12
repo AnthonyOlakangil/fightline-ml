@@ -16,7 +16,7 @@ Two guards enforce the confinement rather than relying on care:
   model that predicts earlier ones.
 
 The search space is deliberately narrow and biased toward strong regularization. With
-~2,000 usable dev fights and 126 features, the real risk is a model that memorises the
+~2,000 usable dev fights and 117 features, the real risk is a model that memorises the
 dev era; shallow trees, high ``min_child_samples`` and column subsampling cost little
 and guard against that.
 """
@@ -38,7 +38,7 @@ from ufc_predictor.storage import db
 #   num_leaves / max_depth : capacity. Small, because the dev window is small.
 #   min_child_samples      : refuses to split on a handful of fights.
 #   learning_rate          : lower rates with early stopping beat hand-tuned tree counts.
-#   colsample_bytree       : many of the 126 features are near-duplicates across windows.
+#   colsample_bytree       : many of the 117 features are near-duplicates across windows.
 #   reg_lambda             : explicit L2 on leaf weights.
 SEARCH_SPACE: dict[str, list] = {
     "num_leaves": [7, 15, 31],

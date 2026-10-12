@@ -399,18 +399,6 @@ def test_difference_columns_equal_slot_one_minus_slot_two():
         assert np.allclose(lhs[~both_nan], rhs[~both_nan], equal_nan=True, atol=1e-9), col
 
 
-def test_physical_attributes_come_from_the_fighter_table():
-    fights = pd.DataFrame([_fight("f1", D1, "a", "b", "a")])
-    fighters = _fighters(["a", "b"])
-    fighters.loc[fighters["fighter_id"] == "a", "reach_cm"] = 200.0
-    feats = build_features(fights, pd.DataFrame(), fighters, rolling_windows=(3,))
-    row = feats.iloc[0]
-    slot = "1" if row["fighter_1"] == "a" else "2"
-    assert row[f"reach_{slot}"] == pytest.approx(200.0)
-    expected_diff = 200.0 - 183.0 if slot == "1" else 183.0 - 200.0
-    assert row["reach_diff"] == pytest.approx(expected_diff)
-
-
 def test_history_table_links_opponent_statistics_correctly():
     fights = pd.DataFrame([_fight("f1", D1, "a", "b", "a", rnd=1, secs=ROUND_SECONDS)])
     stats = pd.DataFrame(
@@ -486,8 +474,10 @@ def test_no_feature_is_entirely_null(real_features):
 
 
 def test_feature_count_is_stable(real_features):
-    """36 pairwise/bout features + 10 rate metrics x 3 windows x 3 slots = 126."""
-    assert len(FEATURE_COLS) == 126
+    """27 pairwise/bout features + 10 rate metrics x 3 windows x 3 slots = 117.
+
+    126 before height, reach and age were dropped as scrape-time leakage."""
+    assert len(FEATURE_COLS) == 117
     assert len(set(FEATURE_COLS)) == len(FEATURE_COLS), "duplicate feature name"
     for col in FEATURE_COLS:
         assert col in real_features.columns

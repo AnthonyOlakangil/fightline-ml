@@ -23,6 +23,14 @@ fighter who lands nothing -- a different and false claim. LightGBM handles NaN n
 features here, because this project has no data for any of them. Inventing them would
 mean inventing numbers. The feature set is exactly what the fight record supports.
 
+**No tale-of-the-tape attributes.** Height, reach and age are absent on purpose. The
+fighters table is a single present-day scrape, and UFCStats only records those fields
+for fighters who stayed on the roster, so a blank reach means "this fighter was later
+cut". Run 1 of the backtest used them, and before 2016 the side with the blank reach
+won 5.7% of dev-window bouts. Blanking both sides whenever either is missing does not
+close the leak, because "this pair has a blank" plus prior experience still points at
+the fighter who was cut. Nothing dated exists to replace them, so they are dropped.
+
 **Odds are never a feature.** The market is a baseline to be compared against, so
 letting it into the feature set would make "the model beats the market" circular.
 """
@@ -70,15 +78,6 @@ def feature_columns(rolling_windows: Sequence[int] = (3, 5)) -> list[str]:
         "elo_1",
         "elo_2",
         "elo_diff",
-        "height_1",
-        "height_2",
-        "height_diff",
-        "reach_1",
-        "reach_2",
-        "reach_diff",
-        "age_1",
-        "age_2",
-        "age_diff",
         "n_prior_fights_1",
         "n_prior_fights_2",
         "n_prior_fights_diff",
@@ -328,6 +327,10 @@ def build_features(
     ``label`` is 1.0 when ``fighter_1`` won, 0.0 when ``fighter_2`` won, and NaN for
     draws and no contests -- which stay in the table because they are real history for
     experience and layoff, but carry no binary outcome.
+
+    ``fighters`` is accepted but its attributes are deliberately never read: see the
+    module docstring. ``tests/test_leakage.py`` blanks them and asserts that no feature
+    value moves.
     """
     elo_params = elo_params or {}
     windows = tuple(rolling_windows)
@@ -336,11 +339,6 @@ def build_features(
     by_date: dict[dt.date, list[dict]] = defaultdict(list)
     for rec in history.to_dict("records"):
         by_date[rec["date"]].append(rec)
-
-    attrs = fighters.set_index("fighter_id")
-    heights = attrs["height_cm"].to_dict()
-    reaches = attrs["reach_cm"].to_dict()
-    dobs = attrs["dob"].to_dict()
 
     states: dict[str, _FighterState] = defaultdict(_FighterState)
     rows: list[dict] = []
@@ -374,15 +372,6 @@ def build_features(
                 for key, value in snap.items():
                     feat[f"{key}_{slot}"] = value
 
-                feat[f"height_{slot}"] = heights.get(fid, np.nan)
-                feat[f"reach_{slot}"] = reaches.get(fid, np.nan)
-                dob = dobs.get(fid)
-                feat[f"age_{slot}"] = (
-                    (event_date - dob).days / 365.25
-                    if dob is not None and not pd.isna(dob)
-                    else np.nan
-                )
-
             rows.append(feat)
 
         # --- 2. Only now fold this date's fights into each fighter's history. ---
@@ -394,9 +383,6 @@ def build_features(
     # Differences, computed after both sides exist.
     diff_bases = [
         "elo",
-        "height",
-        "reach",
-        "age",
         "n_prior_fights",
         "win_rate",
         "win_streak",

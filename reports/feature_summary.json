@@ -2,7 +2,7 @@
   "date_max": "2026-10-03",
   "date_min": "1994-03-11",
   "debut_slots": 2812,
-  "feature_count": 126,
+  "feature_count": 117,
   "highest_null_rate_features": {
     "td_acc_career_diff": 0.38073756625690763,
     "td_acc_w3_diff": 0.44084808841772866,

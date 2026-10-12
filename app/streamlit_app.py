@@ -335,10 +335,6 @@ def build_matchup_row(row_a: pd.Series, row_b: pd.Series) -> pd.DataFrame:
     for slot, snap in (("1", a), ("2", b)):
         for stem in stems:
             row[f"{stem}_{slot}"] = snap.get(stem, np.nan)
-        dob = snap.get("dob")
-        if dob is not None and not pd.isna(dob):
-            dob_d = pd.Timestamp(dob).date()
-            row[f"age_{slot}"] = (today - dob_d).days / 365.25
         last = snap.get("last_fight_date")
         if last is not None and not pd.isna(last):
             row[f"days_since_last_{slot}"] = float((today - pd.Timestamp(last).date()).days)

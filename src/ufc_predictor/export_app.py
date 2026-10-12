@@ -35,9 +35,6 @@ ARTIFACT_DIR = "app/artifacts"
 #: Per-fighter feature stems that exist as `<stem>_1` / `<stem>_2` in the model matrix.
 PER_FIGHTER_STEMS = [
     "elo",
-    "height",
-    "reach",
-    "age",
     "n_prior_fights",
     "win_rate",
     "win_streak",
@@ -84,10 +81,10 @@ def build_fighter_snapshots(cfg: Config) -> pd.DataFrame:
     long = long.sort_values(["fighter_id", "date"], kind="stable")
     latest = long.groupby("fighter_id", as_index=False).last()
 
-    # Attach display name and date of birth so age can be recomputed for "today".
+    # Display name only: the table's attributes are a present-day scrape and are never a
+    # model input (see features/pit.py).
     meta = fighters.set_index("fighter_id")
     latest["display_name"] = latest["fighter_id"].map(meta["name"]).fillna(latest["name"])
-    latest["dob"] = latest["fighter_id"].map(meta["dob"])
     latest = latest.rename(columns={"date": "last_fight_date"})
     return latest.drop(columns=["fight_id", "name"]).reset_index(drop=True)
 
@@ -112,11 +109,7 @@ def matchup_row(
     for slot, snap in (("1", a), ("2", b)):
         for stem in stems:
             row[f"{stem}_{slot}"] = snap.get(stem, np.nan)
-        # Recompute the two time-dependent features for the requested date.
-        dob = snap.get("dob")
-        row[f"age_{slot}"] = (
-            (as_of - dob).days / 365.25 if dob is not None and not pd.isna(dob) else np.nan
-        )
+        # Recompute the time-dependent feature for the requested date.
         last = snap.get("last_fight_date")
         row[f"days_since_last_{slot}"] = (
             float((as_of - last).days) if last is not None and not pd.isna(last) else np.nan

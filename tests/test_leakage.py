@@ -373,30 +373,77 @@ def test_missing_history_is_never_silently_zero(features):
 
 
 # ---------------------------------------------------------------------------
-# Age
+# The fighters table is a present-day snapshot, so nothing in it is point-in-time
 # ---------------------------------------------------------------------------
 
+# Everything in the tale-of-the-tape table except the identity columns. It was scraped
+# once, in 2026, and UFCStats only fills these fields in for fighters who stayed on the
+# roster -- so whether a value exists is decided by the fighter's *future* career.
+SCRAPE_TIME_ATTRIBUTES = ("height_cm", "reach_cm", "weight_lbs", "stance", "dob")
 
-def test_age_is_computed_at_the_event_date(tables, features):
-    """Age must be as of the fight, not as of today, or every historical row drifts."""
-    fights, fighters = tables["fights"], tables["fighters"]
-    dob = dict(zip(fighters["fighter_id"], fighters["dob"], strict=True))
-    merged = features.merge(fights[["fight_id", "date"]], on="fight_id", suffixes=("", "_f"))
 
-    checked = 0
-    for row in merged.head(2000).itertuples(index=False):
-        d = dob.get(row.fighter_1)
-        if d is None or pd.isna(d) or pd.isna(row.age_1):
+def test_features_ignore_the_scrape_time_fighter_attributes(tables, cfg, features):
+    """Blank every attribute in the fighters table; not one feature value may move.
+
+    This is the mutation test for the one input that the fight-level mutation tests
+    never touch. Run 1 of the backtest used height, reach and age from this table, and a
+    missing reach turned out to mean "this fighter was later cut": before 2016 the side
+    with the blank reach won 5.7% of dev-window bouts. Blanking the value only when one
+    side is missing does not close the leak either, because "this pair has a blank"
+    combined with prior experience still identifies who was cut. So the contract is
+    total: the features must not read this table's attributes at all. Reintroducing an
+    attribute needs a dated source, not this snapshot.
+    """
+    blanked = tables["fighters"].copy()
+    for col in SCRAPE_TIME_ATTRIBUTES:
+        assert col in blanked.columns, f"fighters table no longer has {col!r}; update this test"
+        blanked[col] = None
+    rebuilt = build_features(
+        tables["fights"],
+        tables["fight_stats"],
+        blanked,
+        rolling_windows=tuple(cfg.features["rolling_windows"]),
+        elo_params=cfg.elo,
+    )
+    moved = [col for col in FEATURE_COLS if not features[col].equals(rebuilt[col])]
+    assert not moved, f"features read the present-day fighters snapshot: {moved}"
+    assert frame_digest(features) == frame_digest(rebuilt)
+
+
+# Debutants legitimately have blank history and win about 42-46% of dev-window bouts.
+# A blank that predicts the result far more strongly than that is carrying information
+# from somewhere other than the fighter's past.
+BLANK_SIDE_WIN_RATE_BAND = (0.30, 0.70)
+BLANK_SIDE_MIN_BOUTS = 50
+
+
+def test_a_blank_feature_never_predicts_who_loses(features, cfg):
+    """For every paired feature, the side whose value is blank must win at a plausible
+    rate. A generic canary: it catches any future column whose *missingness* encodes the
+    outcome, whatever table it comes from. Dev window only, so it never reads the
+    held-out period."""
+    dates = pd.to_datetime(features["date"]).dt.date
+    dev = features.loc[
+        features["label"].notna()
+        & (dates >= cfg.windows.dev_start)
+        & (dates <= cfg.windows.dev_end)
+    ]
+    assert pd.to_datetime(dev["date"]).dt.date.max() <= cfg.windows.dev_end
+    assert len(dev) > 2000
+
+    lo, hi = BLANK_SIDE_WIN_RATE_BAND
+    offenders = []
+    for base in sorted({c[:-2] for c in FEATURE_COLS if c.endswith("_1")}):
+        blank_1 = dev[f"{base}_1"].isna() & dev[f"{base}_2"].notna()
+        blank_2 = dev[f"{base}_2"].isna() & dev[f"{base}_1"].notna()
+        n = int(blank_1.sum() + blank_2.sum())
+        if n < BLANK_SIDE_MIN_BOUTS:
             continue
-        expected = (row.date - d).days / 365.25
-        assert abs(expected - row.age_1) < 0.01, f"age mismatch for {row.fight_id}"
-        checked += 1
-    assert checked > 500
-
-
-def test_age_is_plausible(features):
-    ages = features["age_1"].dropna()
-    assert ages.between(16, 55).all(), "implausible fighter age implies a date bug"
+        wins = dev.loc[blank_1, "label"].sum() + (1 - dev.loc[blank_2, "label"]).sum()
+        rate = wins / n
+        if not lo <= rate <= hi:
+            offenders.append(f"{base}: blank side won {rate:.3f} of {n} bouts")
+    assert not offenders, "blank values predict the outcome: " + "; ".join(offenders)
 
 
 # ---------------------------------------------------------------------------
