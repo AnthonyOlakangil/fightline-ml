@@ -511,10 +511,12 @@ def regenerate(cfg: Config | None = None, *, verbose: bool = True) -> dict:
         "Log loss vs market (paired, 95% CI, resampled by event)",
     )
 
-    from ufc_predictor.backtest.readme_block import inject
+    from ufc_predictor.backtest.readme_block import inject, inject_parlay
 
     inject(metrics, cfg)
+    if (reports / "parlay_metrics.json").is_file():
+        inject_parlay(cfg=cfg)
     if verbose:
-        print("  charts redrawn and README results block refreshed from metrics.json")
+        print("  charts redrawn and README results/parlay blocks refreshed from metrics")
         print(f"  eval run count unchanged: {metrics['eval_run_count']}\n")
     return metrics

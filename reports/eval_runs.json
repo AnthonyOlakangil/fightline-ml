@@ -11,6 +11,21 @@
       "run": 1,
       "seed": 42,
       "timestamp_utc": "2026-10-10T11:47:52+00:00"
+    },
+    {
+      "git_commit": "75bab69767f39e6eb1f53dd0667b671262e007b8",
+      "git_sha": "75bab69",
+      "headline": {
+        "elo": 0.6849,
+        "lightgbm": 0.6916,
+        "market": 0.6063,
+        "market_plus_model": 0.6054
+      },
+      "reason": "Run 2: re-score after removing the scrape-time fighter-attribute leak (reports/review.md finding 1). LightGBM re-tuned inside the dev window and frozen in 75bab69, committed and pushed before this run.",
+      "run": 2,
+      "seed": 42,
+      "timestamp_utc": "2026-10-12T22:33:27+00:00",
+      "worktree_clean": true
     }
   ]
 }

@@ -267,14 +267,14 @@ permitted to report an eval-window number.
 
 ### Results — held-out evaluation window
 
-Walk-forward over **421 events / 4,636 fights** (2016-01-01 → 2026-10-03). Hyperparameters frozen from the dev window; **62 refits** at a cadence of every 10 events. Seed 42. Evaluation runs to date: **1**.
+Walk-forward over **421 events / 4,636 fights** (2016-01-01 → 2026-10-03). Hyperparameters frozen from the dev window; **62 refits** at a cadence of every 10 events. Seed 42. Evaluation runs to date: **2**.
 
 | Model | n | Log loss | Brier | AUC | Accuracy | ECE |
 |---|---:|---:|---:|---:|---:|---:|
 | Market (vig-free closing line) | 4,636 | **0.6063** | 0.2096 | 0.7319 | 0.6670 | 0.0240 |
-| LightGBM | 4,636 | **0.6772** | 0.2342 | 0.6450 | 0.6031 | 0.0148 |
+| LightGBM | 4,636 | **0.6916** | 0.2420 | 0.6061 | 0.5759 | 0.0129 |
 | Elo | 4,636 | **0.6849** | 0.2459 | 0.5732 | 0.5535 | 0.0164 |
-| Market + model *(variant)* | 4,636 | **0.6030** | 0.2082 | 0.7348 | 0.6711 | 0.0153 |
+| Market + model *(variant)* | 4,636 | **0.6054** | 0.2094 | 0.7316 | 0.6642 | 0.0208 |
 
 ### Does any model beat the market?
 
@@ -282,14 +282,16 @@ Paired per-fight log-loss difference against the market, with a 95% confidence i
 
 | Model | Δ log loss vs market | 95% CI | Verdict |
 |---|---:|---|---|
-| LightGBM | +0.0710 | [+0.0548, +0.0887] | market wins |
+| LightGBM | +0.0853 | [+0.0703, +0.1020] | market wins |
 | Elo | +0.0786 | [+0.0694, +0.0879] | market wins |
-| Market + model *(variant)* | -0.0033 | [-0.0069, +0.0006] | no difference shown |
+| Market + model *(variant)* | -0.0009 | [-0.0017, -0.0000] | **beats the market** |
 
 **Reading this honestly:**
 
-- The closing line **beats** the feature-based model by 0.0710 nats per fight. The model does not beat the market, and this is the project's headline result.
-- The market-anchored variant does not improve on the market (-0.0033, CI [-0.0069, +0.0006]). Because it takes the closing line as an input it cannot support a 'beats the market' claim on its own; it is evidence about whether the features carry information the market has not already priced.
+- The closing line **beats** the feature-based model by 0.0853 nats per fight. The model does not beat the market, and this is the project's headline result.
+- The market-anchored variant does improve on the market (-0.0009, CI [-0.0017, -0.0000]). Because it takes the closing line as an input it cannot support a 'beats the market' claim on its own; it is evidence about whether the features carry information the market has not already priced.
+- How much that is worth: 0.0009 nats is 0.14% of the market's own log loss. Unadjusted p = 0.038; Bonferroni-adjusted across the 3 comparisons, p = 0.114. In the dev window the same variant scored +0.0011 (CI [-0.0012, +0.0034]).
+- LightGBM scores worse than a coin flip in the dev window (0.7370 against ln 2 = 0.6931), yet ranks fights better than chance (AUC 0.5852): its probabilities are too confident, not inverted.
 
 ### Window reconciliation
 
@@ -297,30 +299,30 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 | Window | Span | Events | Fights | Market log loss | LightGBM log loss |
 |---|---|---:|---:|---:|---:|
-| Dev (tuning) | 2010-01-01 → 2015-12-31 | 198 | 2,154 | 0.6098 | 0.6675 |
-| Eval (held out) | 2016-01-01 → 2026-10-03 | 421 | 4,636 | 0.6063 | 0.6772 |
+| Dev (tuning) | 2010-01-01 → 2015-12-31 | 198 | 2,154 | 0.6098 | 0.7370 |
+| Eval (held out) | 2016-01-01 → 2026-10-03 | 421 | 4,636 | 0.6063 | 0.6916 |
 
 ### Log loss by year
 
 | Year | Fights | Market | LightGBM | Elo | Market + model |
 |---:|---:|---:|---:|---:|---:|
-| 2010 | 209 | 0.6429 | 0.8240 | 0.6700 | — |
-| 2011 | 292 | 0.5949 | 0.6381 | 0.6944 | 0.5980 |
-| 2012 | 329 | 0.6046 | 0.6594 | 0.6789 | 0.5829 |
-| 2013 | 372 | 0.5899 | 0.7037 | 0.6910 | 0.5783 |
-| 2014 | 491 | 0.6022 | 0.6666 | 0.6753 | 0.5864 |
-| 2015 | 461 | 0.6319 | 0.5925 | 0.6845 | 0.5940 |
-| 2016 | 479 | 0.6233 | 0.6591 | 0.6762 | 0.5985 |
-| 2017 | 438 | 0.6114 | 0.7021 | 0.6877 | 0.6043 |
-| 2018 | 468 | 0.5997 | 0.6693 | 0.6866 | 0.5978 |
-| 2019 | 491 | 0.6343 | 0.6785 | 0.7026 | 0.6341 |
-| 2020 | 428 | 0.6171 | 0.6541 | 0.6814 | 0.6119 |
-| 2021 | 476 | 0.6300 | 0.6884 | 0.6825 | 0.6290 |
-| 2022 | 483 | 0.5990 | 0.6903 | 0.6836 | 0.6041 |
-| 2023 | 406 | 0.5831 | 0.6851 | 0.6870 | 0.5858 |
-| 2024 | 373 | 0.5914 | 0.6888 | 0.6832 | 0.5950 |
-| 2025 | 484 | 0.5877 | 0.6785 | 0.6821 | 0.5871 |
-| 2026 | 110 | 0.5197 | 0.5963 | 0.6664 | 0.5078 |
+| 2010 | 209 | 0.6429 | 0.8586 | 0.6700 | — |
+| 2011 | 292 | 0.5949 | 0.7906 | 0.6944 | 0.6151 |
+| 2012 | 329 | 0.6046 | 0.6843 | 0.6789 | 0.6060 |
+| 2013 | 372 | 0.5899 | 0.7642 | 0.6910 | 0.5896 |
+| 2014 | 491 | 0.6022 | 0.6951 | 0.6753 | 0.6038 |
+| 2015 | 461 | 0.6319 | 0.7082 | 0.6845 | 0.6335 |
+| 2016 | 479 | 0.6233 | 0.7122 | 0.6762 | 0.6247 |
+| 2017 | 438 | 0.6114 | 0.7006 | 0.6877 | 0.6108 |
+| 2018 | 468 | 0.5997 | 0.6786 | 0.6866 | 0.5988 |
+| 2019 | 491 | 0.6343 | 0.7036 | 0.7026 | 0.6345 |
+| 2020 | 428 | 0.6171 | 0.7683 | 0.6814 | 0.6171 |
+| 2021 | 476 | 0.6300 | 0.6719 | 0.6825 | 0.6290 |
+| 2022 | 483 | 0.5990 | 0.6585 | 0.6836 | 0.5972 |
+| 2023 | 406 | 0.5831 | 0.6862 | 0.6870 | 0.5805 |
+| 2024 | 373 | 0.5914 | 0.6593 | 0.6832 | 0.5896 |
+| 2025 | 484 | 0.5877 | 0.6941 | 0.6821 | 0.5873 |
+| 2026 | 110 | 0.5197 | 0.6166 | 0.6664 | 0.5113 |
 
 ![Calibration, evaluation window](reports/calibration.png)
 
@@ -328,7 +330,7 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 ![Log loss by year](reports/log_loss_by_year.png)
 
-*Generated from `reports/metrics.json` (git `1c1e1f0`, 2026-10-10T11:47:52+00:00) by `make report`. No figure above is typed by hand.*
+*Generated from `reports/metrics.json` (git `75bab69`, 2026-10-12T22:33:27+00:00) by `make report`. No figure above is typed by hand.*
 
 <!-- RESULTS:END -->
 
@@ -340,23 +342,25 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 > **Research backtest only. Not betting advice.** Nothing here should be used to wager. The point of this section is to *falsify* an apparent edge, not to find one.
 
-Priced on the **stored out-of-sample predictions** from the walk-forward backtest — no re-scoring, so the evaluation window was still read exactly once. 421 cards, 4,636 fights, 10,000 seeded simulations per card, up to 3 legs, staked at 0.25x Kelly capped at 2% of bankroll.
+Priced on the **stored out-of-sample predictions** from the walk-forward backtest — evaluation run 2's predictions. Pricing them scores nothing new, so the eval ledger does not move. 421 cards, 4,636 fights, 10,000 seeded simulations per card, up to 3 legs, staked at 0.25x Kelly capped at 2% of bankroll.
 
 **Only real moneyline prices are used.** Moneyline only. The odds snapshot contains no method-of-victory or round prices, and none were invented.
 
-Each simulation resolves every fight on the card once and evaluates all legs against that same draw, so two legs from one bout are exactly dependent: backing both fighters gives a joint probability of zero rather than the product of two probabilities. Across different bouts the model treats fights as conditionally independent, and that assumption is measured rather than asserted — the correlation between same-card residuals is **+0.0028** over 24,069 pairs.
+Each simulation resolves every fight on the card once and evaluates all legs against that same draw, so two legs from one bout are exactly dependent: backing both fighters gives a joint probability of zero rather than the product of two probabilities. Across different bouts the model treats fights as conditionally independent, and that assumption is measured rather than asserted — the correlation between same-card residuals is **+0.0013** over 24,069 pairs.
 
 | Ranked by | Candidates | Staked | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |
 |---|---:|---:|---:|---:|---:|---:|
-| lightgbm | 82,511 | 1,262 | **+5.6203** | **-0.2250** | 0.0317 | 0.1466 |
-| market plus model | 12,807 | 1,124 | **+0.2709** | **-0.0732** | 0.2099 | 0.2543 |
+| lightgbm | 83,265 | 1,261 | **+6.3228** | **-0.5057** | 0.0206 | 0.1323 |
+| market plus model | 81 | 29 | **+0.0357** | **+0.0963** | 0.6182 | 0.5975 |
 | market | 0 | 0 | — | — | — | — |
 
-**The headline of this section.** Ranking by the model's own expected value selected parlays it priced at **+562.0% expected return**. They actually returned **-22.5%** per unit staked. The model expected those parlays to land 14.7% of the time; they landed 3.2% of the time.
+**The headline of this section.** Ranking by the model's own expected value selected parlays it priced at **+632.3% expected return**. They actually returned **-50.6%** per unit staked. The model expected those parlays to land 13.2% of the time; they landed 2.1% of the time.
 
 That gap is the whole lesson. Ranking by estimated edge does not select the best bets — it selects the fights the model is most *wrong* about, because the biggest apparent edges come from the largest overestimates. Multiplying three such legs together compounds the error, which is why the three-leg parlays are the worst of all.
 
-A £1000 bankroll staked this way ends at **£199.29** (-80.1%) with a maximum drawdown of 90.3%. Resampling whole events 2,000 times, **99.8% of histories lose money** and **99.3% hit ruin** (defined as falling to 20% of the starting bankroll).
+A £1000 bankroll staked this way ends at **£198.82** (-80.1%) with a maximum drawdown of 94.0%. Resampling whole events 2,000 times gives a 90% band of £196 to £200; **100.0% of histories lose money** and **100.0% hit ruin** (defined as falling to 20% of the starting bankroll).
+
+**The market-anchored variant** staked only 29 bets. Its bankroll ends at **£1,057.80** (+5.8%); resampling whole events 2,000 times gives a 90% band of £949 to £1,175, and **20.1% of histories lose money**. The band contains the starting bankroll, so this cannot be distinguished from breaking even. It also takes the closing line as an input, so it cannot show an edge *over* that line on its own.
 
 **The control works.** Ranking by the market's own de-vigged probabilities finds **zero** positive-EV parlays, which is exactly right: a de-vigged probability priced against the book's vig-inclusive payout cannot show an edge. If this row had found value, the pricing code would be wrong.
 

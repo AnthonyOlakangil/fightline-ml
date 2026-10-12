@@ -132,11 +132,38 @@ def test_metric_values_are_in_valid_ranges(metrics):
             assert math.isnan(s["auc"]) or 0 <= s["auc"] <= 1
 
 
-def test_every_model_beats_a_coin_flip(metrics):
-    """A model worse than ln(2) would indicate something is wired backwards."""
+def test_no_model_is_wired_backwards(metrics):
+    """An inverted label or probability shows up as AUC below 0.5.
+
+    Log loss above ln 2 is *not* that signal: an overconfident model that still ranks
+    fights the right way round can score worse than a coin flip. That is a result to
+    disclose (see the next test), not a wiring bug.
+    """
     for window in ("dev", "eval"):
         for name, s in metrics["results"][window].items():
-            assert s["log_loss"] < math.log(2), f"{window}/{name} is worse than a coin flip"
+            assert s["auc"] > 0.5, f"{window}/{name} has AUC {s['auc']:.4f}: wired backwards?"
+
+
+def test_readme_discloses_every_model_worse_than_a_coin_flip(metrics):
+    block = render(metrics)
+    for window in ("dev", "eval"):
+        for name, s in metrics["results"][window].items():
+            if s["log_loss"] >= math.log(2):
+                assert f"worse than a coin flip in the {window} window" in block, (window, name)
+
+
+def test_readme_qualifies_a_variant_win_with_multiplicity_and_the_dev_result(metrics):
+    """A narrow interval excluding zero is one of three comparisons; the generated text
+    must say what it looks like after correcting for that, and what dev showed."""
+    var = metrics["paired_vs_market"]["eval"][VARIANT_NAME]
+    if not var["beats_market"]:
+        pytest.skip("variant does not beat the market in this run")
+    block = render(metrics)
+    n = len(metrics["paired_vs_market"]["eval"])
+    adjusted = min(1.0, var["p_value_two_sided"] * n)
+    assert f"Bonferroni-adjusted across the {n} comparisons, p = {adjusted:.3f}" in block
+    dev = metrics["paired_vs_market"]["dev"][VARIANT_NAME]
+    assert f"{dev['observed']:+.4f}" in block
 
 
 def test_by_year_rows_sum_to_the_scored_total(metrics):

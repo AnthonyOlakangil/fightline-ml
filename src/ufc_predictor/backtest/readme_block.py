@@ -9,6 +9,7 @@ than quietly misreporting the result.
 from __future__ import annotations
 
 import json
+import math
 
 from ufc_predictor.backtest.walkforward import VARIANT_NAME
 from ufc_predictor.config import Config, get_config
@@ -17,6 +18,7 @@ START = "<!-- RESULTS:START -->"
 END = "<!-- RESULTS:END -->"
 
 ORDER = ("market", "lightgbm", "elo", VARIANT_NAME)
+LN2 = math.log(2)  # log loss of a constant 50% forecast
 LABELS = {
     "market": "Market (vig-free closing line)",
     "lightgbm": "LightGBM",
@@ -129,6 +131,33 @@ def render(metrics: dict) -> str:
             "'beats the market' claim on its own; it is evidence about whether the "
             "features carry information the market has not already priced."
         )
+        if var_p["beats_market"]:
+            n_cmp = len(paired)
+            adjusted = min(1.0, var_p["p_value_two_sided"] * n_cmp)
+            market_ll = metrics["results"]["eval"]["market"]["log_loss"]
+            dev_var = metrics["paired_vs_market"].get("dev", {}).get(VARIANT_NAME)
+            text = (
+                f"- How much that is worth: {abs(var_p['observed']):.4f} nats is "
+                f"{abs(var_p['observed']) / market_ll:.2%} of the market's own log loss. "
+                f"Unadjusted p = {var_p['p_value_two_sided']:.3f}; Bonferroni-adjusted "
+                f"across the {n_cmp} comparisons, p = {adjusted:.3f}."
+            )
+            if dev_var is not None:
+                text += (
+                    f" In the dev window the same variant scored {dev_var['observed']:+.4f} "
+                    f"(CI [{dev_var['ci_lower']:+.4f}, {dev_var['ci_hi']:+.4f}])."
+                )
+            lines.append(text)
+    for window in ("dev", "eval"):
+        for name in ORDER:
+            s = metrics["results"].get(window, {}).get(name)
+            if s is not None and s["log_loss"] >= LN2:
+                lines.append(
+                    f"- {LABELS[name]} scores worse than a coin flip in the {window} window "
+                    f"({s['log_loss']:.4f} against ln 2 = {LN2:.4f}), yet ranks fights better "
+                    f"than chance (AUC {s['auc']:.4f}): its probabilities are too confident, "
+                    "not inverted."
+                )
 
     lines += [
         "",
@@ -223,7 +252,8 @@ def render_parlay(m: dict) -> str:
         "wager. The point of this section is to *falsify* an apparent edge, not to find one.",
         "",
         f"Priced on the **stored out-of-sample predictions** from the walk-forward backtest "
-        f"— no re-scoring, so the evaluation window was still read exactly once. "
+        f"— evaluation run {m['priced_eval_run']}'s predictions. Pricing them scores nothing "
+        "new, so the eval ledger does not move. "
         f"{m['cards']} cards, {m['fights']:,} fights, "
         f"{int(s['n_sims']):,} seeded simulations per card, up to {int(s['max_parlay_legs'])} legs, "
         f"staked at {s['kelly_fraction']}x Kelly capped at {float(s['max_bet_fraction']):.0%} "
@@ -279,10 +309,33 @@ def render_parlay(m: dict) -> str:
             f"A £{bk['starting_bankroll']:.0f} bankroll staked this way ends at "
             f"**£{bk['ending_bankroll']:.2f}** ({bk['total_return']:+.1%}) with a maximum "
             f"drawdown of {bk['max_drawdown']:.1%}. Resampling whole events "
-            f"{bs['n_resamples']:,} times, **{bs['share_losing_money']:.1%} of histories "
-            f"lose money** and **{bs['ruin_probability']:.1%} hit ruin** "
-            f"(defined as falling to {float(bs['ruin_threshold_fraction']):.0%} of the "
-            "starting bankroll).",
+            f"{bs['n_resamples']:,} times gives a 90% band of "
+            f"£{bs['ending_bankroll']['p05']:,.0f} to £{bs['ending_bankroll']['p95']:,.0f}; "
+            f"**{bs['share_losing_money']:.1%} of histories lose money** and "
+            f"**{bs['ruin_probability']:.1%} hit ruin** (defined as falling to "
+            f"{float(bs['ruin_threshold_fraction']):.0%} of the starting bankroll).",
+        ]
+
+    var = m["by_source"].get("market_plus_model", {})
+    if var.get("n_staked"):
+        bk = var["bankroll"]
+        bs = var["bankroll_bootstrap"]
+        lo, hi = bs["ending_bankroll"]["p05"], bs["ending_bankroll"]["p95"]
+        start = bk["starting_bankroll"]
+        verdict = (
+            "The band contains the starting bankroll, so this cannot be distinguished "
+            "from breaking even."
+            if lo <= start <= hi
+            else "The band excludes the starting bankroll."
+        )
+        lines += [
+            "",
+            f"**The market-anchored variant** staked only {var['n_staked']:,} bets. Its "
+            f"bankroll ends at **£{bk['ending_bankroll']:,.2f}** ({bk['total_return']:+.1%}); "
+            f"resampling whole events {bs['n_resamples']:,} times gives a 90% band of "
+            f"£{lo:,.0f} to £{hi:,.0f}, and **{bs['share_losing_money']:.1%} of histories "
+            f"lose money**. {verdict} It also takes the closing line as an input, so it "
+            "cannot show an edge *over* that line on its own.",
         ]
 
     mk = m["by_source"].get("market", {})

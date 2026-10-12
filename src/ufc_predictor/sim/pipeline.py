@@ -135,6 +135,14 @@ def _plot_predicted_vs_realized(results: dict, path) -> None:
     plt.close(fig)
 
 
+def _scored_eval_run(cfg: Config) -> int:
+    """Which ledgered evaluation run produced the predictions being priced."""
+    path = cfg.paths.reports_dir / "metrics.json"
+    if not path.is_file():
+        raise FileNotFoundError("metrics.json is missing; run `make backtest` first")
+    return int(json.loads(path.read_text(encoding="utf-8"))["eval_run_count"])
+
+
 def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
     """Price parlays for every eval card under each probability source."""
     cfg = cfg or get_config()
@@ -269,6 +277,7 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
             "be used to wager."
         ),
         "reused_phase4_predictions": True,
+        "priced_eval_run": _scored_eval_run(cfg),
         "eval_window": [str(cfg.windows.eval_start), str(cfg.windows.eval_end)],
         "cards": int(preds["event_id"].nunique()),
         "fights": len(preds),

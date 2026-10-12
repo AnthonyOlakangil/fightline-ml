@@ -368,15 +368,19 @@ def test_report_states_it_reuses_phase4_predictions(parlay_metrics):
     assert parlay_metrics["reused_phase4_predictions"] is True
 
 
-def test_eval_run_count_is_still_one():
-    """The decisive check that Phase 5 did not spend another look at the held-out set."""
+def test_parlays_priced_the_latest_eval_run_without_scoring_another():
+    """Parlay pricing reuses the stored walk-forward predictions. It must record which
+    scored run it priced, that must be the latest one, and the ledger must not have
+    grown on its account."""
     import json
 
     cfg = get_config()
-    ledger = cfg.paths.reports_dir / "eval_runs.json"
-    if not ledger.is_file():
-        pytest.skip("no eval ledger")
-    assert len(json.loads(ledger.read_text(encoding="utf-8"))["runs"]) == 1
+    reports = cfg.paths.reports_dir
+    paths = [reports / n for n in ("eval_runs.json", "metrics.json", "parlay_metrics.json")]
+    if not all(p.is_file() for p in paths):
+        pytest.skip("backtest or parlay artefacts absent")
+    ledger, metrics, parlay = (json.loads(p.read_text(encoding="utf-8")) for p in paths)
+    assert parlay["priced_eval_run"] == metrics["eval_run_count"] == len(ledger["runs"])
 
 
 def test_report_carries_the_not_betting_advice_framing(parlay_metrics):
@@ -425,6 +429,30 @@ def test_readme_parlay_block_matches_parlay_metrics(parlay_metrics):
     start = readme.index(PARLAY_START)
     end = readme.index(PARLAY_END) + len(PARLAY_END)
     assert readme[start:end] == expected, "parlay block is stale; run `make parlay`"
+
+
+def test_parlay_block_names_the_eval_run_it_priced(parlay_metrics):
+    from ufc_predictor.backtest.readme_block import render_parlay
+
+    block = render_parlay(parlay_metrics)
+    assert f"evaluation run {parlay_metrics['priced_eval_run']}" in block
+    assert "read exactly once" not in block
+
+
+def test_parlay_block_gives_every_staked_model_its_bootstrap_band(parlay_metrics):
+    """A positive realised return on a few dozen bets must arrive with its uncertainty,
+    not as a bare number in a table."""
+    from ufc_predictor.backtest.readme_block import render_parlay
+
+    block = render_parlay(parlay_metrics)
+    for source in ("lightgbm", "market_plus_model"):
+        res = parlay_metrics["by_source"].get(source, {})
+        if not res.get("n_staked"):
+            continue
+        bs = res["bankroll_bootstrap"]
+        assert f"{bs['share_losing_money']:.1%} of histories lose money" in block, source
+        assert f"£{bs['ending_bankroll']['p05']:,.0f}" in block, source
+        assert f"£{bs['ending_bankroll']['p95']:,.0f}" in block, source
 
 
 def test_readme_parlay_section_is_framed_as_not_betting_advice():
