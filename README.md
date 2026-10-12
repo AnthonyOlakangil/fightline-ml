@@ -328,7 +328,7 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 ![Log loss by year](reports/log_loss_by_year.png)
 
-*Generated from `reports/metrics.json` (git `1c1e1f0`, 2026-10-10T11:47:52+00:00Z) by `make report`. No figure above is typed by hand.*
+*Generated from `reports/metrics.json` (git `1c1e1f0`, 2026-10-10T11:47:52+00:00) by `make report`. No figure above is typed by hand.*
 
 <!-- RESULTS:END -->
 

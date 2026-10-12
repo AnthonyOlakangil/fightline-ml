@@ -174,7 +174,7 @@ def render(metrics: dict) -> str:
         "![Log loss by year](reports/log_loss_by_year.png)",
         "",
         f"*Generated from `reports/metrics.json` (git `{metrics['git_sha']}`, "
-        f"{metrics['generated_at_utc']}Z) by `make report`. No figure above is typed by hand.*",
+        f"{metrics['generated_at_utc']}) by `make report`. No figure above is typed by hand.*",
         "",
         END,
     ]

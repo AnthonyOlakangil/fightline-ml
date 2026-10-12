@@ -161,6 +161,13 @@ def test_readme_block_matches_metrics_json(metrics, readme):
     )
 
 
+def test_readme_timestamp_has_a_single_utc_designator(metrics):
+    """generated_at_utc already ends in +00:00; appending Z as well is malformed."""
+    block = render(metrics)
+    assert metrics["generated_at_utc"] in block
+    assert "+00:00Z" not in block
+
+
 def test_readme_states_the_eval_run_count(metrics, readme):
     assert f"Evaluation runs to date: **{metrics['eval_run_count']}**" in readme
 
