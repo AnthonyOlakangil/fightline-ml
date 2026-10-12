@@ -1,0 +1,90 @@
+{
+  "attribute_leak": {
+    "complete_pairs": {
+      "bouts": 1568,
+      "less_experienced_win_rate": 0.4840561224489796
+    },
+    "decisive_bouts": 2198,
+    "pairs_with_a_one_sided_blank": {
+      "bouts": 211,
+      "less_experienced_win_rate": 0.23222748815165878
+    },
+    "per_attribute": {
+      "age": {
+        "blank_side_win_rate": 0.125,
+        "bouts_one_side_blank": 8
+      },
+      "height": {
+        "blank_side_win_rate": 0.0,
+        "bouts_one_side_blank": 3
+      },
+      "reach": {
+        "blank_side_win_rate": 0.05688622754491018,
+        "bouts_one_side_blank": 334
+      }
+    },
+    "window": [
+      "2010-01-01",
+      "2015-12-31"
+    ]
+  },
+  "chance_log_loss": 0.6931471805599453,
+  "control": {
+    "auc": 0.5862590095326669,
+    "log_loss": 0.7082511675761374
+  },
+  "dev_window": [
+    "2010-01-01",
+    "2015-12-31"
+  ],
+  "model": "LightGBM on the frozen hyperparameters, a fixed 200 trees, no early stopping or calibration",
+  "seed": 42,
+  "shuffle": {
+    "aucs": [
+      0.5055235674711169,
+      0.47262838065943963,
+      0.49222164743632996,
+      0.5235666628972069,
+      0.48702219620908554,
+      0.5018344700294866,
+      0.5277804878048781,
+      0.482904493076329
+    ],
+    "log_losses": [
+      0.7204681781182013,
+      0.737575750675196,
+      0.72797876574368,
+      0.7156809239683043,
+      0.7385596579866892,
+      0.7255854268354822,
+      0.7143587119806653,
+      0.7299995198090461
+    ],
+    "mean_auc": 0.49918523819798405,
+    "mean_log_loss": 0.7262758668896581,
+    "n_draws": 8,
+    "sd_auc": 0.019368957300921662,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ]
+  },
+  "split": {
+    "n_test": 1033,
+    "n_train": 2408,
+    "test_span": [
+      "2013-10-26",
+      "2015-12-19"
+    ],
+    "train_span": [
+      "1994-03-11",
+      "2013-10-26"
+    ]
+  }
+}

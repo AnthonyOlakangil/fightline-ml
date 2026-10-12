@@ -32,36 +32,36 @@
     "lightgbm": {
       "calibrated": true,
       "dev_holdout": {
-        "accuracy": 0.6106796116504855,
-        "auc": 0.674883545497407,
-        "brier": 0.22392932417598313,
-        "log_loss": 0.6457924368933139,
-        "mean_prediction": 0.5258391297221082,
+        "accuracy": 0.537864077669903,
+        "auc": 0.5671456859971712,
+        "brier": 0.25301198986453155,
+        "log_loss": 0.7145396792695455,
+        "mean_prediction": 0.5361973231269827,
         "n": 1030
       },
       "fit_regime": {
         "calibrate": true,
         "early_stopping_rounds": 50,
-        "min_validation_rows": 300,
+        "min_validation_rows": 200,
         "validation_fraction": 0.2
       },
       "hyperparams": {
         "colsample_bytree": 0.7,
-        "learning_rate": 0.02,
-        "max_depth": 3,
+        "learning_rate": 0.05,
+        "max_depth": 6,
         "min_child_samples": 80,
         "n_estimators": 2000,
-        "num_leaves": 7,
+        "num_leaves": 31,
         "reg_alpha": 0.1,
-        "reg_lambda": 5.0,
+        "reg_lambda": 1.0,
         "subsample": 0.8,
         "subsample_freq": 1,
         "verbosity": -1
       },
-      "n_features": 126,
+      "n_features": 117,
       "name": "lightgbm",
       "requires_fit": true,
-      "trees_after_early_stopping": 332
+      "trees_after_early_stopping": 35
     },
     "market": {
       "dev_holdout": {
@@ -83,6 +83,6 @@
   "note": "Dev-window chronological holdout only. Not project results: the evaluation window is untouched until the walk-forward backtest writes metrics.json.",
   "scored_rows_priced_only": 1030,
   "seed": 42,
-  "total_features_available": 126,
+  "total_features_available": 117,
   "train_rows_all_decisive": 2408
 }

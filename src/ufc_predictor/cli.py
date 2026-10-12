@@ -77,6 +77,14 @@ def models() -> None:
 
 
 @app.command()
+def diagnose() -> None:
+    """Shuffle test, its control and the attribute-leak evidence, dev window only."""
+    from ufc_predictor.features.diagnostics import run
+
+    run()
+
+
+@app.command()
 def tune() -> None:
     """Search LightGBM hyperparameters inside the dev window only."""
     from ufc_predictor.models.tune import search

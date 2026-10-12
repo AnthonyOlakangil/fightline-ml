@@ -20,6 +20,7 @@ import pandas as pd
 import pytest
 
 from ufc_predictor.config import get_config
+from ufc_predictor.features import diagnostics
 from ufc_predictor.features.pit import (
     FEATURE_COLS,
     build_features,
@@ -480,32 +481,6 @@ def test_label_base_rate_is_balanced(features):
 # ---------------------------------------------------------------------------
 
 
-def _dev_only_split(feats: pd.DataFrame, cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Chronological 70/30 split **confined to the dev window**.
-
-    These diagnostics must never touch the held-out period. They make no tuning
-    decision, but a performance number measured on the eval window is an eval-window
-    number regardless of intent, and reporting one before the walk-forward backtest
-    exists would spend the held-out set on a side check.
-    """
-    usable = feats.loc[feats["label"].notna() & (feats["date"] <= cfg.windows.dev_end)].sort_values(
-        "date"
-    )
-    split = int(len(usable) * 0.7)
-    return usable.iloc[:split], usable.iloc[split:]
-
-
-def _fit_predict_dev(train, test, cfg):
-    """Fit a fixed, un-tuned LightGBM for diagnostic purposes only."""
-    import lightgbm as lgb
-
-    params = dict(cfg.lightgbm)
-    params.update({"n_estimators": 200, "random_state": cfg.seed, "verbosity": -1})
-    model = lgb.LGBMClassifier(**params)
-    model.fit(train[FEATURE_COLS], train["label"].astype(int))
-    return model.predict_proba(test[FEATURE_COLS])[:, 1]
-
-
 @pytest.mark.slow
 def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     """Randomize who won, rebuild every feature from scratch, then train and evaluate.
@@ -525,33 +500,18 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
     """
     from sklearn.metrics import log_loss, roc_auc_score
 
-    fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
     n_shuffles = 3
     aucs: list[float] = []
     lls: list[float] = []
 
     for offset in range(n_shuffles):
-        rng = np.random.default_rng(cfg.seed + offset)
-        shuffled = fights.copy()
-        decisive = shuffled["is_decisive"].to_numpy()
-        pick_first = rng.random(len(shuffled)) < 0.5
-        shuffled.loc[decisive, "winner_id"] = np.where(
-            pick_first[decisive],
-            shuffled.loc[decisive, "fighter_1"],
-            shuffled.loc[decisive, "fighter_2"],
+        feats = diagnostics.build(
+            diagnostics.shuffle_outcomes(tables["fights"], cfg.seed + offset), tables, cfg
         )
-
-        feats = build_features(
-            shuffled,
-            stats,
-            fighters,
-            rolling_windows=tuple(cfg.features["rolling_windows"]),
-            elo_params=cfg.elo,
-        )
-        train, test = _dev_only_split(feats, cfg)
+        train, test = diagnostics.dev_only_split(feats, cfg)
         assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
 
-        p = _fit_predict_dev(train, test, cfg)
+        p = diagnostics.fit_predict_dev(train, test, cfg)
         y = test["label"].astype(int)
         aucs.append(roc_auc_score(y, p))
         lls.append(log_loss(y, p, labels=[0, 1]))
@@ -577,17 +537,11 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     """
     from sklearn.metrics import roc_auc_score
 
-    feats = build_features(
-        tables["fights"],
-        tables["fight_stats"],
-        tables["fighters"],
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
-    )
-    train, test = _dev_only_split(feats, cfg)
+    feats = diagnostics.build(tables["fights"], tables, cfg)
+    train, test = diagnostics.dev_only_split(feats, cfg)
     assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
 
-    p = _fit_predict_dev(train, test, cfg)
+    p = diagnostics.fit_predict_dev(train, test, cfg)
     auc = roc_auc_score(test["label"].astype(int), p)
     assert auc > 0.55, (
         f"AUC {auc:.4f} on real outcomes is near chance; the features carry almost no "
