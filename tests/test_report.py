@@ -372,3 +372,19 @@ def test_readme_says_when_lightgbm_trails_elo_on_eval(metrics):
     if ev["lightgbm"]["log_loss"] <= ev["elo"]["log_loss"]:
         pytest.skip("LightGBM does not trail Elo in this run")
     assert "worse than one-feature Elo" in render(metrics)
+
+
+def test_frozen_from_dev_is_checked_against_the_tuning_record(cfg, tmp_path):
+    """The flag in metrics.json is computed, not asserted: config must hold exactly what
+    the dev-only search selected."""
+    import dataclasses
+    import shutil
+
+    from ufc_predictor.backtest import report
+
+    shutil.copy(cfg.paths.reports_dir / "tuning.json", tmp_path / "tuning.json")
+    assert report._frozen_from_dev(_cfg_with_reports(cfg, tmp_path)) is True
+    drifted = dataclasses.replace(
+        _cfg_with_reports(cfg, tmp_path), lightgbm={**cfg.lightgbm, "max_depth": 99}
+    )
+    assert report._frozen_from_dev(drifted) is False

@@ -62,6 +62,23 @@ def _rebuild_inputs(cfg: Config) -> None:
     build_feature_table(cfg, verbose=False)
 
 
+def _frozen_from_dev(cfg: Config) -> bool:
+    """Whether config holds exactly the hyperparameters the dev-only search selected."""
+    path = cfg.paths.reports_dir / "tuning.json"
+    if not path.is_file():
+        return False
+    selected = json.loads(path.read_text(encoding="utf-8"))["selected"]
+    tuned = (
+        "max_depth",
+        "num_leaves",
+        "min_child_samples",
+        "learning_rate",
+        "colsample_bytree",
+        "reg_lambda",
+    )
+    return all(cfg.lightgbm.get(k) == selected.get(k) for k in tuned)
+
+
 def _input_digests(cfg: Config) -> dict[str, str]:
     """Content hashes of the tables the walk-forward reads, for the ledger."""
     import hashlib
@@ -360,12 +377,13 @@ def run(
     # untouched evaluation window as "warm-up".
     panel_scorable = load_panel(cfg)
     panel_scorable = panel_scorable.loc[panel_scorable["scorable"]]
+    total_priced_decisive = len(panel_scorable)
     if through is not None:
         panel_scorable = panel_scorable.loc[panel_scorable["date"] <= through]
     in_range = len(panel_scorable)
 
     reconciliation = {
-        "total_priced_decisive": 6790,
+        "total_priced_decisive": total_priced_decisive,
         "in_range_for_this_run": in_range,
         "scored_total": total,
         "dev": len(dev),
@@ -429,7 +447,7 @@ def run(
             "dev_events": int(dev["event_id"].nunique()),
             "eval_events": int(ev["event_id"].nunique()),
             "median_trees_after_early_stopping": float(folds["trees"].median()),
-            "hyperparameters_frozen_from_dev": True,
+            "hyperparameters_frozen_from_dev": _frozen_from_dev(cfg),
             "lightgbm": dict(cfg.lightgbm),
             "lightgbm_fit": dict(cfg.lightgbm_fit),
         },
