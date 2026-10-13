@@ -16,6 +16,16 @@
 2. **Forward-test sources:** ESPN's public JSON for cards; Kalshi's public market data as the primary price (mid of bid and ask, normalized across the two fighters); BestFightOdds' multi-book odds as a cross-check. No accounts or API keys.
 3. **Development protocol:** select on 2010–2014 (walk-forward inside it), confirm on 2015 exactly once, with a pre-registered experiment list and Holm-corrected comparisons.
 
+## Decisions at approval (user, 2026-10-13)
+
+4. **Execution is hybrid.** A fresh implementer subagent plus a leakage reviewer for Tasks 7a, 7b, 7c, 8 and 3 (the join that feeds CLV); every other task is implemented directly, with one review at the end.
+5. **BestFightOdds:** check `robots.txt`, rate-limit and cache before scraping, and stop if anything disallows it. Checked 2026-10-13: `User-agent: * / Allow: /`, no crawl delay; `/terms` holds only an accuracy disclaimer.
+6. **Forward-test prices:** prefer the Kalshi API.
+7. **Forward-test automation:** a GitHub Actions schedule commits predictions at least 24 hours before each card and alerts the user on failure (new Task 15).
+8. The repository is renamed to `AnthonyOlakangil/fightline-ml`; the remote and README follow.
+
+Execution order (Task 6 consumes Task 9's models; Task 3 waits for the crawl): 1, 2, 5, 7a, 7b, 7c, 8, 9, 6, 10, 10b, 3, 11, 4, 12, 13, 15, 14.
+
 ## Global Constraints
 
 - **The 2016+ evaluation window is closed.** No code path in this phase may score a prediction dated on or after `2016-01-01` against an outcome, except the forward test, which only scores fights dated after the freeze commit. Training on 2016+ fights is allowed only for the frozen forward-test model.
@@ -396,6 +406,17 @@ final_retune: true                     # re-tune the frozen configuration inside
 
 - [ ] **Step 1: Failing tests:** `predict` on a started event raises; a replaced bout is void, not scored; the ledger check `committed_before_start(event)` reads `git log --format=%cI -- reports/forward/<event>/predictions.csv` and fails when the first commit time is after `start_utc` (tested in a temporary git repo).
 - [ ] **Steps 2–5:** FAIL → implement → pass → commit `feat: add the forward-test predict, close and settle commands` and push.
+
+### Task 15: Scheduled forward test on GitHub Actions
+
+**Files:** Create `.github/workflows/forward.yml`, `src/ufc_predictor/forward/schedule.py`; tests in `tests/test_forward.py`.
+
+**Interfaces:** `schedule.due_actions(cards, ledger, now) -> list[(action, event_id)]` decides, from ESPN's calendar and the forward ledger, which events need `predict` (start between 24 h and `forward.predict_window_hours` away, no committed predictions), `close` (start within 2 h) or `settle` (finished, unsettled), and reports `missed` for an event that reached 24 h before its start with no committed predictions. CLI `forward run-due` executes them.
+
+- [ ] **Step 1: Failing tests:** a card 30 h away with no predictions is `predict`; one 23 h away with none is `missed` (never predicted late); one 90 min away is `close`; a finished unsettled card is `settle`; every decision is a pure function of `(cards, ledger, now)`.
+- [ ] **Step 2:** FAIL → implement → pass.
+- [ ] **Step 3:** Workflow: cron every 3 hours plus `workflow_dispatch`; `uv sync`, `make data`, `ufc-predictor forward run-due`; commits `reports/forward/` with the user's name and GitHub noreply address and pushes; records the run id and URL in the ledger. On any failure, or a `missed` event, it opens or updates one issue labelled `forward-test` that mentions the user (GitHub also emails the failed run).
+- [ ] **Step 4:** Commit `ci: schedule the forward test on GitHub Actions` and push; trigger it once with `workflow_dispatch` and confirm a green run.
 
 ### Task 14: First forward card and README
 
