@@ -1,0 +1,99 @@
+name: Forward test
+
+# Phase 8 forward test (research only, not betting advice). Every three hours this asks
+# `ufc-predictor forward run-due` what is due: predict a card 24-72 hours before it
+# starts, snapshot prices shortly before it, settle it after it. Predictions are
+# committed and pushed by this job, so the commit time and this run's log are two
+# independent records that they existed before the card. Any failure, or a card that
+# reached 24 hours out without committed predictions, fails the run and opens (or
+# comments on) an issue labelled `forward-test`.
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: forward-test
+  cancel-in-progress: false
+
+jobs:
+  run-due:
+    name: forward run-due
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: settlement checks when each predictions file was first committed.
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python 3.11
+        run: uv python install 3.11
+
+      - name: Install dependencies (locked)
+        run: uv sync --all-groups --frozen
+
+      - name: Build data from the committed snapshot
+        run: uv run ufc-predictor data
+
+      - name: Run whatever is due
+        id: due
+        run: |
+          set -o pipefail
+          uv run ufc-predictor forward run-due 2>&1 | tee run-due.log
+
+      # Runs even when a step above failed: predictions made before a later step failed
+      # must still be committed while they are early.
+      - name: Commit and push forward-test records
+        if: always()
+        run: |
+          git config user.name "Anthony Olakangil"
+          git config user.email "151782021+AnthonyOlakangil@users.noreply.github.com"
+          for path in reports/forward data/raw/espn_results; do
+            if [ -e "$path" ]; then git add "$path"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          git commit -m "docs: record forward-test predictions and results ($(date -u +%Y-%m-%dT%H:%MZ))" \
+            -m "Forward-test run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          for attempt in 1 2 3; do
+            git pull --rebase --quiet origin main && git push --quiet origin HEAD:main && exit 0
+            sleep 10
+          done
+          echo "::error::could not push forward-test records"
+          exit 1
+
+      - name: Open or update the forward-test issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          {
+            echo "@AnthonyOlakangil the scheduled forward test failed: ${url}"
+            echo
+            echo '```'
+            tail -n 60 run-due.log 2>/dev/null || echo "(no run-due log: an earlier step failed)"
+            echo '```'
+          } > body.md
+          gh label create forward-test --color B60205 --description "Scheduled forward test alerts" 2>/dev/null || true
+          open=$(gh issue list --label forward-test --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body-file body.md
+          else
+            gh issue create --title "Forward test failed" --label forward-test --body-file body.md
+          fi
