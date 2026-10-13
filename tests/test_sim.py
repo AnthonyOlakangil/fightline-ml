@@ -433,9 +433,14 @@ def test_readme_parlay_block_matches_parlay_metrics(parlay_metrics):
 
 def test_committed_parlay_metrics_name_a_clean_commit(parlay_metrics):
     """Pricing reads the eval window's stored predictions, so the committed result must
-    say which code produced it, and that the tree matched that code."""
+    say which code produced it, that the code was committed, and exactly which
+    predictions it priced -- the committed ones."""
+    import hashlib
+
     assert len(parlay_metrics["git_commit"]) == 40
-    assert parlay_metrics["worktree_clean"] is True
+    assert parlay_metrics["code_tree_clean"] is True
+    csv = get_config().paths.reports_dir / "walkforward_predictions.csv"
+    assert parlay_metrics["predictions_sha256"] == hashlib.sha256(csv.read_bytes()).hexdigest()
 
 
 def test_parlay_table_separates_ranked_staked_and_placed_bets(parlay_metrics):

@@ -3580,14 +3580,16 @@
     }
   },
   "cards": 421,
+  "code_tree_clean": true,
   "disclaimer": "Research backtest only. This is not betting advice and nothing here should be used to wager.",
   "eval_window": [
     "2016-01-01",
     "2026-10-03"
   ],
   "fights": 4636,
-  "git_commit": "7e026f0655b13685fcd6c9f14d468137c62ea90a",
+  "git_commit": "866a940c58263c8e991bf1a169459110b4c5fe10",
   "legs_priced": "Moneyline only. The odds snapshot contains no method-of-victory or round prices, and none were invented.",
+  "predictions_sha256": "7acfbcd984ea2778a1f9f9e659aa022fd231e0f930f3fc7b0c8dfc1bd67f6560",
   "priced_eval_run": 2,
   "reused_phase4_predictions": true,
   "seed": 42,
@@ -3606,6 +3608,5 @@
     "correlation": 0.001286371229785214,
     "n_pairs": 24069,
     "note": "Pearson correlation between pairs of same-card residuals. Near zero supports treating fights on a card as conditionally independent given features, which is what the parlay joint probability assumes."
-  },
-  "worktree_clean": true
+  }
 }
