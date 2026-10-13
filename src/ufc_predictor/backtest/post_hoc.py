@@ -119,7 +119,13 @@ def variant_decomposition(preds: pd.DataFrame, cfg: Config) -> dict:
 
 def certainty_audit(preds: pd.DataFrame, cfg: Config) -> dict:
     """How many LightGBM predictions are literal certainties, and what they cost."""
-    out = {"tolerance": CERTAINTY_TOLERANCE, "cost_of_a_miss_nats": -math.log(EPS)}
+    lo, hi = (float(b) for b in cfg.lightgbm_fit["calibration_bounds"])
+    out = {
+        "tolerance": CERTAINTY_TOLERANCE,
+        "cost_of_a_miss_nats": -math.log(EPS),
+        "bounds": [lo, hi],
+        "cost_of_a_miss_at_the_bound_nats": -math.log(lo),
+    }
     windows = {
         "dev": (cfg.windows.dev_start, cfg.windows.dev_end),
         "eval": (cfg.windows.eval_start, cfg.windows.eval_end),
@@ -130,11 +136,14 @@ def certainty_audit(preds: pd.DataFrame, cfg: Config) -> dict:
         y = w["label"].to_numpy(dtype=float)
         certain = (p <= CERTAINTY_TOLERANCE) | (p >= 1 - CERTAINTY_TOLERANCE)
         wrong = certain & ((p > 0.5) != (y > 0.5))
+        at_bound = (np.abs(p - lo) < 1e-9) | (np.abs(p - hi) < 1e-9)
         loss = per_fight_log_loss(y, p)
         out[name] = {
             "n": len(w),
             "certain": int(certain.sum()),
             "certain_and_wrong": int(wrong.sum()),
+            "at_bound": int(at_bound.sum()),
+            "at_bound_and_wrong": int((at_bound & ((p > 0.5) != (y > 0.5))).sum()),
             "log_loss": float(loss.mean()),
             "log_loss_without_certainties": float(loss[~certain].mean()),
             "share_of_total_loss_from_wrong_certainties": float(loss[wrong].sum() / loss.sum()),

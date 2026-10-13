@@ -1,0 +1,467 @@
+{
+  "bootstrap": {
+    "ci_level": 0.95,
+    "n_resamples": 10000,
+    "resampling_unit": "event",
+    "why_event": "Fights on one card share conditions and correlated model errors, so resampling fights would treat correlated observations as independent and understate the interval."
+  },
+  "by_year": [
+    {
+      "elo_log_loss": 0.6700473294495017,
+      "lightgbm_log_loss": 0.8585949939540661,
+      "market_log_loss": 0.6428677745338328,
+      "market_plus_model_log_loss": null,
+      "n": 209,
+      "n_events": 20,
+      "year": 2010
+    },
+    {
+      "elo_log_loss": 0.6944352232514408,
+      "lightgbm_log_loss": 0.7905567493782709,
+      "market_log_loss": 0.5949168054512738,
+      "market_plus_model_log_loss": 0.6151003648390051,
+      "n": 292,
+      "n_events": 27,
+      "year": 2011
+    },
+    {
+      "elo_log_loss": 0.6788908196649031,
+      "lightgbm_log_loss": 0.6843059862815025,
+      "market_log_loss": 0.6046083056817744,
+      "market_plus_model_log_loss": 0.6059645735312211,
+      "n": 329,
+      "n_events": 31,
+      "year": 2012
+    },
+    {
+      "elo_log_loss": 0.6909937643081234,
+      "lightgbm_log_loss": 0.7641768925149901,
+      "market_log_loss": 0.5899332419429782,
+      "market_plus_model_log_loss": 0.5896124213524521,
+      "n": 372,
+      "n_events": 33,
+      "year": 2013
+    },
+    {
+      "elo_log_loss": 0.6752832530519892,
+      "lightgbm_log_loss": 0.6951478406868778,
+      "market_log_loss": 0.6021867637604246,
+      "market_plus_model_log_loss": 0.603798712658192,
+      "n": 491,
+      "n_events": 46,
+      "year": 2014
+    },
+    {
+      "elo_log_loss": 0.6845312955928047,
+      "lightgbm_log_loss": 0.7082490193678121,
+      "market_log_loss": 0.6319401296993739,
+      "market_plus_model_log_loss": 0.633547245844185,
+      "n": 461,
+      "n_events": 41,
+      "year": 2015
+    },
+    {
+      "elo_log_loss": 0.676192110765328,
+      "lightgbm_log_loss": 0.7121960499022685,
+      "market_log_loss": 0.6233286488098717,
+      "market_plus_model_log_loss": 0.6247263569064135,
+      "n": 479,
+      "n_events": 41,
+      "year": 2016
+    },
+    {
+      "elo_log_loss": 0.6876727065172112,
+      "lightgbm_log_loss": 0.7005964598484671,
+      "market_log_loss": 0.611384920543198,
+      "market_plus_model_log_loss": 0.6108038654760712,
+      "n": 438,
+      "n_events": 39,
+      "year": 2017
+    },
+    {
+      "elo_log_loss": 0.6866412439587182,
+      "lightgbm_log_loss": 0.6786027154729042,
+      "market_log_loss": 0.5997380331652615,
+      "market_plus_model_log_loss": 0.5988373253806403,
+      "n": 468,
+      "n_events": 39,
+      "year": 2018
+    },
+    {
+      "elo_log_loss": 0.702594018657596,
+      "lightgbm_log_loss": 0.7036170576835706,
+      "market_log_loss": 0.6343431807768005,
+      "market_plus_model_log_loss": 0.6344814671990663,
+      "n": 491,
+      "n_events": 42,
+      "year": 2019
+    },
+    {
+      "elo_log_loss": 0.6814060616913369,
+      "lightgbm_log_loss": 0.7682651632160451,
+      "market_log_loss": 0.6170757016931744,
+      "market_plus_model_log_loss": 0.6170923990177518,
+      "n": 428,
+      "n_events": 41,
+      "year": 2020
+    },
+    {
+      "elo_log_loss": 0.6824799637525103,
+      "lightgbm_log_loss": 0.6718995451740155,
+      "market_log_loss": 0.6299579817769512,
+      "market_plus_model_log_loss": 0.6289941579254603,
+      "n": 476,
+      "n_events": 43,
+      "year": 2021
+    },
+    {
+      "elo_log_loss": 0.6835895939289858,
+      "lightgbm_log_loss": 0.6585274319651653,
+      "market_log_loss": 0.5989764996462134,
+      "market_plus_model_log_loss": 0.597214795450022,
+      "n": 483,
+      "n_events": 42,
+      "year": 2022
+    },
+    {
+      "elo_log_loss": 0.6870436617470174,
+      "lightgbm_log_loss": 0.6862000976042104,
+      "market_log_loss": 0.583110747919408,
+      "market_plus_model_log_loss": 0.5805260821270609,
+      "n": 406,
+      "n_events": 42,
+      "year": 2023
+    },
+    {
+      "elo_log_loss": 0.6831517745465624,
+      "lightgbm_log_loss": 0.6592899684512393,
+      "market_log_loss": 0.591368301850863,
+      "market_plus_model_log_loss": 0.5895570210633283,
+      "n": 373,
+      "n_events": 41,
+      "year": 2024
+    },
+    {
+      "elo_log_loss": 0.6820621337793457,
+      "lightgbm_log_loss": 0.694068043475637,
+      "market_log_loss": 0.5876701718547777,
+      "market_plus_model_log_loss": 0.5873394949670291,
+      "n": 484,
+      "n_events": 42,
+      "year": 2025
+    },
+    {
+      "elo_log_loss": 0.6663676203436816,
+      "lightgbm_log_loss": 0.6166375679573234,
+      "market_log_loss": 0.5196797252297317,
+      "market_plus_model_log_loss": 0.511318643388576,
+      "n": 110,
+      "n_events": 9,
+      "year": 2026
+    }
+  ],
+  "dry_run_dev_only": false,
+  "eval_run_count": 2,
+  "generated_at_utc": "2026-10-12T22:33:27+00:00",
+  "git_commit": "75bab69767f39e6eb1f53dd0667b671262e007b8",
+  "git_sha": "75bab69",
+  "paired_vs_market": {
+    "dev": {
+      "elo": {
+        "beats_market": false,
+        "ci_hi": 0.08874104910679242,
+        "ci_level": 0.95,
+        "ci_lower": 0.05610427927795716,
+        "interpretation": "positive and excluding zero: the market beats the model",
+        "n_events_resampled": 198,
+        "n_fights": 2154,
+        "n_fights_compared": 2154,
+        "n_resamples": 10000,
+        "observed": 0.07284506504843866,
+        "p_value_two_sided": 0.0,
+        "share_favouring_model": 0.0,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      },
+      "lightgbm": {
+        "beats_market": false,
+        "ci_hi": 0.1686095206078604,
+        "ci_level": 0.95,
+        "ci_lower": 0.08997719347883784,
+        "interpretation": "positive and excluding zero: the market beats the model",
+        "n_events_resampled": 198,
+        "n_fights": 2154,
+        "n_fights_compared": 2154,
+        "n_resamples": 10000,
+        "observed": 0.12724016449565906,
+        "p_value_two_sided": 0.0,
+        "share_favouring_model": 0.0,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      },
+      "market_plus_model": {
+        "beats_market": false,
+        "ci_hi": 0.0033701837676097337,
+        "ci_level": 0.95,
+        "ci_lower": -0.0011909500670392581,
+        "interpretation": "the interval contains zero, so no difference from the market is demonstrated",
+        "n_events_resampled": 158,
+        "n_fights": 1726,
+        "n_fights_compared": 1726,
+        "n_resamples": 10000,
+        "observed": 0.0010652259837023324,
+        "p_value_two_sided": 0.3596,
+        "share_favouring_model": 0.1798,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      }
+    },
+    "eval": {
+      "elo": {
+        "beats_market": false,
+        "ci_hi": 0.08790634060962,
+        "ci_level": 0.95,
+        "ci_lower": 0.06940340586786786,
+        "interpretation": "positive and excluding zero: the market beats the model",
+        "n_events_resampled": 421,
+        "n_fights": 4636,
+        "n_fights_compared": 4636,
+        "n_resamples": 10000,
+        "observed": 0.07863953213670817,
+        "p_value_two_sided": 0.0,
+        "share_favouring_model": 0.0,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      },
+      "lightgbm": {
+        "beats_market": false,
+        "ci_hi": 0.10196753236365802,
+        "ci_level": 0.95,
+        "ci_lower": 0.07033486616977322,
+        "interpretation": "positive and excluding zero: the market beats the model",
+        "n_events_resampled": 421,
+        "n_fights": 4636,
+        "n_fights_compared": 4636,
+        "n_resamples": 10000,
+        "observed": 0.08527861268712529,
+        "p_value_two_sided": 0.0,
+        "share_favouring_model": 0.0,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      },
+      "market_plus_model": {
+        "beats_market": true,
+        "ci_hi": -4.498092430611992e-05,
+        "ci_level": 0.95,
+        "ci_lower": -0.0016825081094146023,
+        "interpretation": "negative means the model beats the market; the interval excludes zero",
+        "n_events_resampled": 421,
+        "n_fights": 4636,
+        "n_fights_compared": 4636,
+        "n_resamples": 10000,
+        "observed": -0.0008727174369757793,
+        "p_value_two_sided": 0.038,
+        "share_favouring_model": 0.981,
+        "statistic": "mean(log_loss_model - log_loss_market)"
+      }
+    }
+  },
+  "reconciliation": {
+    "dev": 2154,
+    "eval": 4636,
+    "gap": 0,
+    "in_range_for_this_run": 6790,
+    "note": "A fight before the walk-forward has min_train_fights of prior history cannot be scored; those are counted as warm-up. dev + gap + eval equals scored_total, and scored_total + unscored_warmup equals the fights in range.",
+    "scored_total": 6790,
+    "total_priced_decisive": 6790,
+    "unscored_warmup": 0
+  },
+  "results": {
+    "dev": {
+      "elo": {
+        "accuracy": 0.5566388115134633,
+        "auc": 0.5784458485142502,
+        "base_rate": 0.5232126276694522,
+        "brier": 0.24480868111437548,
+        "covers_all_fights": true,
+        "ece": 0.01658580877792245,
+        "log_loss": 0.6826150146488167,
+        "log_loss_ci": {
+          "ci_hi": 0.6897724061414273,
+          "ci_level": 0.95,
+          "ci_lower": 0.6756807037946443,
+          "point": 0.6826150146488167
+        },
+        "mean_prediction": 0.5190815383023974,
+        "n": 2154
+      },
+      "lightgbm": {
+        "accuracy": 0.5673166202414113,
+        "auc": 0.5852281219841562,
+        "base_rate": 0.5232126276694522,
+        "brier": 0.24772357848244697,
+        "covers_all_fights": true,
+        "ece": 0.03076341286699563,
+        "log_loss": 0.7370101140960372,
+        "log_loss_ci": {
+          "ci_hi": 0.7762161962197534,
+          "ci_level": 0.95,
+          "ci_lower": 0.7027607552878302,
+          "point": 0.7370101140960372
+        },
+        "mean_prediction": 0.5264378390015608,
+        "n": 2154
+      },
+      "market": {
+        "accuracy": 0.6606313834726091,
+        "auc": 0.7263464972797469,
+        "base_rate": 0.5232126276694522,
+        "brier": 0.21114700305924686,
+        "covers_all_fights": true,
+        "ece": 0.02200814501642319,
+        "log_loss": 0.6097699496003781,
+        "log_loss_ci": {
+          "ci_hi": 0.628157006734679,
+          "ci_level": 0.95,
+          "ci_lower": 0.5927810236260216,
+          "point": 0.6097699496003781
+        },
+        "mean_prediction": 0.5123252106638712,
+        "n": 2154
+      },
+      "market_plus_model": {
+        "accuracy": 0.6633835457705678,
+        "auc": 0.7259933507633711,
+        "base_rate": 0.5202780996523755,
+        "brier": 0.21116629501561457,
+        "covers_all_fights": false,
+        "ece": 0.02328899527118028,
+        "log_loss": 0.6095776015744339,
+        "log_loss_ci": {
+          "ci_hi": 0.6317098765797045,
+          "ci_level": 0.95,
+          "ci_lower": 0.5873387973807093,
+          "point": 0.6095776015744339
+        },
+        "market_on_same_subset": {
+          "accuracy": 0.6610660486674391,
+          "auc": 0.7270309490763156,
+          "base_rate": 0.5202780996523755,
+          "brier": 0.2107493210418821,
+          "ece": 0.022143150222094177,
+          "log_loss": 0.6085123755907313,
+          "mean_prediction": 0.5104724647870738,
+          "n": 1726
+        },
+        "mean_prediction": 0.5229799451013537,
+        "n": 1726
+      }
+    },
+    "eval": {
+      "elo": {
+        "accuracy": 0.5534943917169974,
+        "auc": 0.5731906996138335,
+        "base_rate": 0.4928817946505608,
+        "brier": 0.24592999162138168,
+        "covers_all_fights": true,
+        "ece": 0.01643345613454898,
+        "log_loss": 0.6849155117395691,
+        "log_loss_ci": {
+          "ci_hi": 0.6889007614105528,
+          "ci_level": 0.95,
+          "ci_lower": 0.68079359086536,
+          "point": 0.6849155117395691
+        },
+        "mean_prediction": 0.5054506352808692,
+        "n": 4636
+      },
+      "lightgbm": {
+        "accuracy": 0.5759275237273511,
+        "auc": 0.6061005745494956,
+        "base_rate": 0.4928817946505608,
+        "brier": 0.24195853100198222,
+        "covers_all_fights": true,
+        "ece": 0.012934755965404573,
+        "log_loss": 0.6915545922899864,
+        "log_loss_ci": {
+          "ci_hi": 0.7078387338314046,
+          "ci_level": 0.95,
+          "ci_lower": 0.6773225930161524,
+          "point": 0.6915545922899864
+        },
+        "mean_prediction": 0.49568945144795995,
+        "n": 4636
+      },
+      "market": {
+        "accuracy": 0.6669542709232097,
+        "auc": 0.7319084853319087,
+        "base_rate": 0.4928817946505608,
+        "brier": 0.20959335348942706,
+        "covers_all_fights": true,
+        "ece": 0.024003405671240697,
+        "log_loss": 0.6062759796028611,
+        "log_loss_ci": {
+          "ci_hi": 0.6157559228698805,
+          "ci_level": 0.95,
+          "ci_lower": 0.5968316083370274,
+          "point": 0.6062759796028611
+        },
+        "mean_prediction": 0.4999205049164163,
+        "n": 4636
+      },
+      "market_plus_model": {
+        "accuracy": 0.6641501294219154,
+        "auc": 0.731635962907911,
+        "base_rate": 0.4928817946505608,
+        "brier": 0.20936450981018923,
+        "covers_all_fights": true,
+        "ece": 0.020763849412715304,
+        "log_loss": 0.6054032621658852,
+        "log_loss_ci": {
+          "ci_hi": 0.615506672722869,
+          "ci_level": 0.95,
+          "ci_lower": 0.5952823124999742,
+          "point": 0.6054032621658852
+        },
+        "mean_prediction": 0.5019332538713923,
+        "n": 4636
+      }
+    }
+  },
+  "seed": 42,
+  "variant_note": "market_plus_model consumes the closing line as an input and therefore cannot support a 'beats the market' claim. It exists to test whether the model's features add information beyond the market, and it warms up on accumulated out-of-sample predictions, so it covers fewer fights than the other models.",
+  "walk_forward": {
+    "dev_events": 198,
+    "eval_events": 421,
+    "events_scored": 619,
+    "hyperparameters_frozen_from_dev": true,
+    "lightgbm": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 6,
+      "min_child_samples": 80,
+      "n_estimators": 2000,
+      "num_leaves": 31,
+      "reg_alpha": 0.1,
+      "reg_lambda": 1.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    },
+    "lightgbm_fit": {
+      "calibrate": true,
+      "early_stopping_rounds": 50,
+      "min_validation_rows": 200,
+      "validation_fraction": 0.2
+    },
+    "median_trees_after_early_stopping": 47.5,
+    "min_train_fights": 1000,
+    "n_folds": 62,
+    "retrain_every_n_events": 10
+  },
+  "windows": {
+    "dev": [
+      "2010-01-01",
+      "2015-12-31"
+    ],
+    "eval": [
+      "2016-01-01",
+      "2026-10-03"
+    ]
+  }
+}

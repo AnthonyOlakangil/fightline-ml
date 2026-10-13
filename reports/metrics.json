@@ -8,7 +8,7 @@
   "by_year": [
     {
       "elo_log_loss": 0.6700473294495017,
-      "lightgbm_log_loss": 0.8585949939540661,
+      "lightgbm_log_loss": 0.7263936836060826,
       "market_log_loss": 0.6428677745338328,
       "market_plus_model_log_loss": null,
       "n": 209,
@@ -17,99 +17,99 @@
     },
     {
       "elo_log_loss": 0.6944352232514408,
-      "lightgbm_log_loss": 0.7905567493782709,
+      "lightgbm_log_loss": 0.7275330095241511,
       "market_log_loss": 0.5949168054512738,
-      "market_plus_model_log_loss": 0.6151003648390051,
+      "market_plus_model_log_loss": 0.6151095762352633,
       "n": 292,
       "n_events": 27,
       "year": 2011
     },
     {
       "elo_log_loss": 0.6788908196649031,
-      "lightgbm_log_loss": 0.6843059862815025,
+      "lightgbm_log_loss": 0.6843365313752805,
       "market_log_loss": 0.6046083056817744,
-      "market_plus_model_log_loss": 0.6059645735312211,
+      "market_plus_model_log_loss": 0.6058974442129019,
       "n": 329,
       "n_events": 31,
       "year": 2012
     },
     {
       "elo_log_loss": 0.6909937643081234,
-      "lightgbm_log_loss": 0.7641768925149901,
+      "lightgbm_log_loss": 0.7148323993274297,
       "market_log_loss": 0.5899332419429782,
-      "market_plus_model_log_loss": 0.5896124213524521,
+      "market_plus_model_log_loss": 0.5895131783396319,
       "n": 372,
       "n_events": 33,
       "year": 2013
     },
     {
       "elo_log_loss": 0.6752832530519892,
-      "lightgbm_log_loss": 0.6951478406868778,
+      "lightgbm_log_loss": 0.6763612424378891,
       "market_log_loss": 0.6021867637604246,
-      "market_plus_model_log_loss": 0.603798712658192,
+      "market_plus_model_log_loss": 0.6033297234045376,
       "n": 491,
       "n_events": 46,
       "year": 2014
     },
     {
       "elo_log_loss": 0.6845312955928047,
-      "lightgbm_log_loss": 0.7082490193678121,
+      "lightgbm_log_loss": 0.6883135709941242,
       "market_log_loss": 0.6319401296993739,
-      "market_plus_model_log_loss": 0.633547245844185,
+      "market_plus_model_log_loss": 0.6332141096177173,
       "n": 461,
       "n_events": 41,
       "year": 2015
     },
     {
       "elo_log_loss": 0.676192110765328,
-      "lightgbm_log_loss": 0.7121960499022685,
+      "lightgbm_log_loss": 0.6930286682497144,
       "market_log_loss": 0.6233286488098717,
-      "market_plus_model_log_loss": 0.6247263569064135,
+      "market_plus_model_log_loss": 0.624594476228083,
       "n": 479,
       "n_events": 41,
       "year": 2016
     },
     {
       "elo_log_loss": 0.6876727065172112,
-      "lightgbm_log_loss": 0.7005964598484671,
+      "lightgbm_log_loss": 0.7006609667998029,
       "market_log_loss": 0.611384920543198,
-      "market_plus_model_log_loss": 0.6108038654760712,
+      "market_plus_model_log_loss": 0.6113249442722807,
       "n": 438,
       "n_events": 39,
       "year": 2017
     },
     {
       "elo_log_loss": 0.6866412439587182,
-      "lightgbm_log_loss": 0.6786027154729042,
+      "lightgbm_log_loss": 0.6786671342924746,
       "market_log_loss": 0.5997380331652615,
-      "market_plus_model_log_loss": 0.5988373253806403,
+      "market_plus_model_log_loss": 0.5991033457977101,
       "n": 468,
       "n_events": 39,
       "year": 2018
     },
     {
       "elo_log_loss": 0.702594018657596,
-      "lightgbm_log_loss": 0.7036170576835706,
+      "lightgbm_log_loss": 0.6849405953036029,
       "market_log_loss": 0.6343431807768005,
-      "market_plus_model_log_loss": 0.6344814671990663,
+      "market_plus_model_log_loss": 0.6343737399423028,
       "n": 491,
       "n_events": 42,
       "year": 2019
     },
     {
       "elo_log_loss": 0.6814060616913369,
-      "lightgbm_log_loss": 0.7682651632160451,
+      "lightgbm_log_loss": 0.703826305529585,
       "market_log_loss": 0.6170757016931744,
-      "market_plus_model_log_loss": 0.6170923990177518,
+      "market_plus_model_log_loss": 0.6169954215078256,
       "n": 428,
       "n_events": 41,
       "year": 2020
     },
     {
       "elo_log_loss": 0.6824799637525103,
-      "lightgbm_log_loss": 0.6718995451740155,
+      "lightgbm_log_loss": 0.6719788834042804,
       "market_log_loss": 0.6299579817769512,
-      "market_plus_model_log_loss": 0.6289941579254603,
+      "market_plus_model_log_loss": 0.6290195818916923,
       "n": 476,
       "n_events": 43,
       "year": 2021
@@ -118,34 +118,34 @@
       "elo_log_loss": 0.6835895939289858,
       "lightgbm_log_loss": 0.6585274319651653,
       "market_log_loss": 0.5989764996462134,
-      "market_plus_model_log_loss": 0.597214795450022,
+      "market_plus_model_log_loss": 0.5966284715186182,
       "n": 483,
       "n_events": 42,
       "year": 2022
     },
     {
       "elo_log_loss": 0.6870436617470174,
-      "lightgbm_log_loss": 0.6862000976042104,
+      "lightgbm_log_loss": 0.6860832919695485,
       "market_log_loss": 0.583110747919408,
-      "market_plus_model_log_loss": 0.5805260821270609,
+      "market_plus_model_log_loss": 0.581062494747277,
       "n": 406,
       "n_events": 42,
       "year": 2023
     },
     {
       "elo_log_loss": 0.6831517745465624,
-      "lightgbm_log_loss": 0.6592899684512393,
+      "lightgbm_log_loss": 0.6589930254941595,
       "market_log_loss": 0.591368301850863,
-      "market_plus_model_log_loss": 0.5895570210633283,
+      "market_plus_model_log_loss": 0.5895119955693237,
       "n": 373,
       "n_events": 41,
       "year": 2024
     },
     {
       "elo_log_loss": 0.6820621337793457,
-      "lightgbm_log_loss": 0.694068043475637,
+      "lightgbm_log_loss": 0.6750384146079176,
       "market_log_loss": 0.5876701718547777,
-      "market_plus_model_log_loss": 0.5873394949670291,
+      "market_plus_model_log_loss": 0.5871005197168876,
       "n": 484,
       "n_events": 42,
       "year": 2025
@@ -154,17 +154,17 @@
       "elo_log_loss": 0.6663676203436816,
       "lightgbm_log_loss": 0.6166375679573234,
       "market_log_loss": 0.5196797252297317,
-      "market_plus_model_log_loss": 0.511318643388576,
+      "market_plus_model_log_loss": 0.5103688356203442,
       "n": 110,
       "n_events": 9,
       "year": 2026
     }
   ],
   "dry_run_dev_only": false,
-  "eval_run_count": 2,
-  "generated_at_utc": "2026-10-12T22:33:27+00:00",
-  "git_commit": "75bab69767f39e6eb1f53dd0667b671262e007b8",
-  "git_sha": "75bab69",
+  "eval_run_count": 3,
+  "generated_at_utc": "2026-10-13T09:42:29+00:00",
+  "git_commit": "42c7d5e4d811aaae49e0c59cc10680081e886ef0",
+  "git_sha": "42c7d5e",
   "paired_vs_market": {
     "dev": {
       "elo": {
@@ -184,32 +184,32 @@
       },
       "lightgbm": {
         "beats_market": false,
-        "ci_hi": 0.1686095206078604,
+        "ci_hi": 0.11019759325166806,
         "ci_level": 0.95,
-        "ci_lower": 0.08997719347883784,
+        "ci_lower": 0.06750769726234217,
         "interpretation": "positive and excluding zero: the market beats the model",
         "n_events_resampled": 198,
         "n_fights": 2154,
         "n_fights_compared": 2154,
         "n_resamples": 10000,
-        "observed": 0.12724016449565906,
+        "observed": 0.08880303846475156,
         "p_value_two_sided": 0.0,
         "share_favouring_model": 0.0,
         "statistic": "mean(log_loss_model - log_loss_market)"
       },
       "market_plus_model": {
         "beats_market": false,
-        "ci_hi": 0.0033701837676097337,
+        "ci_hi": 0.003145189555490939,
         "ci_level": 0.95,
-        "ci_lower": -0.0011909500670392581,
+        "ci_lower": -0.001513628745996701,
         "interpretation": "the interval contains zero, so no difference from the market is demonstrated",
         "n_events_resampled": 158,
         "n_fights": 1726,
         "n_fights_compared": 1726,
         "n_resamples": 10000,
-        "observed": 0.0010652259837023324,
-        "p_value_two_sided": 0.3596,
-        "share_favouring_model": 0.1798,
+        "observed": 0.0008090376647479816,
+        "p_value_two_sided": 0.4952,
+        "share_favouring_model": 0.2476,
         "statistic": "mean(log_loss_model - log_loss_market)"
       }
     },
@@ -231,32 +231,32 @@
       },
       "lightgbm": {
         "beats_market": false,
-        "ci_hi": 0.10196753236365802,
+        "ci_hi": 0.08280786788012193,
         "ci_level": 0.95,
-        "ci_lower": 0.07033486616977322,
+        "ci_lower": 0.06400255332530454,
         "interpretation": "positive and excluding zero: the market beats the model",
         "n_events_resampled": 421,
         "n_fights": 4636,
         "n_fights_compared": 4636,
         "n_resamples": 10000,
-        "observed": 0.08527861268712529,
+        "observed": 0.07337104019732117,
         "p_value_two_sided": 0.0,
         "share_favouring_model": 0.0,
         "statistic": "mean(log_loss_model - log_loss_market)"
       },
       "market_plus_model": {
         "beats_market": true,
-        "ci_hi": -4.498092430611992e-05,
+        "ci_hi": -4.020656770770767e-06,
         "ci_level": 0.95,
-        "ci_lower": -0.0016825081094146023,
+        "ci_lower": -0.00176855979622477,
         "interpretation": "negative means the model beats the market; the interval excludes zero",
         "n_events_resampled": 421,
         "n_fights": 4636,
         "n_fights_compared": 4636,
         "n_resamples": 10000,
-        "observed": -0.0008727174369757793,
-        "p_value_two_sided": 0.038,
-        "share_favouring_model": 0.981,
+        "observed": -0.0008932281674078105,
+        "p_value_two_sided": 0.0484,
+        "share_favouring_model": 0.9758,
         "statistic": "mean(log_loss_model - log_loss_market)"
       }
     }
@@ -292,19 +292,19 @@
       },
       "lightgbm": {
         "accuracy": 0.5673166202414113,
-        "auc": 0.5852281219841562,
+        "auc": 0.5852307139358008,
         "base_rate": 0.5232126276694522,
-        "brier": 0.24772357848244697,
+        "brier": 0.24763475826359427,
         "covers_all_fights": true,
-        "ece": 0.03076341286699563,
-        "log_loss": 0.7370101140960372,
+        "ece": 0.030631283296595983,
+        "log_loss": 0.6985729880651297,
         "log_loss_ci": {
-          "ci_hi": 0.7762161962197534,
+          "ci_hi": 0.7139045358971124,
           "ci_level": 0.95,
-          "ci_lower": 0.7027607552878302,
-          "point": 0.7370101140960372
+          "ci_lower": 0.6839283381413154,
+          "point": 0.6985729880651297
         },
-        "mean_prediction": 0.5264378390015608,
+        "mean_prediction": 0.5264619232464604,
         "n": 2154
       },
       "market": {
@@ -325,18 +325,18 @@
         "n": 2154
       },
       "market_plus_model": {
-        "accuracy": 0.6633835457705678,
-        "auc": 0.7259933507633711,
+        "accuracy": 0.6616454229432214,
+        "auc": 0.7261816382083642,
         "base_rate": 0.5202780996523755,
-        "brier": 0.21116629501561457,
+        "brier": 0.21106319955924374,
         "covers_all_fights": false,
-        "ece": 0.02328899527118028,
-        "log_loss": 0.6095776015744339,
+        "ece": 0.02356103421006,
+        "log_loss": 0.6093214132554795,
         "log_loss_ci": {
-          "ci_hi": 0.6317098765797045,
+          "ci_hi": 0.6315290993336617,
           "ci_level": 0.95,
-          "ci_lower": 0.5873387973807093,
-          "point": 0.6095776015744339
+          "ci_lower": 0.5870535440388498,
+          "point": 0.6093214132554795
         },
         "market_on_same_subset": {
           "accuracy": 0.6610660486674391,
@@ -348,7 +348,7 @@
           "mean_prediction": 0.5104724647870738,
           "n": 1726
         },
-        "mean_prediction": 0.5229799451013537,
+        "mean_prediction": 0.5229075267491509,
         "n": 1726
       }
     },
@@ -374,17 +374,17 @@
         "accuracy": 0.5759275237273511,
         "auc": 0.6061005745494956,
         "base_rate": 0.4928817946505608,
-        "brier": 0.24195853100198222,
+        "brier": 0.24192899466559797,
         "covers_all_fights": true,
-        "ece": 0.012934755965404573,
-        "log_loss": 0.6915545922899864,
+        "ece": 0.01286655320655906,
+        "log_loss": 0.6796470198001822,
         "log_loss_ci": {
-          "ci_hi": 0.7078387338314046,
+          "ci_hi": 0.687720873428843,
           "ci_level": 0.95,
-          "ci_lower": 0.6773225930161524,
-          "point": 0.6915545922899864
+          "ci_lower": 0.6720671779576006,
+          "point": 0.6796470198001822
         },
-        "mean_prediction": 0.49568945144795995,
+        "mean_prediction": 0.49567233342307965,
         "n": 4636
       },
       "market": {
@@ -405,20 +405,20 @@
         "n": 4636
       },
       "market_plus_model": {
-        "accuracy": 0.6641501294219154,
-        "auc": 0.731635962907911,
+        "accuracy": 0.6650129421915444,
+        "auc": 0.7315399099224037,
         "base_rate": 0.4928817946505608,
-        "brier": 0.20936450981018923,
+        "brier": 0.20937031493391034,
         "covers_all_fights": true,
-        "ece": 0.020763849412715304,
-        "log_loss": 0.6054032621658852,
+        "ece": 0.02062504942840565,
+        "log_loss": 0.6053827514354532,
         "log_loss_ci": {
-          "ci_hi": 0.615506672722869,
+          "ci_hi": 0.6155143968065799,
           "ci_level": 0.95,
-          "ci_lower": 0.5952823124999742,
-          "point": 0.6054032621658852
+          "ci_lower": 0.595272878656373,
+          "point": 0.6053827514354532
         },
-        "mean_prediction": 0.5019332538713923,
+        "mean_prediction": 0.501311372930616,
         "n": 4636
       }
     }
@@ -445,6 +445,10 @@
     },
     "lightgbm_fit": {
       "calibrate": true,
+      "calibration_bounds": [
+        0.01,
+        0.99
+      ],
       "early_stopping_rounds": 50,
       "min_validation_rows": 200,
       "validation_fraction": 0.2

@@ -418,15 +418,26 @@ def page_backtest(summary: dict) -> None:
             "ECE": st.column_config.NumberColumn(format="%.4f"),
         },
     )
-    cert = summary["post_hoc"]["lightgbm_certainties"]["eval"]
+    audit = summary["post_hoc"]["lightgbm_certainties"]
+    cert = audit["eval"]
+    if cert["certain"] == 0 and "bounds" in audit:
+        lo, hi = audit["bounds"]
+        lgbm_note = (
+            f"LightGBM's calibrator is bounded to [{lo:g}, {hi:g}] since evaluation run 3, so "
+            f"no prediction claims certainty; {cert['at_bound']} eval predictions sit at the "
+            f"bound and {cert['at_bound_and_wrong']} of them missed."
+        )
+    else:
+        lgbm_note = (
+            f"LightGBM's calibrator emits literal certainties — {cert['certain']} predictions "
+            f"of exactly 0 or 1 on the evaluation window, {cert['certain_and_wrong']} of them "
+            f"wrong — and without them its log loss would be "
+            f"{cert['log_loss_without_certainties']:.4f}, still far behind the market."
+        )
     st.caption(
         "Lower is better for log loss, Brier and ECE; higher is better for AUC and "
         "accuracy. ECE averages miscalibration over probability bins, so it can look good "
-        "while a few extreme predictions are badly wrong. LightGBM's calibrator emits "
-        f"literal certainties — {cert['certain']} predictions of exactly 0 or 1 on the "
-        f"evaluation window, {cert['certain_and_wrong']} of them wrong — and without "
-        f"them its log loss would be {cert['log_loss_without_certainties']:.4f}, still "
-        "far behind the market."
+        "while a few extreme predictions are badly wrong. " + lgbm_note
     )
 
     st.subheader("Difference from the market")

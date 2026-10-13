@@ -25,6 +25,8 @@ from ufc_predictor.config import Config, get_config
 LN2 = math.log(2)
 EN_DASH = "\u2013"  # escaped so the linter does not mistake it for a hyphen
 RUN_1_ARCHIVE = Path("archive") / "eval_run_1"
+#: Earlier evaluation runs, archived from git so the README can show every run.
+RUN_ARCHIVES = (RUN_1_ARCHIVE, Path("archive") / "eval_run_2")
 
 
 def _markers(name: str) -> tuple[str, str]:
@@ -165,9 +167,8 @@ def render_dev_cards(c: dict) -> str:
     return _wrap("DEVCARDS", lines)
 
 
-def render_leak(run1: dict, run2: dict, parlay1: dict, parlay2: dict, diagnostics: dict) -> str:
+def render_leak(diagnostics: dict) -> str:
     ev = diagnostics["attribute_leak"]
-    a, b = run1["eval_run_count"], run2["eval_run_count"]
     lines = [
         f"**Evidence, dev window {ev['window'][0]} → {ev['window'][1]}** "
         f"({ev['decisive_bouts']:,} decisive bouts):",
@@ -190,64 +191,114 @@ def render_leak(run1: dict, run2: dict, parlay1: dict, parlay2: dict, diagnostic
         f"**{full['less_experienced_win_rate']:.1%}** of {full['bouts']:,} complete pairs, "
         'so "this pair has a blank" plus prior experience still points at the fighter who '
         "was later cut.",
-        "",
-        f"**How much each number changed** (run {a} → run {b}; both on the same "
-        f"{run2['results']['eval']['market']['n']:,} eval fights):",
-        "",
-        f"| Figure | Run {a} (leaky) | Run {b} (leak-free) | Change |",
-        "|---|---:|---:|---:|",
     ]
-
-    def ll_row(window: str, name: str) -> str:
-        x = run1["results"][window][name]["log_loss"]
-        y = run2["results"][window][name]["log_loss"]
-        return (
-            f"| {window.capitalize()} log loss — {LABELS[name]} | {x:.4f} | {y:.4f} | "
-            f"{y - x:+.4f} |"
-        )
-
-    def paired_row(window: str, name: str) -> str:
-        x = run1["paired_vs_market"][window][name]
-        y = run2["paired_vs_market"][window][name]
-        return (
-            f"| {window.capitalize()} Δ vs market — {LABELS[name]} | {_ci(x)} | {_ci(y)} | "
-            f"{y['observed'] - x['observed']:+.4f} |"
-        )
-
-    for name in ("market", "lightgbm", "elo", VARIANT_NAME):
-        lines.append(ll_row("eval", name))
-    for name in ("lightgbm", "elo", VARIANT_NAME):
-        lines.append(paired_row("eval", name))
-    lines.append(ll_row("dev", "lightgbm"))
-    lines.append(paired_row("dev", VARIANT_NAME))
-
-    for source, label in (("lightgbm", "LightGBM"), ("market_plus_model", "market + model")):
-        x, y = parlay1["by_source"][source], parlay2["by_source"][source]
-        px = x["predicted_vs_realized"]["all_top_ranked"]
-        py = y["predicted_vs_realized"]["all_top_ranked"]
-        lines += [
-            f"| Parlays ranked by {label} — top-ranked | {x['n_top_ranked']:,} | "
-            f"{y['n_top_ranked']:,} | {y['n_top_ranked'] - x['n_top_ranked']:+,} |",
-            f"| Parlays ranked by {label} — placed in bankroll replay | "
-            f"{x['bankroll']['n_bets']:,} | {y['bankroll']['n_bets']:,} | "
-            f"{y['bankroll']['n_bets'] - x['bankroll']['n_bets']:+,} |",
-            f"| Parlays ranked by {label} — predicted EV, flat stakes | "
-            f"{px['mean_predicted_ev']:+.1%} | "
-            f"{py['mean_predicted_ev']:+.1%} | "
-            f"{(py['mean_predicted_ev'] - px['mean_predicted_ev']) * 100:+.1f} pp |",
-            f"| Parlays ranked by {label} — realised ROI, flat stakes | "
-            f"{px['realized_roi']:+.1%} | "
-            f"{py['realized_roi']:+.1%} | "
-            f"{(py['realized_roi'] - px['realized_roi']) * 100:+.1f} pp |",
-            f"| Parlays ranked by {label} — ending bankroll (from "
-            f"£{x['bankroll']['starting_bankroll']:,.0f}) | "
-            f"£{x['bankroll']['ending_bankroll']:,.2f} | £{y['bankroll']['ending_bankroll']:,.2f} "
-            f"| {y['bankroll']['ending_bankroll'] - x['bankroll']['ending_bankroll']:+,.2f} |",
-        ]
     return _wrap("LEAK", lines)
 
 
-def render_post_hoc(ph: dict, metrics: dict) -> str:
+def render_calibration_bound(diagnostics: dict) -> str:
+    c = diagnostics["calibration_bound"]
+    lo, hi = c["bounds"]
+    heavy, top = c["favourites_at_or_above_0_85"], c["top_1pct_favourites"]
+    return _wrap(
+        "CALBOUND",
+        [
+            f"**Evidence for [{lo:g}, {hi:g}], dev window {c['window'][0]} → {c['window'][1]}** "
+            f"({c['n']:,} priced fights; the bound was fixed before this was computed, and "
+            "was not searched):",
+            "",
+            "| Dev-window fact | Value |",
+            "|---|---:|",
+            f"| Most extreme vig-free closing probabilities | {c['market_min']:.3f} and "
+            f"{c['market_max']:.3f} |",
+            f"| Fights where the closing line itself fell outside the bound | "
+            f"{c['market_outside_bounds']:,} |",
+            f"| Favourites priced at 0.85 or more: bouts, share they lost | "
+            f"{heavy['n']:,}, {heavy['lost']:.1%} |",
+            f"| The top 1% of favourites (priced {top['min_probability']:.3f}+): bouts, share "
+            f"they lost | {top['n']:,}, {top['lost']:.1%} |",
+            f"| Cost of one miss, unbounded → at the bound | "
+            f"{c['cost_of_a_miss_unbounded_nats']:.1f} → "
+            f"{c['cost_of_a_miss_at_the_bound_nats']:.1f} nats |",
+            "",
+            "The bound sits outside anything the closing line or the outcomes support, so it "
+            "removes only literal certainty; it never constrains a prediction the market "
+            "would consider plausible.",
+        ],
+    )
+
+
+#: How each ledgered run is described in the side-by-side table.
+RUN_LABELS = {1: "leaky features", 2: "leak fixed", 3: "calibrator bounded"}
+
+
+def render_runs(runs: list[tuple[dict, dict]]) -> str:
+    """Every headline figure, one column per evaluation run.
+
+    ``runs`` is ``[(metrics, parlay_metrics), ...]`` in run order.
+    """
+    ms = [m for m, _ in runs]
+    n_fights = {m["results"]["eval"]["market"]["n"] for m in ms}
+    head = " | ".join(
+        f"Run {m['eval_run_count']} ({RUN_LABELS.get(m['eval_run_count'], 'current')})" for m in ms
+    )
+    lines = [
+        f"All on the same {min(n_fights):,} evaluation fights"
+        + ("" if len(n_fights) == 1 else " (fight counts differ between runs)")
+        + ". Each column is generated from that run's own `metrics.json`; earlier runs are "
+        "archived under `reports/archive/`.",
+        "",
+        f"| Figure | {head} |",
+        "|---|" + "---:|" * len(ms),
+    ]
+
+    def row(label: str, cells: list[str]) -> None:
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+
+    for name in ("market", "lightgbm", "elo", VARIANT_NAME):
+        row(
+            f"Eval log loss — {LABELS[name]}",
+            [f"{m['results']['eval'][name]['log_loss']:.4f}" for m in ms],
+        )
+    for name in ("lightgbm", "elo", VARIANT_NAME):
+        row(
+            f"Eval Δ vs market — {LABELS[name]}",
+            [_ci(m["paired_vs_market"]["eval"][name]) for m in ms],
+        )
+    row(
+        "Dev log loss — LightGBM",
+        [f"{m['results']['dev']['lightgbm']['log_loss']:.4f}" for m in ms],
+    )
+    row(
+        f"Dev Δ vs market — {LABELS[VARIANT_NAME]}",
+        [_ci(m["paired_vs_market"]["dev"][VARIANT_NAME]) for m in ms],
+    )
+
+    for source, label in (("lightgbm", "LightGBM"), ("market_plus_model", "market + model")):
+        res = [p["by_source"][source] for _, p in runs]
+        pv = [r["predicted_vs_realized"]["all_top_ranked"] for r in res]
+        row(f"Parlays ranked by {label} — top-ranked", [f"{r['n_top_ranked']:,}" for r in res])
+        row(
+            f"Parlays ranked by {label} — placed in bankroll replay",
+            [f"{r['bankroll']['n_bets']:,}" for r in res],
+        )
+        row(
+            f"Parlays ranked by {label} — predicted EV, flat stakes",
+            [f"{x['mean_predicted_ev']:+.1%}" for x in pv],
+        )
+        row(
+            f"Parlays ranked by {label} — realised ROI, flat stakes",
+            [f"{x['realized_roi']:+.1%}" for x in pv],
+        )
+        row(
+            f"Parlays ranked by {label} — ending bankroll (from "
+            f"£{res[0]['bankroll']['starting_bankroll']:,.0f})",
+            [f"£{r['bankroll']['ending_bankroll']:,.2f}" for r in res],
+        )
+    return _wrap("RUNS", lines)
+
+
+def render_post_hoc(ph: dict, metrics: dict, history: list[tuple[int, dict]] = ()) -> str:
+    """``history`` holds ``(run, post_hoc)`` for archived earlier runs that have one."""
     vd, cert = ph["variant_decomposition"], ph["lightgbm_certainties"]
     rec, add, tot = (
         vd["recalibrated_minus_market"],
@@ -305,42 +356,57 @@ def render_post_hoc(ph: dict, metrics: dict) -> str:
         )
     lines.append(text)
 
-    cost = cert["cost_of_a_miss_nats"]
+    lines += ["", "### Where LightGBM's excess log loss comes from", ""]
+    audits = [(earlier_run, earlier["lightgbm_certainties"]) for earlier_run, earlier in history]
+    audits.append((metrics["eval_run_count"], cert))
     lines += [
-        "",
-        "### Where LightGBM's excess log loss comes from",
-        "",
-        "| Window | Fights | LightGBM predictions within "
-        f"{cert['tolerance']:g} of 0 or 1 | Of those, wrong | Log loss | Log loss without them "
-        "| Share of all log loss from the wrong ones |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Run | Window | Fights | Exactly 0 or 1 (within "
+        f"{cert['tolerance']:g}) | Of those, wrong | At the calibration bound | Of those, wrong "
+        "| LightGBM log loss |",
+        "|---:|---|---:|---:|---:|---:|---:|---:|",
     ]
-    for w in ("dev", "eval"):
-        c = cert[w]
-        lines.append(
-            f"| {w.capitalize()} | {c['n']:,} | {c['certain']} | {c['certain_and_wrong']} | "
-            f"{c['log_loss']:.4f} | {c['log_loss_without_certainties']:.4f} | "
-            f"{c['share_of_total_loss_from_wrong_certainties']:.1%} |"
-        )
-    dev, ev = cert["dev"], cert["eval"]
+    for run_no, audit in audits:
+        for w in ("dev", "eval"):
+            c = audit[w]
+            at, at_wrong = (
+                (str(c["at_bound"]), str(c["at_bound_and_wrong"]))
+                if "at_bound" in c
+                else ("— (no bound)", "—")
+            )
+            lines.append(
+                f"| {run_no} | {w.capitalize()} | {c['n']:,} | {c['certain']} | "
+                f"{c['certain_and_wrong']} | {at} | {at_wrong} | {c['log_loss']:.4f} |"
+            )
+    cost = cert["cost_of_a_miss_nats"]
     market_ev = metrics["results"]["eval"]["market"]["log_loss"]
-    dev_clause = (
-        "still worse than a coin flip"
-        if dev["log_loss_without_certainties"] >= LN2
-        else "better than a coin flip"
-    )
-    lines += [
-        "",
+    dev, ev = cert["dev"], cert["eval"]
+    text = (
         "Each walk-forward fold calibrates LightGBM with isotonic regression, a step "
         "function. When its most extreme step holds only wins or only losses it outputs "
         f"exactly 1 or 0, which scoring clips to {math.exp(-cost):g}; a miss then costs "
-        f"{cost:.1f} nats, {cost / LN2:.0f} times what a coin flip pays. Without those "
-        f"predictions LightGBM scores {dev['log_loss_without_certainties']:.4f} in the dev "
-        f"window, {dev_clause}, and {ev['log_loss_without_certainties']:.4f} on eval, still "
-        f"far behind the market's {market_ev:.4f}. This is a defect in the fitting regime, "
-        "not leakage, and it does not change the headline. Fixing it changes the model, so "
-        "it would need a third scored run; that has not been done.",
-    ]
+        f"{cost:.1f} nats, {cost / LN2:.0f} times what a coin flip pays."
+    )
+    if ev["certain"] == 0 and dev["certain"] == 0 and "bounds" in cert:
+        lo, hi = cert["bounds"]
+        text += (
+            f" Run {metrics['eval_run_count']} bounds the calibrator to [{lo:g}, {hi:g}], so no "
+            f"prediction claims certainty; the same extremes now sit at the bound, where a miss "
+            f"costs {cert['cost_of_a_miss_at_the_bound_nats']:.1f} nats. LightGBM scores "
+            f"{dev['log_loss']:.4f} in the dev window, "
+            + (
+                "still slightly worse than a coin flip"
+                if dev["log_loss"] >= LN2
+                else "better than a coin flip"
+            )
+            + f", and {ev['log_loss']:.4f} on eval, still far behind the market's {market_ev:.4f}."
+        )
+    else:
+        text += (
+            f" Without those predictions LightGBM scores {dev['log_loss_without_certainties']:.4f}"
+            f" in the dev window and {ev['log_loss_without_certainties']:.4f} on eval, still far "
+            f"behind the market's {market_ev:.4f}."
+        )
+    lines += ["", text]
     return _wrap("POSTHOC", lines)
 
 
@@ -366,13 +432,23 @@ def render_all(cfg: Config | None = None) -> dict[str, str]:
         "DIAGNOSTICS": render_diagnostics(diagnostics),
         "TUNING": render_tuning(_load(r / "tuning.json")),
         "DEVCARDS": render_dev_cards(_load(r / "model_cards.json")),
-        "POSTHOC": render_post_hoc(_load(r / "post_hoc.json"), metrics),
-        "LEAK": render_leak(
-            _load(r / RUN_1_ARCHIVE / "metrics.json"),
+        "POSTHOC": render_post_hoc(
+            _load(r / "post_hoc.json"),
             metrics,
-            _load(r / RUN_1_ARCHIVE / "parlay_metrics.json"),
-            _load(r / "parlay_metrics.json"),
-            diagnostics,
+            [
+                (_load(r / a / "metrics.json")["eval_run_count"], _load(r / a / "post_hoc.json"))
+                for a in RUN_ARCHIVES
+                if (r / a / "post_hoc.json").is_file()
+            ],
+        ),
+        "LEAK": render_leak(diagnostics),
+        "CALBOUND": render_calibration_bound(diagnostics),
+        "RUNS": render_runs(
+            [
+                (_load(r / a / "metrics.json"), _load(r / a / "parlay_metrics.json"))
+                for a in RUN_ARCHIVES
+            ]
+            + [(metrics, _load(r / "parlay_metrics.json"))]
         ),
     }
 

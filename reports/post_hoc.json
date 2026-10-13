@@ -1,21 +1,30 @@
 {
   "lightgbm_certainties": {
+    "bounds": [
+      0.01,
+      0.99
+    ],
+    "cost_of_a_miss_at_the_bound_nats": 4.605170185988091,
     "cost_of_a_miss_nats": 13.815510557964274,
     "dev": {
-      "certain": 25,
-      "certain_and_wrong": 9,
-      "log_loss": 0.7370101140960372,
-      "log_loss_without_certainties": 0.6872617072528381,
+      "at_bound": 25,
+      "at_bound_and_wrong": 9,
+      "certain": 0,
+      "certain_and_wrong": 0,
+      "log_loss": 0.6985729880651297,
+      "log_loss_without_certainties": 0.6985729880651297,
       "n": 2154,
-      "share_of_total_loss_from_wrong_certainties": 0.07832317816550141
+      "share_of_total_loss_from_wrong_certainties": 0.0
     },
     "eval": {
-      "certain": 26,
-      "certain_and_wrong": 6,
-      "log_loss": 0.6915545922899864,
-      "log_loss_without_certainties": 0.6774737541233551,
+      "at_bound": 26,
+      "at_bound_and_wrong": 6,
+      "certain": 0,
+      "certain_and_wrong": 0,
+      "log_loss": 0.6796470198001822,
+      "log_loss_without_certainties": 0.6796470198001822,
       "n": 4636,
-      "share_of_total_loss_from_wrong_certainties": 0.025855223277900387
+      "share_of_total_loss_from_wrong_certainties": 0.0
     },
     "tolerance": 1e-05
   },
@@ -28,12 +37,12 @@
         1.113437941508785
       ],
       "variant_weight_on_logit_lightgbm": [
-        0.005883249191101406,
-        0.034560787421661736
+        0.0420819438283022,
+        0.08233722612764935
       ],
       "variant_weight_on_logit_market": [
-        1.012156339534104,
-        1.105015245405133
+        1.0037482282435883,
+        1.09812449027528
       ]
     },
     "n_fights": 4636,
@@ -54,30 +63,30 @@
     "replay_matches_stored_variant": true,
     "variant_minus_market": {
       "beats_market": true,
-      "ci_hi": -4.498092430612205e-05,
+      "ci_hi": -4.02065677077289e-06,
       "ci_level": 0.95,
-      "ci_lower": -0.0016825081094146005,
+      "ci_lower": -0.001768559796224772,
       "interpretation": "negative means the model beats the market; the interval excludes zero",
       "n_events_resampled": 421,
       "n_fights": 4636,
       "n_resamples": 10000,
-      "observed": -0.0008727174369757801,
-      "p_value_two_sided": 0.038,
-      "share_favouring_model": 0.981,
+      "observed": -0.0008932281674078118,
+      "p_value_two_sided": 0.0484,
+      "share_favouring_model": 0.9758,
       "statistic": "mean(log_loss_model - log_loss_market)"
     },
     "variant_minus_recalibrated": {
       "beats_market": false,
-      "ci_hi": 0.00036903928160360734,
+      "ci_hi": 0.0004458068606905473,
       "ci_level": 0.95,
-      "ci_lower": -0.00036646764646074603,
+      "ci_lower": -0.0004961210192188723,
       "interpretation": "the interval contains zero, so no difference from the market is demonstrated",
       "n_events_resampled": 421,
       "n_fights": 4636,
       "n_resamples": 10000,
-      "observed": -1.3335397857038744e-05,
-      "p_value_two_sided": 0.925,
-      "share_favouring_model": 0.5375,
+      "observed": -3.3846128289070476e-05,
+      "p_value_two_sided": 0.8892,
+      "share_favouring_model": 0.5554,
       "statistic": "mean(log_loss_model - log_loss_market)"
     }
   }

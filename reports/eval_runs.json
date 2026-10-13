@@ -26,6 +26,26 @@
       "seed": 42,
       "timestamp_utc": "2026-10-12T22:33:27+00:00",
       "worktree_clean": true
+    },
+    {
+      "git_commit": "42c7d5e4d811aaae49e0c59cc10680081e886ef0",
+      "git_sha": "42c7d5e",
+      "headline": {
+        "elo": 0.6849,
+        "lightgbm": 0.6796,
+        "market": 0.6063,
+        "market_plus_model": 0.6054
+      },
+      "input_digests": {
+        "features": "06e0645fed3b9f4899667b51726f04d811f47b678f7bc422f04d2b2e13e5d41f",
+        "fights": "13b3a9ef50be8e33da094be823ff521d56f4c29e589db7092dfc34cf7c5ac030",
+        "odds": "2af73fd0dfd9fabea0ce55667d25434ca375d0c110191d7959f747258f07ccbe"
+      },
+      "reason": "Run 3: re-score after bounding LightGBM's isotonic calibrator to [0.01, 0.99] (reports/review_run2.md finding 2; bound fixed a priori, justified on dev data only). Nothing else changed; committed and pushed in 42c7d5e before this run.",
+      "run": 3,
+      "seed": 42,
+      "timestamp_utc": "2026-10-13T09:42:29+00:00",
+      "worktree_clean": true
     }
   ]
 }

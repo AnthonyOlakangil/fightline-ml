@@ -15,7 +15,7 @@ from ufc_predictor.backtest import readme_sections
 from ufc_predictor.config import get_config
 
 REPO_ROOT = get_config().paths.raw_dir.parent.parent
-SECTIONS = ("HEADLINE", "DIAGNOSTICS", "TUNING", "DEVCARDS", "LEAK", "POSTHOC")
+SECTIONS = ("HEADLINE", "DIAGNOSTICS", "TUNING", "DEVCARDS", "LEAK", "POSTHOC", "RUNS", "CALBOUND")
 
 
 @pytest.fixture(scope="module")
@@ -121,3 +121,25 @@ def test_calibration_bound_evidence_is_dev_only_and_reproduces(cfg):
     assert committed["window"][1] <= str(cfg.windows.dev_end)
     assert committed["bounds"] == list(cfg.lightgbm_fit["calibration_bounds"])
     _assert_close(diagnostics.calibration_bound_evidence(cfg), committed, "calibration_bound")
+
+
+@pytest.mark.parametrize("index", [0, 1])
+def test_every_archived_run_is_the_run_the_ledger_recorded(cfg, index):
+    """Each earlier column of the side-by-side table must be that run, not a rerun."""
+    archive = readme_sections.RUN_ARCHIVES[index]
+    archived = _load(cfg, archive, "metrics.json")
+    entry = _load(cfg, "eval_runs.json")["runs"][index]
+    assert archived["eval_run_count"] == entry["run"] == index + 1
+    assert archived["git_sha"] == entry["git_sha"]
+    headline = {k: round(v["log_loss"], 4) for k, v in archived["results"]["eval"].items()}
+    assert headline == entry["headline"]
+    assert archived["reconciliation"] == _load(cfg, "metrics.json")["reconciliation"]
+
+
+def test_stored_lightgbm_predictions_respect_the_calibration_bound(cfg):
+    """The committed run's predictions, not just a fixture, must stay inside the bound."""
+    import pandas as pd
+
+    preds = pd.read_csv(cfg.paths.reports_dir / "walkforward_predictions.csv")
+    lo, hi = cfg.lightgbm_fit["calibration_bounds"]
+    assert preds["p_lightgbm"].between(lo, hi).all()

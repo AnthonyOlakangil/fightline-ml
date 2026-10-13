@@ -34,13 +34,17 @@
       "dev_holdout": {
         "accuracy": 0.537864077669903,
         "auc": 0.5671456859971712,
-        "brier": 0.25301198986453155,
-        "log_loss": 0.7145396792695455,
-        "mean_prediction": 0.5361973231269827,
+        "brier": 0.2529864956484736,
+        "log_loss": 0.7055921309982973,
+        "mean_prediction": 0.5362267049056165,
         "n": 1030
       },
       "fit_regime": {
         "calibrate": true,
+        "calibration_bounds": [
+          0.01,
+          0.99
+        ],
         "early_stopping_rounds": 50,
         "min_validation_rows": 200,
         "validation_fraction": 0.2
