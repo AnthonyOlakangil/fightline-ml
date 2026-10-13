@@ -79,6 +79,7 @@ ingest:
 features:
   rolling_windows: [3, 5]      # last-N-fight windows, plus career-to-date
   min_prior_fights: 1          # below this, rolling features stay NaN (never backfilled)
+  recency_half_life_fights: 3  # "recency" family EWM half-life, in bouts; a priori, not searched
 
 elo:
   initial_rating: 1500.0

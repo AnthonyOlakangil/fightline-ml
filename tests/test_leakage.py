@@ -9,6 +9,9 @@ The central test is `test_mutating_a_later_fight_leaves_earlier_features_byte_id
 It does not inspect columns or reason about the code; it changes the future and checks
 that the past did not move. A feature builder that passes it cannot be reading forward,
 whatever its implementation does.
+
+Every test builds every registered feature family and checks ``ALL_FEATURE_COLS``, so a
+family added to ``pit.FEATURE_FAMILIES`` is covered here without a new test.
 """
 
 from __future__ import annotations
@@ -22,7 +25,9 @@ import pytest
 from ufc_predictor.config import get_config
 from ufc_predictor.features import diagnostics
 from ufc_predictor.features.pit import (
+    ALL_FEATURE_COLS,
     FEATURE_COLS,
+    FEATURE_FAMILIES,
     build_features,
     fighter_fight_history,
 )
@@ -49,14 +54,20 @@ def tables(cfg):
         pytest.skip("processed tables absent; run `make data`")
 
 
+def build_kwargs(cfg) -> dict:
+    """Every registered family, so each test covers every feature column."""
+    return {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+        "families": tuple(FEATURE_FAMILIES),
+        "recency_half_life_fights": float(cfg.features["recency_half_life_fights"]),
+    }
+
+
 @pytest.fixture(scope="module")
 def features(tables, cfg):
     return build_features(
-        tables["fights"],
-        tables["fight_stats"],
-        tables["fighters"],
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
+        tables["fights"], tables["fight_stats"], tables["fighters"], **build_kwargs(cfg)
     )
 
 
@@ -85,10 +96,7 @@ def test_mutating_a_later_fight_leaves_earlier_features_byte_identical(tables, c
     strictly before M, so mutating a fight *at* M must leave date-M rows untouched too.
     """
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    kwargs = {
-        "rolling_windows": tuple(cfg.features["rolling_windows"]),
-        "elo_params": cfg.elo,
-    }
+    kwargs = build_kwargs(cfg)
 
     base = build_features(fights, stats, fighters, **kwargs)
 
@@ -125,7 +133,7 @@ def test_mutating_a_later_fight_leaves_earlier_features_byte_identical(tables, c
 
     # Compare FEATURES only. The mutated fight's own `label` legitimately flips -- that
     # is the mutation -- but a label is not a feature, and no feature may move.
-    cols = ["fight_id", *FEATURE_COLS]
+    cols = ["fight_id", *ALL_FEATURE_COLS]
     before_base = base.loc[base["date"] <= cutoff, cols]
     before_mut = mutated.loc[mutated["date"] <= cutoff, cols]
 
@@ -162,10 +170,7 @@ def test_mutating_the_very_last_event_changes_no_feature_row(tables, cfg):
     """A complementary end-case: nothing follows the final event, so mutating it must
     leave the entire feature table unchanged."""
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    kwargs = {
-        "rolling_windows": tuple(cfg.features["rolling_windows"]),
-        "elo_params": cfg.elo,
-    }
+    kwargs = build_kwargs(cfg)
     base = build_features(fights, stats, fighters, **kwargs)
 
     last_date = fights["date"].max()
@@ -175,8 +180,8 @@ def test_mutating_the_very_last_event_changes_no_feature_row(tables, cfg):
 
     mutated = build_features(mutated_fights, stats, fighters, **kwargs)
     # Labels legitimately change for the mutated fights; features must not.
-    assert frame_digest(base[["fight_id", *FEATURE_COLS]]) == frame_digest(
-        mutated[["fight_id", *FEATURE_COLS]]
+    assert frame_digest(base[["fight_id", *ALL_FEATURE_COLS]]) == frame_digest(
+        mutated[["fight_id", *ALL_FEATURE_COLS]]
     )
 
 
@@ -192,10 +197,7 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
     flipping the result of one bout must not alter any other bout on that same date.
     """
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    kwargs = {
-        "rolling_windows": tuple(cfg.features["rolling_windows"]),
-        "elo_params": cfg.elo,
-    }
+    kwargs = build_kwargs(cfg)
     base = build_features(fights, stats, fighters, **kwargs)
 
     # A busy, recent card.
@@ -215,12 +217,20 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
 
     others = [f for f in same_day["fight_id"] if f != victim["fight_id"]]
     assert len(others) >= 9
-    a = base.loc[base["fight_id"].isin(others), ["fight_id", *FEATURE_COLS]]
-    b = mutated.loc[mutated["fight_id"].isin(others), ["fight_id", *FEATURE_COLS]]
+    a = base.loc[base["fight_id"].isin(others), ["fight_id", *ALL_FEATURE_COLS]]
+    b = mutated.loc[mutated["fight_id"].isin(others), ["fight_id", *ALL_FEATURE_COLS]]
     assert frame_digest(a) == frame_digest(b), (
         "a fight's result altered its own card-mates' features: state is advancing "
         "mid-event instead of after the event"
     )
+
+
+# Families whose paired columns describe one fighter's own state, not the matchup.
+PER_FIGHTER_FAMILIES = ("base", "adjusted", "recency")
+
+
+def _same(a, b) -> bool:
+    return bool((pd.isna(a) and pd.isna(b)) or a == b)
 
 
 def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg):
@@ -229,12 +239,13 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
     results -- a plain `shift(1)` over the fight sequence would leak here.
     """
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    feats = build_features(
-        fights,
-        stats,
-        fighters,
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
+    feats = build_features(fights, stats, fighters, **build_kwargs(cfg))
+    # Every column describing the fighter's own pre-night state, read from their slot.
+    # (Matchup columns depend on the opponent, so legitimately differ between bouts.) Elo
+    # is compared separately below, rounded, as it always has been.
+    per_fighter = sorted(
+        {c[:-2] for fam in PER_FIGHTER_FAMILIES for c in FEATURE_FAMILIES[fam] if c.endswith("_1")}
+        - {"elo"}
     )
 
     long = pd.concat(
@@ -257,16 +268,21 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
         # Every bout that night must report the same pre-fight state for this fighter,
         # read from whichever slot (1 or 2) that fighter occupies in each bout.
         slot_vals = []
+        states = []
         for fight_id in rows.index:
             row = f.loc[fight_id]
             slot = "1" if row["fighter_1"] == fid else "2"
             slot_vals.append((row[f"n_prior_fights_{slot}"], row[f"elo_{slot}"]))
+            states.append({b: row[f"{b}_{slot}"] for b in per_fighter})
         assert len({v[0] for v in slot_vals}) == 1, (
             f"{fid} on {date}: prior-fight count changed between bouts on the same night"
         )
         assert len({round(float(v[1]), 9) for v in slot_vals}) == 1, (
             f"{fid} on {date}: Elo changed between bouts on the same night"
         )
+        for other in states[1:]:
+            moved = [b for b in per_fighter if not _same(states[0][b], other[b])]
+            assert not moved, f"{fid} on {date}: {moved} changed between bouts on one night"
         checked += 1
     assert checked >= 20, f"only checked {checked} tournament nights"
 
@@ -279,10 +295,7 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
 def test_a_fights_own_round_stats_never_enter_its_own_features(tables, cfg):
     """Scramble one fight's per-round stats; that fight's own feature row must not move."""
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
-    kwargs = {
-        "rolling_windows": tuple(cfg.features["rolling_windows"]),
-        "elo_params": cfg.elo,
-    }
+    kwargs = build_kwargs(cfg)
     base = build_features(fights, stats, fighters, **kwargs)
 
     # Pick a fight whose participants both have prior history, so the row is not all-NaN.
@@ -297,8 +310,8 @@ def test_a_fights_own_round_stats_never_enter_its_own_features(tables, cfg):
 
     mutated = build_features(fights, mutated_stats, fighters, **kwargs)
 
-    row_a = base.loc[base["fight_id"] == target_id, FEATURE_COLS]
-    row_b = mutated.loc[mutated["fight_id"] == target_id, FEATURE_COLS]
+    row_a = base.loc[base["fight_id"] == target_id, ALL_FEATURE_COLS]
+    row_b = mutated.loc[mutated["fight_id"] == target_id, ALL_FEATURE_COLS]
     pd.testing.assert_frame_equal(row_a, row_b, check_exact=True)
 
 
@@ -345,6 +358,11 @@ def test_elo_diff_is_consistent_with_its_components(features):
 # ---------------------------------------------------------------------------
 
 
+# Families whose every per-fighter column is a rate over prior bouts: NaN, never 0, for a
+# debutant or for a fighter with no round statistics yet.
+HISTORY_RATE_PREFIXES = ("adj_", "ewm_")
+
+
 def test_debut_rolling_features_are_null_not_zero(features):
     """A debutant has no history. Encoding that as 0.0 would be a lie the model reads
     as 'this fighter lands zero strikes per minute', and backfilling from career totals
@@ -354,6 +372,11 @@ def test_debut_rolling_features_are_null_not_zero(features):
 
     rolling_1 = [c for c in FEATURE_COLS if c.endswith("_1") and ("_w" in c or "rate" in c)]
     assert rolling_1, "expected rolling per-fighter columns"
+    history_1 = [
+        c for c in ALL_FEATURE_COLS if c.endswith("_1") and c.startswith(HISTORY_RATE_PREFIXES)
+    ]
+    assert len(history_1) == 20, "expected the adjusted and recency per-fighter columns"
+    rolling_1 += history_1
     for col in rolling_1:
         assert debuts[col].isna().all(), f"{col} is populated for debutants; must be NaN"
 
@@ -369,8 +392,11 @@ def test_missing_history_is_never_silently_zero(features):
     """n_prior_fights is a genuine count, so 0 is meaningful there; but every derived
     rate must be NaN rather than 0 when there is nothing to average."""
     no_stats = features.loc[~features["has_stats_history_1"]]
-    if len(no_stats):
-        assert no_stats["sig_str_landed_pm_career_1"].isna().all()
+    assert len(no_stats) > 100, "expected fighters with a record but no round statistics"
+    assert no_stats["sig_str_landed_pm_career_1"].isna().all()
+    for col in ALL_FEATURE_COLS:
+        if col.endswith("_1") and col.startswith(HISTORY_RATE_PREFIXES):
+            assert no_stats[col].isna().all(), f"{col} is set with no stats history"
 
 
 # ---------------------------------------------------------------------------
@@ -399,14 +425,8 @@ def test_features_ignore_the_scrape_time_fighter_attributes(tables, cfg, feature
     for col in SCRAPE_TIME_ATTRIBUTES:
         assert col in blanked.columns, f"fighters table no longer has {col!r}; update this test"
         blanked[col] = None
-    rebuilt = build_features(
-        tables["fights"],
-        tables["fight_stats"],
-        blanked,
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
-    )
-    moved = [col for col in FEATURE_COLS if not features[col].equals(rebuilt[col])]
+    rebuilt = build_features(tables["fights"], tables["fight_stats"], blanked, **build_kwargs(cfg))
+    moved = [col for col in ALL_FEATURE_COLS if not features[col].equals(rebuilt[col])]
     assert not moved, f"features read the present-day fighters snapshot: {moved}"
     assert frame_digest(features) == frame_digest(rebuilt)
 
@@ -416,13 +436,7 @@ def test_features_ignore_which_fighters_the_snapshot_contains(tables, cfg, featu
     fighter in the 2026 roster at all?" -- which would leak the same way. With an empty
     fighters table, every feature must still be byte-identical."""
     empty = tables["fighters"].iloc[0:0].copy()
-    rebuilt = build_features(
-        tables["fights"],
-        tables["fight_stats"],
-        empty,
-        rolling_windows=tuple(cfg.features["rolling_windows"]),
-        elo_params=cfg.elo,
-    )
+    rebuilt = build_features(tables["fights"], tables["fight_stats"], empty, **build_kwargs(cfg))
     assert frame_digest(features) == frame_digest(rebuilt)
 
 
@@ -464,7 +478,7 @@ def test_a_blank_feature_never_predicts_who_loses(features, cfg):
 
     lo, hi = BLANK_SIDE_WIN_RATE_BAND
     offenders = []
-    for base in sorted({c[:-2] for c in FEATURE_COLS if c.endswith("_1")}):
+    for base in sorted({c[:-2] for c in ALL_FEATURE_COLS if c.endswith("_1")}):
         blank_1 = dev[f"{base}_1"].isna() & dev[f"{base}_2"].notna()
         blank_2 = dev[f"{base}_2"].isna() & dev[f"{base}_1"].notna()
         n = int(blank_1.sum() + blank_2.sum())
@@ -485,13 +499,13 @@ def test_a_blank_feature_never_predicts_who_loses(features, cfg):
 def test_no_odds_derived_column_reaches_the_feature_set():
     """If the model could see the closing line, 'model beats market' would be circular."""
     banned = ("odds", "market", "vigfree", "vig", "implied", "overround", "p1_", "p2_", "moneyline")
-    offenders = [c for c in FEATURE_COLS if any(b in c.lower() for b in banned)]
+    offenders = [c for c in ALL_FEATURE_COLS if any(b in c.lower() for b in banned)]
     assert not offenders, f"odds-derived columns in the feature set: {offenders}"
 
 
 def test_no_outcome_derived_column_reaches_the_feature_set():
     banned = ("winner", "label", "is_decisive", "method", "finish_round", "finish_time")
-    offenders = [c for c in FEATURE_COLS if any(b in c.lower() for b in banned)]
+    offenders = [c for c in ALL_FEATURE_COLS if any(b in c.lower() for b in banned)]
     assert not offenders, f"outcome columns in the feature set: {offenders}"
 
 
@@ -536,12 +550,15 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
 
     for offset in range(n_shuffles):
         feats = diagnostics.build(
-            diagnostics.shuffle_outcomes(tables["fights"], cfg.seed + offset), tables, cfg
+            diagnostics.shuffle_outcomes(tables["fights"], cfg.seed + offset),
+            tables,
+            cfg,
+            families=tuple(FEATURE_FAMILIES),
         )
         train, test = diagnostics.dev_only_split(feats, cfg)
         assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
 
-        p = diagnostics.fit_predict_dev(train, test, cfg)
+        p = diagnostics.fit_predict_dev(train, test, cfg, feature_cols=ALL_FEATURE_COLS)
         y = test["label"].astype(int)
         aucs.append(roc_auc_score(y, p))
         lls.append(log_loss(y, p, labels=[0, 1]))
@@ -567,11 +584,11 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     """
     from sklearn.metrics import roc_auc_score
 
-    feats = diagnostics.build(tables["fights"], tables, cfg)
+    feats = diagnostics.build(tables["fights"], tables, cfg, families=tuple(FEATURE_FAMILIES))
     train, test = diagnostics.dev_only_split(feats, cfg)
     assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
 
-    p = diagnostics.fit_predict_dev(train, test, cfg)
+    p = diagnostics.fit_predict_dev(train, test, cfg, feature_cols=ALL_FEATURE_COLS)
     auc = roc_auc_score(test["label"].astype(int), p)
     assert auc > 0.55, (
         f"AUC {auc:.4f} on real outcomes is near chance; the features carry almost no "
@@ -587,10 +604,7 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
 
 
 def test_feature_build_is_deterministic(tables, cfg):
-    kwargs = {
-        "rolling_windows": tuple(cfg.features["rolling_windows"]),
-        "elo_params": cfg.elo,
-    }
+    kwargs = build_kwargs(cfg)
     a = build_features(tables["fights"], tables["fight_stats"], tables["fighters"], **kwargs)
     b = build_features(tables["fights"], tables["fight_stats"], tables["fighters"], **kwargs)
     assert frame_digest(a) == frame_digest(b)

@@ -33,6 +33,12 @@ the fighter who was cut. Nothing dated exists to replace them, so they are dropp
 
 **Odds are never a feature.** The market is a baseline to be compared against, so
 letting it into the feature set would make "the model beats the market" circular.
+
+**Feature families.** ``FEATURE_COLS`` is the "base" family: the run-3 feature set,
+always built. Phase 8 development-window candidates register further families in
+``FEATURE_FAMILIES`` and are built only when ``build_features(families=...)`` asks for
+them, so the default output is byte-identical to run 3's. The leakage suite builds every
+family and runs every column through the same tests.
 """
 
 from __future__ import annotations
@@ -44,6 +50,8 @@ from collections.abc import Sequence
 import numpy as np
 import pandas as pd
 
+from ufc_predictor.features import adjusted
+from ufc_predictor.features.adjusted import ADJUSTED_COLS, RECENCY_COLS
 from ufc_predictor.features.elo import build_elo
 
 # Seconds in a championship/standard round. Durations are reconstructed as
@@ -66,6 +74,7 @@ RATE_METRICS = (
 )
 
 CAREER = "career"
+BOUT = "bout"
 
 
 def _windows(rolling_windows: Sequence[int]) -> list[str]:
@@ -110,6 +119,15 @@ def feature_columns(rolling_windows: Sequence[int] = (3, 5)) -> list[str]:
 
 
 FEATURE_COLS: list[str] = feature_columns((3, 5))
+
+# Every family's columns, in output order. "base" is always built; the rest are appended
+# after it, in this order, when requested.
+FEATURE_FAMILIES: dict[str, list[str]] = {
+    "base": FEATURE_COLS,  # the 117 run-3 features, unchanged
+    "adjusted": ADJUSTED_COLS,  # opponent-adjusted career rates (features/adjusted.py)
+    "recency": RECENCY_COLS,  # recency-weighted rates (features/adjusted.py)
+}
+ALL_FEATURE_COLS: list[str] = [c for cols in FEATURE_FAMILIES.values() for c in cols]
 
 
 # ---------------------------------------------------------------------------
@@ -219,9 +237,21 @@ def fighter_fight_history(fights: pd.DataFrame, fight_stats: pd.DataFrame) -> pd
 class _FighterState:
     """Running history for one fighter, advanced only at event-date boundaries."""
 
-    __slots__ = ("fights", "finishes", "last_date", "loss_streak", "n", "win_streak", "wins")
+    __slots__ = (
+        "bouts",
+        "fights",
+        "finishes",
+        "last_date",
+        "loss_streak",
+        "n",
+        "win_streak",
+        "wins",
+    )
 
     def __init__(self) -> None:
+        # Per prior bout: (own per-bout rates, opponent's frozen pre-bout baseline).
+        # Filled only when the adjusted/recency families are requested.
+        self.bouts: list[tuple[dict[str, float], dict[str, float]]] = []
         self.fights: deque[dict] = deque(maxlen=64)
         self.last_date: dt.date | None = None
         self.n = 0
@@ -288,6 +318,11 @@ def _rate_block(records: list[dict], prefix_suffix: str) -> dict[str, float]:
     return out
 
 
+def _bare(block: dict[str, float], suffix: str) -> dict[str, float]:
+    """``_rate_block`` output keyed by bare metric name."""
+    return {metric: block[f"{metric}_{suffix}"] for metric in RATE_METRICS}
+
+
 def _snapshot(state: _FighterState, event_date: dt.date, windows: Sequence[int]) -> dict:
     """Describe a fighter as of the morning of ``event_date``."""
     recs = list(state.fights)
@@ -321,6 +356,8 @@ def build_features(
     *,
     rolling_windows: Sequence[int] = (3, 5),
     elo_params: dict | None = None,
+    families: Sequence[str] = ("base",),
+    recency_half_life_fights: float = 3.0,
 ) -> pd.DataFrame:
     """Build the point-in-time feature table: one row per fight.
 
@@ -331,9 +368,34 @@ def build_features(
     ``fighters`` is accepted but its attributes are deliberately never read: see the
     module docstring. ``tests/test_leakage.py`` blanks them and asserts that no feature
     value moves.
+
+    ``families`` names the ``FEATURE_FAMILIES`` to emit. The base columns always come
+    first; each requested family's columns follow in registry order. The default emits
+    the base family alone. ``recency_half_life_fights`` is the "recency" family's
+    half-life, in bouts.
+
+    Raises:
+        ValueError: on an unknown family name or a non-positive half-life.
     """
     elo_params = elo_params or {}
     windows = tuple(rolling_windows)
+
+    requested = set(families)
+    unknown = sorted(requested - set(FEATURE_FAMILIES))
+    if unknown:
+        raise ValueError(f"unknown feature families {unknown}; known: {list(FEATURE_FAMILIES)}")
+    if not recency_half_life_fights > 0:
+        raise ValueError(
+            f"recency_half_life_fights must be positive, got {recency_half_life_fights!r}"
+        )
+    family_cols = [
+        c
+        for name, cols in FEATURE_FAMILIES.items()
+        if name != "base" and name in requested
+        for c in cols
+    ]
+    # The adjusted and recency families share one per-bout record, kept only if needed.
+    track_bouts = bool(requested & {"adjusted", "recency"})
 
     history = fighter_fight_history(fights, fight_stats)
     by_date: dict[dt.date, list[dict]] = defaultdict(list)
@@ -347,6 +409,9 @@ def build_features(
     for event_date, day in ordered.groupby("date", sort=True):
         # --- 1. Describe every fight on this date from the pre-date snapshot. ---
         cache: dict[str, dict] = {}
+        # Each fighter's pre-date mirror quantities, frozen into their opponents' bout
+        # records in step 2. Taken here, before anything on this date is folded in.
+        baselines: dict[str, dict[str, float]] = {}
         for row in day.itertuples(index=False):
             feat: dict = {
                 "fight_id": row.fight_id,
@@ -367,7 +432,15 @@ def build_features(
 
             for slot, fid in (("1", row.fighter_1), ("2", row.fighter_2)):
                 if fid not in cache:
-                    cache[fid] = _snapshot(states[fid], event_date, windows)
+                    state = states[fid]
+                    cache[fid] = _snapshot(state, event_date, windows)
+                    if track_bouts:
+                        cache[fid].update(
+                            adjusted.family_snapshot(state.bouts, recency_half_life_fights)
+                        )
+                        baselines[fid] = adjusted.opponent_baseline(
+                            _bare(cache[fid], CAREER), adjusted.absorbed_rates(state.fights)
+                        )
                 snap = cache[fid]
                 for key, value in snap.items():
                     feat[f"{key}_{slot}"] = value
@@ -376,6 +449,12 @@ def build_features(
 
         # --- 2. Only now fold this date's fights into each fighter's history. ---
         for rec in by_date.get(event_date, ()):
+            if track_bouts:
+                # The opponent's baseline is the step-1, pre-date one: no card-mate's
+                # result and no other bout of the opponent's tonight can reach it.
+                states[rec["fighter_id"]].bouts.append(
+                    (_bare(_rate_block([rec], BOUT), BOUT), baselines[rec["opponent_id"]])
+                )
             states[rec["fighter_id"]].add(rec)
 
     feats = pd.DataFrame(rows)
@@ -405,8 +484,12 @@ def build_features(
     for win in _windows(windows):
         for metric in RATE_METRICS:
             feats[f"{metric}_{win}_diff"] = feats[f"{metric}_{win}_1"] - feats[f"{metric}_{win}_2"]
+    if family_cols:
+        stems = [c[: -len("_diff")] for c in family_cols if c.endswith("_diff")]
+        diffs = {f"{s}_diff": feats[f"{s}_1"] - feats[f"{s}_2"] for s in stems}
+        feats = pd.concat([feats, pd.DataFrame(diffs, index=feats.index)], axis=1)
 
-    cols = feature_columns(windows)
+    cols = [*feature_columns(windows), *family_cols]
     missing = [c for c in cols if c not in feats.columns]
     if missing:
         raise RuntimeError(f"feature builder did not produce expected columns: {missing}")

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Sequence
 
 import numpy as np
 import pandas as pd
@@ -38,13 +39,19 @@ SCRAPE_ATTRIBUTES = {"reach": "reach_cm", "height": "height_cm", "age": "dob"}
 DIAGNOSTIC_TREES = 200
 
 
-def build(fights: pd.DataFrame, tables: dict, cfg: Config) -> pd.DataFrame:
+def build(
+    fights: pd.DataFrame, tables: dict, cfg: Config, *, families: Sequence[str] = ("base",)
+) -> pd.DataFrame:
+    """The feature table. ``families`` defaults to the base set the README figures use;
+    the leakage suite passes every family."""
     return build_features(
         fights,
         tables["fight_stats"],
         tables["fighters"],
         rolling_windows=tuple(cfg.features["rolling_windows"]),
         elo_params=cfg.elo,
+        families=families,
+        recency_half_life_fights=float(cfg.features["recency_half_life_fights"]),
     )
 
 
@@ -63,15 +70,22 @@ def dev_only_split(feats: pd.DataFrame, cfg: Config) -> tuple[pd.DataFrame, pd.D
     return train, test
 
 
-def fit_predict_dev(train: pd.DataFrame, test: pd.DataFrame, cfg: Config) -> np.ndarray:
+def fit_predict_dev(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    cfg: Config,
+    *,
+    feature_cols: Sequence[str] = FEATURE_COLS,
+) -> np.ndarray:
     """A fixed LightGBM on the frozen hyperparameters, for diagnostics only."""
     import lightgbm as lgb
 
+    cols = list(feature_cols)
     params = dict(cfg.lightgbm)
     params.update({"n_estimators": DIAGNOSTIC_TREES, "random_state": cfg.seed, "verbosity": -1})
     model = lgb.LGBMClassifier(**params)
-    model.fit(train[FEATURE_COLS], train["label"].astype(int))
-    return model.predict_proba(test[FEATURE_COLS])[:, 1]
+    model.fit(train[cols], train["label"].astype(int))
+    return model.predict_proba(test[cols])[:, 1]
 
 
 def shuffle_outcomes(fights: pd.DataFrame, seed: int) -> pd.DataFrame:
