@@ -815,8 +815,8 @@ margin. Runs 2 and 3 were each scored from a commit pushed before the run.
 Requires [uv](https://docs.astral.sh/uv/). Python 3.11 is fetched automatically.
 
 ```bash
-git clone https://github.com/AnthonyOlakangil/ufc-predictor.git
-cd ufc-predictor
+git clone https://github.com/AnthonyOlakangil/fightline-ml.git
+cd fightline-ml
 make setup      # venv + pinned dependencies
 make data       # snapshot -> normalized Parquet (no network)
 make backtest   # walk-forward evaluation -> reports/metrics.json
