@@ -35,6 +35,12 @@ windows:
   dev_end: "2015-12-31"
   eval_start: "2016-01-01"
   eval_end: "2026-10-03"
+  # Phase 8 (2026-10-13): the eval window is CLOSED; no further eval runs. Model changes
+  # are selected on 2010-2014 and confirmed exactly once on 2015
+  # (src/ufc_predictor/experiments/protocol.py enforces both).
+  selection_end: "2014-12-31"
+  confirmation_start: "2015-01-01"
+  confirmation_end: "2015-12-31"
 
 # ---------------------------------------------------------------------------
 # Ingest / joining

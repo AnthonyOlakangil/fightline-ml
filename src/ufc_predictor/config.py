@@ -71,12 +71,19 @@ class Windows:
     the held-out walk-forward period. Keeping them disjoint is enforced in __post_init__
     so an edit to config.yaml cannot quietly create an overlap -- which would leak
     tuning information into the headline result.
+
+    Phase 8 splits the dev window: model choices are selected on ``dev_start`` ..
+    ``selection_end`` and confirmed once on ``confirmation_start`` ..
+    ``confirmation_end``, which must close the dev window exactly.
     """
 
     dev_start: dt.date
     dev_end: dt.date
     eval_start: dt.date
     eval_end: dt.date
+    selection_end: dt.date
+    confirmation_start: dt.date
+    confirmation_end: dt.date
 
     def __post_init__(self) -> None:
         if self.dev_start >= self.dev_end:
@@ -91,6 +98,20 @@ class Windows:
             raise ConfigError(
                 f"windows: dev_end {self.dev_end} must precede eval_start {self.eval_start}; "
                 "overlapping windows would leak tuning information into the held-out result"
+            )
+        if not (
+            self.dev_start
+            <= self.selection_end
+            < self.confirmation_start
+            <= self.confirmation_end
+            == self.dev_end
+        ):
+            raise ConfigError(
+                "windows: need dev_start <= selection_end < confirmation_start <= "
+                f"confirmation_end == dev_end, got selection_end {self.selection_end}, "
+                f"confirmation {self.confirmation_start}..{self.confirmation_end}, "
+                f"dev {self.dev_start}..{self.dev_end}; selection must never see the "
+                "confirmation year"
             )
 
 
@@ -150,6 +171,15 @@ def load_config(path: str | Path | None = None) -> Config:
             _require(raw_windows, "eval_start", "windows"), "windows.eval_start"
         ),
         eval_end=_parse_date(_require(raw_windows, "eval_end", "windows"), "windows.eval_end"),
+        selection_end=_parse_date(
+            _require(raw_windows, "selection_end", "windows"), "windows.selection_end"
+        ),
+        confirmation_start=_parse_date(
+            _require(raw_windows, "confirmation_start", "windows"), "windows.confirmation_start"
+        ),
+        confirmation_end=_parse_date(
+            _require(raw_windows, "confirmation_end", "windows"), "windows.confirmation_end"
+        ),
     )
 
     return Config(

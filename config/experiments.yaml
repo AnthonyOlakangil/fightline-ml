@@ -1,0 +1,115 @@
+# Phase 8 pre-registration: development-window experiments.
+#
+# Committed BEFORE any experiment runs. src/ufc_predictor/experiments/protocol.py refuses
+# to run an experiment from a commit that lacks this file or where it has changed since
+# the commit that added it. Nothing here may be edited after that commit.
+#
+# The 2016+ evaluation window is closed and is never scored by anything below.
+
+selection_window: ["2010-01-01", "2014-12-31"]
+confirmation_window: ["2015-01-01", "2015-12-31"]
+
+scoring: >
+  Every priced, decisive fight dated inside the selection window, each predicted by a
+  model trained only on decisive fights dated strictly before its event (the training
+  pool includes fights before 2010 and unpriced fights). Refit every 10 scored events
+  with at least 1,000 training fights, as in evaluation run 3. All candidates in a stage
+  are scored on the identical set of fights; a candidate that cannot score one of them
+  raises rather than being compared on a different set.
+
+metric: log_loss
+comparison: >
+  Paired per-fight log-loss difference, candidate minus stage incumbent, on identical
+  fights; 10,000 event-level bootstrap resamples, seed from config/config.yaml.
+p_value: one-sided; the share of bootstrap mean differences that are >= 0
+multiplicity: Holm step-down across the candidates of one stage
+alpha: 0.10
+
+decision_rule: >
+  Adopt a candidate over the stage incumbent only if its paired difference in
+  selection-window log loss is negative and its Holm-adjusted one-sided bootstrap
+  p-value within the stage is below 0.10. Otherwise keep the incumbent (the simpler
+  option on a tie). Every candidate's result is reported, adopted or not.
+several_pass: If several candidates pass, adopt the one with the lowest selection-window log loss.
+
+hyperparameters: >
+  Stages 1-6 use the LightGBM hyperparameters chosen by stage 0 and do not re-tune them;
+  the frozen configuration is re-tuned once at the end (final_retune).
+
+stages:
+  - name: stage_0_retune
+    kind: retune
+    why: >
+      The run-3 hyperparameters were tuned on a holdout that included 2015. Re-tune the
+      run-3 baseline (117 base features, isotonic calibration bounded to [0.01, 0.99],
+      all prior history) inside 2010-2014 only.
+    grid: the 216-candidate grid in src/ufc_predictor/models/tune.py (SEARCH_SPACE)
+    holdout: >
+      The last 20% of labelled 2010-2014 fights by date (fights sharing the boundary
+      date move into the holdout). Training: every labelled fight dated before the
+      holdout's first date. Calibration off during tuning; early stopping on the
+      chronological tail of the training rows.
+    selection: most regularized candidate within 0.001 log loss of the best (tune.py rule)
+    output: the incumbent configuration of stage 1, called "baseline"
+
+  - name: stage_1_features
+    kind: compare
+    field: features
+    incumbent: base
+    candidates: [base+adjusted, base+recency, base+style, base+decline, base+glicko, all]
+
+  - name: stage_2_selection
+    kind: compare
+    field: top_k
+    incumbent: null         # the stage-1 winner's full feature set
+    candidates: [25]        # top 25 by LightGBM gain, chosen inside each fold's training rows
+
+  - name: stage_3_train_window
+    kind: compare
+    field: train_window
+    incumbent: all_history
+    candidates: [from_2001, last_8_years]   # fights dated >= 2001-01-01; fights dated >= event date minus 8 calendar years
+    floor: >
+      Before 2010 only 985 decisive fights date from 2001 on and 947 from the eight
+      years before 2010-01-01, below the 1,000-fight training minimum. When a restricted
+      pool holds fewer than 1,000 fights it is extended back to the most recent 1,000
+      decisive fights before the event; the number of folds that needed this is reported.
+
+  - name: stage_4_symmetry
+    kind: compare
+    field: symmetric
+    incumbent: false
+    candidates: [true]      # train on rows plus their mirror; average p(x) and 1 - p(mirror(x))
+
+  - name: stage_5_calibration
+    kind: compare
+    field: calibration
+    incumbent: isotonic_bounded
+    candidates: [platt, none]   # fitted on the same chronological tail as the isotonic calibrator
+
+  - name: stage_6_model
+    kind: compare
+    field: model
+    incumbent: lightgbm
+    candidates: [logistic]  # L2; median imputation + missing indicators + standardization; C in {0.01, 0.1, 1.0} chosen on the fold's chronological training tail; its own probabilities, no extra calibrator
+
+final_retune:
+  enabled: true
+  procedure: >
+    If the frozen model is LightGBM, repeat the stage-0 procedure for the frozen
+    configuration (its features, top-k, training window and symmetry). The re-tuned
+    parameters are adopted only under the decision rule above, against the frozen
+    configuration with the stage-0 parameters. Skipped for the logistic model, whose C
+    is chosen inside every fold.
+
+confirmation: >
+  Run once, from a clean, pushed commit after the frozen configuration is committed.
+  Scores the frozen configuration and the stage-0 baseline on every priced decisive 2015
+  fight, walk-forward, and reports the paired event bootstrap of each against the other
+  and against the vig-free market. No decision depends on it: whatever it shows, the
+  frozen configuration is not re-selected. A second run raises.
+
+expectations: >
+  About 1,690 priced selection-window fights; paired differences of 0.003-0.005 log loss
+  are near the noise floor, so several candidates are expected to be rejected. The 2015
+  confirmation has about 460 fights and an interval of roughly +/-0.01 on a difference.
