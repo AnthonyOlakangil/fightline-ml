@@ -185,6 +185,58 @@ def experiments() -> None:
     run_all()
 
 
+forward_app = typer.Typer(
+    no_args_is_help=True,
+    help="Forward test: predictions committed before each card, scored after it. "
+    "Research only - not betting advice.",
+)
+app.add_typer(forward_app, name="forward")
+
+
+def _forward(step: str, event: str | None = None) -> None:
+    import datetime as dt
+    import json
+
+    from ufc_predictor.forward import run
+
+    cfg = get_config()
+    now = dt.datetime.now(dt.UTC)
+    fetcher = run.make_fetcher(cfg)
+    try:
+        if step == "run-due":
+            typer.echo(json.dumps(run.run_due(cfg, now=now, fetcher=fetcher), indent=1))
+        else:
+            out = getattr(run, step)(event, cfg, now=now, fetcher=fetcher)
+            typer.echo(out if not isinstance(out, dict) else json.dumps(out["summary"], indent=1))
+    except run.ForwardError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@forward_app.command("predict")
+def forward_predict(event: str = typer.Option(..., "--event", help="ESPN event id.")) -> None:
+    """Predict a card at least forward.min_lead_hours before it starts."""
+    _forward("predict", event)
+
+
+@forward_app.command("close")
+def forward_close(event: str = typer.Option(..., "--event", help="ESPN event id.")) -> None:
+    """Snapshot Kalshi and sportsbook prices shortly before a card starts (fallback)."""
+    _forward("close", event)
+
+
+@forward_app.command("settle")
+def forward_settle(event: str = typer.Option(..., "--event", help="ESPN event id.")) -> None:
+    """Score a finished card against its committed predictions."""
+    _forward("settle", event)
+
+
+@forward_app.command("run-due")
+def forward_run_due() -> None:
+    """Do whatever is due now (the GitHub Actions schedule runs this)."""
+    _forward("run-due")
+
+
 @app.command("export-app")
 def export_app_cmd() -> None:
     """Export precomputed artefacts the Streamlit demo loads at startup."""
