@@ -322,3 +322,30 @@ def test_every_ledger_entry_after_the_first_is_fully_provenanced(cfg):
         assert len(entry["git_commit"]) == 40, entry
         assert entry["worktree_clean"] is True, entry
         assert entry["reason"].strip(), entry
+
+
+def test_eval_run_rebuilds_its_inputs_and_refuses_if_that_changes_tracked_files(
+    cfg, tmp_path, monkeypatch
+):
+    """The processed tables are gitignored, so a clean tree says nothing about them.
+    Scoring the evaluation window therefore rebuilds them from the committed snapshot
+    first, and refuses if the rebuild disagrees with the committed record of it."""
+    from ufc_predictor.backtest import report
+
+    states = iter(
+        [
+            {"commit": "d" * 40, "short": "d" * 7, "clean": True},
+            {"commit": "d" * 40, "short": "d" * 7, "clean": False},
+        ]
+    )
+    monkeypatch.setattr(report, "_git_state", lambda: next(states))
+    rebuilt = []
+    monkeypatch.setattr(report, "_rebuild_inputs", lambda c: rebuilt.append(True))
+
+    def must_not_run(*args, **kwargs):
+        raise AssertionError("the walk-forward ran on inputs that disagree with the commit")
+
+    monkeypatch.setattr(report, "run_walk_forward", must_not_run)
+    with pytest.raises(RuntimeError, match="rebuilding"):
+        report.run(_cfg_with_reports(cfg, tmp_path), verbose=False, reason="test")
+    assert rebuilt == [True]

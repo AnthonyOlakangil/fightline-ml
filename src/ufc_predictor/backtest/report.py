@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import subprocess
 from pathlib import Path
 
 import matplotlib
@@ -36,6 +35,7 @@ from ufc_predictor.backtest.walkforward import (
     run_walk_forward,
 )
 from ufc_predictor.config import Config, get_config
+from ufc_predictor.provenance import git_state as _git_state
 
 MODEL_COLUMNS = ("market", "elo", "lightgbm")
 ALL_COLUMNS = (*MODEL_COLUMNS, VARIANT_NAME)
@@ -49,21 +49,31 @@ COLOURS = {
 }
 
 
-def _git_state() -> dict:
-    """Full HEAD commit, its short form, and whether the working tree matches it.
+def _rebuild_inputs(cfg: Config) -> None:
+    """Rebuild the processed tables and features from the committed snapshot.
 
-    Untracked files count as dirty: an uncommitted module is still uncommitted code.
+    They are gitignored, so a clean working tree says nothing about whether they match
+    the committed code. Rebuilding takes seconds and removes the question.
     """
-    try:
-        commit = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
-        ).strip()
-        status = subprocess.check_output(
-            ["git", "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL
-        )
-    except Exception:  # pragma: no cover - git may be absent
-        return {"commit": "unknown", "short": "unknown", "clean": False}
-    return {"commit": commit, "short": commit[:7], "clean": status.strip() == ""}
+    from ufc_predictor.features.pipeline import run as build_feature_table
+    from ufc_predictor.ingest.pipeline import run as build_tables
+
+    build_tables(cfg, verbose=False)
+    build_feature_table(cfg, verbose=False)
+
+
+def _input_digests(cfg: Config) -> dict[str, str]:
+    """Content hashes of the tables the walk-forward reads, for the ledger."""
+    import hashlib
+
+    from ufc_predictor.storage import db
+
+    out = {}
+    for name in ("features", "fights", "odds"):
+        frame = db.read_table(cfg.paths.processed_dir, name)
+        rows = pd.util.hash_pandas_object(frame, index=False).to_numpy().tobytes()
+        out[name] = hashlib.sha256(rows).hexdigest()
+    return out
 
 
 def _window_slice(predictions: pd.DataFrame, start: dt.date, end: dt.date) -> pd.DataFrame:
@@ -263,7 +273,9 @@ def _eval_run_count(cfg: Config) -> int:
     return len(json.loads(path.read_text(encoding="utf-8")).get("runs", []))
 
 
-def _append_eval_ledger(cfg: Config, summary: dict, *, git: dict, reason: str) -> int:
+def _append_eval_ledger(
+    cfg: Config, summary: dict, *, git: dict, reason: str, inputs: dict | None = None
+) -> int:
     """Append to the eval-run ledger and return the new run count.
 
     ``git`` is the state captured *before* the walk-forward started, so the entry names
@@ -281,6 +293,7 @@ def _append_eval_ledger(cfg: Config, summary: dict, *, git: dict, reason: str) -
             "git_commit": git["commit"],
             "worktree_clean": git["clean"],
             "reason": reason,
+            "input_digests": inputs or {},
             "seed": cfg.seed,
             "headline": summary,
         }
@@ -323,6 +336,14 @@ def run(
                 "refusing to score the evaluation window with uncommitted changes: commit "
                 "the code and settings first so the eval ledger can name the exact commit"
             )
+        _rebuild_inputs(cfg)
+        after = _git_state()
+        if not after["clean"] or after["commit"] != git["commit"]:
+            raise RuntimeError(
+                "rebuilding the inputs from the committed snapshot changed tracked files, so "
+                "the committed record of them is stale; refusing to score the evaluation window"
+            )
+    inputs = _input_digests(cfg) if not dry_run else {}
     predictions, folds = run_walk_forward(cfg, verbose=verbose, through=through)
 
     reports = cfg.paths.reports_dir
@@ -386,7 +407,7 @@ def run(
         run_count = _eval_run_count(cfg)
     else:
         headline = {name: round(results["eval"][name]["log_loss"], 4) for name in results["eval"]}
-        run_count = _append_eval_ledger(cfg, headline, git=git, reason=reason)
+        run_count = _append_eval_ledger(cfg, headline, git=git, reason=reason, inputs=inputs)
 
     payload = {
         "dry_run_dev_only": dry_run,

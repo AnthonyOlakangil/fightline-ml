@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 
 from ufc_predictor.config import Config, get_config
+from ufc_predictor.provenance import git_state
 from ufc_predictor.sim.bankroll import bootstrap_by_event, replay
 from ufc_predictor.sim.parlay import price_parlays
 
@@ -145,6 +146,7 @@ def _scored_eval_run(cfg: Config) -> int:
 
 def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
     """Price parlays for every eval card under each probability source."""
+    git = git_state()
     cfg = cfg or get_config()
     sim_cfg = cfg.sim
     preds = load_predictions(cfg, eval_only=True)
@@ -278,6 +280,8 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
         ),
         "reused_phase4_predictions": True,
         "priced_eval_run": _scored_eval_run(cfg),
+        "git_commit": git["commit"],
+        "worktree_clean": git["clean"],
         "eval_window": [str(cfg.windows.eval_start), str(cfg.windows.eval_end)],
         "cards": int(preds["event_id"].nunique()),
         "fights": len(preds),
