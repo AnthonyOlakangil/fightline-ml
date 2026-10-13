@@ -106,6 +106,7 @@ class Config:
     lightgbm_fit: dict[str, Any] = field(default_factory=dict)
     backtest: dict[str, Any] = field(default_factory=dict)
     sim: dict[str, Any] = field(default_factory=dict)
+    bfo: dict[str, Any] = field(default_factory=dict)
 
 
 def load_config(path: str | Path | None = None) -> Config:
@@ -162,6 +163,7 @@ def load_config(path: str | Path | None = None) -> Config:
         lightgbm_fit=raw.get("lightgbm_fit", {}),
         backtest=raw.get("backtest", {}),
         sim=raw.get("sim", {}),
+        bfo=raw.get("bfo", {}),
     )
 
 

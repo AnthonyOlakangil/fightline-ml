@@ -151,6 +151,22 @@ backtest:
   bootstrap_ci: 0.95
 
 # ---------------------------------------------------------------------------
+# BestFightOdds historical lines (Phase 8 closing-line-value analysis)
+#
+# Crawled once from fighter pages, cached, and committed as a dated snapshot; nothing on
+# the graded path touches the network. robots.txt (2026-10-13): "User-agent: * / Allow: /",
+# no crawl delay. The window is the development window only.
+# ---------------------------------------------------------------------------
+bfo:
+  base_url: https://www.bestfightodds.com
+  user_agent: "ufc-predictor research bot (github.com/AnthonyOlakangil/fightline-ml)"
+  delay_s: 5.0
+  cache_dir: data/cache/bfo
+  window_start: "2010-01-01"
+  window_end: "2015-12-31"
+  snapshot_dir: data/raw/bfo_snapshot_2026-10-13
+
+# ---------------------------------------------------------------------------
 # Simulation / parlay pricing (research backtest only - not betting advice)
 # ---------------------------------------------------------------------------
 sim:

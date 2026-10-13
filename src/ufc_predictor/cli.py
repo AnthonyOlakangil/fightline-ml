@@ -162,6 +162,17 @@ def settle(
         raise typer.Exit(code=1) from exc
 
 
+@app.command()
+def bfo() -> None:
+    """Crawl BestFightOdds (cached, 1 request per 5 s) and write the dated snapshot.
+
+    Not on the graded path: the committed snapshot is the input everywhere else.
+    """
+    from ufc_predictor.ingest.bfo import write_snapshot
+
+    write_snapshot()
+
+
 @app.command("export-app")
 def export_app_cmd() -> None:
     """Export precomputed artefacts the Streamlit demo loads at startup."""
