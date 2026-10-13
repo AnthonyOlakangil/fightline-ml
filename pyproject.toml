@@ -51,6 +51,8 @@ packages = ["src/ufc_predictor"]
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+# Plans and design notes under docs/ quote illustrative code; they are not the code base.
+extend-exclude = ["docs"]
 
 [tool.ruff.lint]
 select = [
