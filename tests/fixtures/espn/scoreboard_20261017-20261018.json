@@ -1,0 +1,1041 @@
+{
+ "events": [
+  {
+   "id": "600060773",
+   "uid": "s:3301~l:3321~e:600060773",
+   "date": "2026-10-17T21:00Z",
+   "name": "UFC Fight Night: Buckley vs. Malott",
+   "shortName": "UFC Fight Night",
+   "season": {
+    "year": 2026,
+    "type": 2,
+    "slug": "regular-season"
+   },
+   "competitions": [
+    {
+     "id": "401919643",
+     "uid": "s:3301~l:3321~e:600060773~c:401919643",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "970",
+      "abbreviation": "Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "5044361",
+       "uid": "s:3301~a:5044361",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "SuYoung You",
+        "displayName": "SuYoung You",
+        "shortName": "S. You"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "16-4-0"
+        }
+       ]
+      },
+      {
+       "id": "5282412",
+       "uid": "s:3301~a:5282412",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Cody Chovancek",
+        "displayName": "Cody Chovancek",
+        "shortName": "C. Chovancek"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "9-0-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401908373",
+     "uid": "s:3301~l:3321~e:600060773~c:401908373",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "1003",
+      "abbreviation": "W Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4319785",
+       "uid": "s:3301~a:4319785",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Chelsea Chandler",
+        "displayName": "Chelsea Chandler",
+        "shortName": "C. Chandler"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "7-4-0"
+        }
+       ]
+      },
+      {
+       "id": "4947922",
+       "uid": "s:3301~a:4947922",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Melissa Croden",
+        "displayName": "Melissa Croden",
+        "shortName": "M. Croden"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "8-3-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401914039",
+     "uid": "s:3301~l:3321~e:600060773~c:401914039",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "970",
+      "abbreviation": "Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4816062",
+       "uid": "s:3301~a:4816062",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Chad Anheliger",
+        "displayName": "Chad Anheliger",
+        "shortName": "C. Anheliger"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "13-8-0"
+        }
+       ]
+      },
+      {
+       "id": "5119740",
+       "uid": "s:3301~a:5119740",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Steven Koslow",
+        "displayName": "Steven Koslow",
+        "shortName": "S. Koslow"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "6-1-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401929675",
+     "uid": "s:3301~l:3321~e:600060773~c:401929675",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "1007",
+      "abbreviation": "W Flyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4026490",
+       "uid": "s:3301~a:4026490",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Katlyn Cerminara",
+        "displayName": "Katlyn Cerminara",
+        "shortName": "K. Cerminara"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "18-6-0"
+        }
+       ]
+      },
+      {
+       "id": "5130806",
+       "uid": "s:3301~a:5130806",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Mackenzie Stiller",
+        "displayName": "Mackenzie Stiller",
+        "shortName": "M. Stiller"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "6-1-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401929676",
+     "uid": "s:3301~l:3321~e:600060773~c:401929676",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "982",
+      "abbreviation": "Heavyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "5405986",
+       "uid": "s:3301~a:5405986",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Javad Mahjoub",
+        "displayName": "Javad Mahjoub",
+        "shortName": "J. Mahjoub"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "5-0-0"
+        }
+       ]
+      },
+      {
+       "id": "5454260",
+       "uid": "s:3301~a:5454260",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Joel Faglier",
+        "displayName": "Joel Faglier",
+        "shortName": "J. Faglier"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "6-0-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401911807",
+     "uid": "s:3301~l:3321~e:600060773~c:401911807",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "972",
+      "abbreviation": "Middleweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4807973",
+       "uid": "s:3301~a:4807973",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Julien LeBlanc",
+        "displayName": "Julien LeBlanc",
+        "shortName": "J. LeBlanc"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "10-3-0"
+        }
+       ]
+      },
+      {
+       "id": "5296770",
+       "uid": "s:3301~a:5296770",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Nick Galanti",
+        "displayName": "Nick Galanti",
+        "shortName": "N. Galanti"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "8-1-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401908371",
+     "uid": "s:3301~l:3321~e:600060773~c:401908371",
+     "date": "2026-10-17T21:00Z",
+     "endDate": "2026-10-17T21:00Z",
+     "type": {
+      "id": "982",
+      "abbreviation": "Heavyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4232775",
+       "uid": "s:3301~a:4232775",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Tanner Boser",
+        "displayName": "Tanner Boser",
+        "shortName": "T. Boser"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "22-11-1"
+        }
+       ]
+      },
+      {
+       "id": "5145497",
+       "uid": "s:3301~a:5145497",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Jhonata Diniz",
+        "displayName": "Jhonata Diniz",
+        "shortName": "J. Diniz"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "9-2-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 5:00 PM EDT",
+       "shortDetail": "10/17 - 5:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-17T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401905374",
+     "uid": "s:3301~l:3321~e:600060773~c:401905374",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "986",
+      "abbreviation": "Lightweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "3821549",
+       "uid": "s:3301~a:3821549",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Nate Landwehr",
+        "displayName": "Nate Landwehr",
+        "shortName": "N. Landwehr"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "18-8-0"
+        }
+       ]
+      },
+      {
+       "id": "4063786",
+       "uid": "s:3301~a:4063786",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Mandel Nallo",
+        "displayName": "Mandel Nallo",
+        "shortName": "M. Nallo"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "14-4-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401909783",
+     "uid": "s:3301~l:3321~e:600060773~c:401909783",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "970",
+      "abbreviation": "Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4877916",
+       "uid": "s:3301~a:4877916",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Louis Jourdain",
+        "displayName": "Louis Jourdain",
+        "shortName": "L. Jourdain"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "9-3-0"
+        }
+       ]
+      },
+      {
+       "id": "5123311",
+       "uid": "s:3301~a:5123311",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Timmy Cuamba",
+        "displayName": "Timmy Cuamba",
+        "shortName": "T. Cuamba"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "10-4-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401908372",
+     "uid": "s:3301~l:3321~e:600060773~c:401908372",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "972",
+      "abbreviation": "Middleweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4329444",
+       "uid": "s:3301~a:4329444",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Kyle Daukaus",
+        "displayName": "Kyle Daukaus",
+        "shortName": "K. Daukaus"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "17-5-0"
+        }
+       ]
+      },
+      {
+       "id": "4415883",
+       "uid": "s:3301~a:4415883",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Marc-Andre Barriault",
+        "displayName": "Marc-Andre Barriault",
+        "shortName": "M. Barriault"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "17-11-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401923630",
+     "uid": "s:3301~l:3321~e:600060773~c:401923630",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "986",
+      "abbreviation": "Lightweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4408436",
+       "uid": "s:3301~a:4408436",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Kyle Nelson",
+        "displayName": "Kyle Nelson",
+        "shortName": "K. Nelson"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "17-7-1"
+        }
+       ]
+      },
+      {
+       "id": "5180489",
+       "uid": "s:3301~a:5180489",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Cristian Pérez",
+        "displayName": "Cristian Pérez",
+        "shortName": "C. Pérez"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "15-2-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401897729",
+     "uid": "s:3301~l:3321~e:600060773~c:401897729",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "1007",
+      "abbreviation": "W Flyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4350796",
+       "uid": "s:3301~a:4350796",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Erin Blanchfield",
+        "displayName": "Erin Blanchfield",
+        "shortName": "E. Blanchfield"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "14-2-0"
+        }
+       ]
+      },
+      {
+       "id": "4835135",
+       "uid": "s:3301~a:4835135",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Jasmine Jasudavicius",
+        "displayName": "Jasmine Jasudavicius",
+        "shortName": "J. Jasudavicius"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "15-4-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401897388",
+     "uid": "s:3301~l:3321~e:600060773~c:401897388",
+     "date": "2026-10-18T00:00Z",
+     "endDate": "2026-10-18T00:00Z",
+     "type": {
+      "id": "969",
+      "abbreviation": "Welterweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": false,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "3165120",
+       "uid": "s:3301~a:3165120",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Mike Malott",
+        "displayName": "Mike Malott",
+        "shortName": "M. Malott"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "14-2-1"
+        }
+       ]
+      },
+      {
+       "id": "4024714",
+       "uid": "s:3301~a:4024714",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Joaquin Buckley",
+        "displayName": "Joaquin Buckley",
+        "shortName": "J. Buckley"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "21-8-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0.0,
+      "displayClock": "-",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, October 17th at 8:00 PM EDT",
+       "shortDetail": "10/17 - 8:00 PM EDT"
+      }
+     },
+     "format": {
+      "regulation": {
+       "periods": 5
+      }
+     },
+     "startDate": "2026-10-18T00:00Z",
+     "broadcast": "Paramount+"
+    }
+   ],
+   "venues": [
+    {
+     "id": "5282",
+     "fullName": "Rogers Place",
+     "address": {
+      "city": "Edmonton",
+      "state": "AB",
+      "country": "Canada"
+     }
+    }
+   ],
+   "status": {
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Scheduled",
+     "shortDetail": "Scheduled"
+    }
+   }
+  }
+ ]
+}

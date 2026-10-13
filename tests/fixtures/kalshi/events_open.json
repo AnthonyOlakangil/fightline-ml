@@ -1,0 +1,2022 @@
+{
+ "cursor": "",
+ "events": [
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17CHOSTI",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T11:01:02.678105Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:00:00Z",
+     "created_time": "2026-10-12T00:35:33.873535Z",
+     "custom_strike": {
+      "ufc_competitor": "1247400c-4d0b-4012-9080-5685a1341639"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CHOSTI",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:00:00Z",
+     "expiration_time": "2026-10-19T21:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7200",
+     "latest_expiration_time": "2026-10-19T21:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.3000",
+     "no_bid_dollars": "0.2800",
+     "no_sub_title": "Katlyn Cerminara",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:00:00Z",
+     "open_interest_fp": "631.39",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.0000",
+     "previous_yes_ask_dollars": "0.7200",
+     "previous_yes_bid_dollars": "0.7100",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Katlyn Cerminara wins the Katlyn Cerminara vs Mackenzie Stiller professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CHOSTI-CHO",
+     "title": "Katlyn Cerminara wins",
+     "updated_time": "2026-10-13T11:01:02.680358Z",
+     "volume_24h_fp": "631.39",
+     "volume_fp": "631.39",
+     "yes_ask_dollars": "0.7200",
+     "yes_ask_size_fp": "1245.33",
+     "yes_bid_dollars": "0.7000",
+     "yes_bid_size_fp": "788.09",
+     "yes_sub_title": "Katlyn Cerminara"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:00:00Z",
+     "created_time": "2026-10-12T00:35:33.873535Z",
+     "custom_strike": {
+      "ufc_competitor": "73e63b6f-fe24-4b0f-84ca-42fb58d84817"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CHOSTI",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:00:00Z",
+     "expiration_time": "2026-10-19T21:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3000",
+     "latest_expiration_time": "2026-10-19T21:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7200",
+     "no_bid_dollars": "0.7000",
+     "no_sub_title": "Mackenzie Stiller",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:00:00Z",
+     "open_interest_fp": "3757.55",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.2900",
+     "previous_yes_ask_dollars": "0.2900",
+     "previous_yes_bid_dollars": "0.2700",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Mackenzie Stiller wins the Katlyn Cerminara vs Mackenzie Stiller professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CHOSTI-STI",
+     "title": "Mackenzie Stiller wins",
+     "updated_time": "2026-10-13T11:01:02.680358Z",
+     "volume_24h_fp": "2876.54",
+     "volume_fp": "3822.75",
+     "yes_ask_dollars": "0.3000",
+     "yes_ask_size_fp": "9207.12",
+     "yes_bid_dollars": "0.2800",
+     "yes_bid_size_fp": "507.00",
+     "yes_sub_title": "Mackenzie Stiller"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Cerminara vs Stiller",
+   "title": "Fight Night: Katlyn Cerminara vs Mackenzie Stiller"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17MAHFAG",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T11:01:03.662131Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:20:00Z",
+     "created_time": "2026-10-12T00:35:34.395451Z",
+     "custom_strike": {
+      "ufc_competitor": "27a3717d-63d7-4271-8165-cf46214bbb5b"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17MAHFAG",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:20:00Z",
+     "expiration_time": "2026-10-19T21:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.5100",
+     "latest_expiration_time": "2026-10-19T21:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.5000",
+     "no_bid_dollars": "0.4900",
+     "no_sub_title": "Javad Mahjoub",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:20:00Z",
+     "open_interest_fp": "1368.79",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.5100",
+     "previous_yes_ask_dollars": "0.5200",
+     "previous_yes_bid_dollars": "0.4900",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Javad Mahjoub wins the Javad Mahjoub vs Joel Faglier professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17MAHFAG-MAH",
+     "title": "Javad Mahjoub wins",
+     "updated_time": "2026-10-13T11:01:03.664105Z",
+     "volume_24h_fp": "611.54",
+     "volume_fp": "1425.65",
+     "yes_ask_dollars": "0.5100",
+     "yes_ask_size_fp": "1187.33",
+     "yes_bid_dollars": "0.5000",
+     "yes_bid_size_fp": "479.00",
+     "yes_sub_title": "Javad Mahjoub"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:20:00Z",
+     "created_time": "2026-10-12T00:35:34.395451Z",
+     "custom_strike": {
+      "ufc_competitor": "360d9f04-0303-46d3-9383-7be572bf93ed"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17MAHFAG",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:20:00Z",
+     "expiration_time": "2026-10-19T21:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.5000",
+     "latest_expiration_time": "2026-10-19T21:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.5100",
+     "no_bid_dollars": "0.5000",
+     "no_sub_title": "Joel Faglier",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:20:00Z",
+     "open_interest_fp": "2261.40",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.5000",
+     "previous_yes_ask_dollars": "0.5000",
+     "previous_yes_bid_dollars": "0.4900",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Joel Faglier wins the Javad Mahjoub vs Joel Faglier professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17MAHFAG-FAG",
+     "title": "Joel Faglier wins",
+     "updated_time": "2026-10-13T11:01:03.664105Z",
+     "volume_24h_fp": "889.96",
+     "volume_fp": "2263.33",
+     "yes_ask_dollars": "0.5000",
+     "yes_ask_size_fp": "3278.34",
+     "yes_bid_dollars": "0.4900",
+     "yes_bid_size_fp": "358.07",
+     "yes_sub_title": "Joel Faglier"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Mahjoub vs Faglier",
+   "title": "Fight Night: Javad Mahjoub vs Joel Faglier"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17LEBGAL",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T11:01:04.887833Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:40:00Z",
+     "created_time": "2026-10-11T20:35:45.902278Z",
+     "custom_strike": {
+      "ufc_competitor": "9a790209-e5c6-4446-b83e-55ac44bbd653"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17LEBGAL",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:40:00Z",
+     "expiration_time": "2026-10-19T21:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.1800",
+     "latest_expiration_time": "2026-10-19T21:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.8300",
+     "no_bid_dollars": "0.8200",
+     "no_sub_title": "Julien Leblanc",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:40:00Z",
+     "open_interest_fp": "3685.12",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.1800",
+     "previous_yes_ask_dollars": "0.1800",
+     "previous_yes_bid_dollars": "0.1500",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Julien Leblanc wins the Julien Leblanc vs Nick Galanti professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17LEBGAL-LEB",
+     "title": "Julien Leblanc wins",
+     "updated_time": "2026-10-13T11:01:04.890886Z",
+     "volume_24h_fp": "2164.87",
+     "volume_fp": "4664.20",
+     "yes_ask_dollars": "0.1800",
+     "yes_ask_size_fp": "17838.21",
+     "yes_bid_dollars": "0.1700",
+     "yes_bid_size_fp": "0.57",
+     "yes_sub_title": "Julien Leblanc"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T21:40:00Z",
+     "created_time": "2026-10-11T20:35:45.902278Z",
+     "custom_strike": {
+      "ufc_competitor": "f56f81d2-a1c7-4d77-852b-e8036fbe8a36"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17LEBGAL",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:40:00Z",
+     "expiration_time": "2026-10-19T21:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.8400",
+     "latest_expiration_time": "2026-10-19T21:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.1800",
+     "no_bid_dollars": "0.1600",
+     "no_sub_title": "Nick Galanti",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T02:40:00Z",
+     "open_interest_fp": "857.84",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.8400",
+     "previous_yes_ask_dollars": "0.8400",
+     "previous_yes_bid_dollars": "0.8200",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Nick Galanti wins the Julien Leblanc vs Nick Galanti professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17LEBGAL-GAL",
+     "title": "Nick Galanti wins",
+     "updated_time": "2026-10-13T11:01:04.890886Z",
+     "volume_24h_fp": "514.22",
+     "volume_fp": "857.84",
+     "yes_ask_dollars": "0.8400",
+     "yes_ask_size_fp": "1666.99",
+     "yes_bid_dollars": "0.8200",
+     "yes_bid_size_fp": "1447.00",
+     "yes_sub_title": "Nick Galanti"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Leblanc vs Galanti",
+   "title": "Fight Night: Julien Leblanc vs Nick Galanti"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17CHOYOU",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T10:31:31.589512Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:00:00Z",
+     "created_time": "2026-10-13T00:35:36.384031Z",
+     "custom_strike": {
+      "ufc_competitor": "72fb0c37-b9c8-4873-a959-74f94ab53a7d"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CHOYOU",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:00:00Z",
+     "expiration_time": "2026-10-19T22:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.5900",
+     "latest_expiration_time": "2026-10-19T22:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.4300",
+     "no_bid_dollars": "0.4100",
+     "no_sub_title": "Cody Chovancek",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:00:00Z",
+     "open_interest_fp": "259.49",
+     "open_time": "2026-10-13T00:40:00Z",
+     "previous_price_dollars": "0.0000",
+     "previous_yes_ask_dollars": "0.0000",
+     "previous_yes_bid_dollars": "0.0000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Cody Chovancek  wins the Cody Chovancek vs Soyoung You professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight ends in a draw/no contest, both markets will resolve to $0.50. Note that any revisions after Expiration will not be considered. Therefore, if a fighter is disqualified, removed, or the official result of the fight is reversed or changed in any way after the Contract expires, that will not impact resolution. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, both markets will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CHOYOU-CHO",
+     "title": "Cody Chovancek wins",
+     "updated_time": "2026-10-13T10:31:31.592323Z",
+     "volume_24h_fp": "259.49",
+     "volume_fp": "259.49",
+     "yes_ask_dollars": "0.5900",
+     "yes_ask_size_fp": "1932.43",
+     "yes_bid_dollars": "0.5700",
+     "yes_bid_size_fp": "1590.94",
+     "yes_sub_title": "Cody Chovancek"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:00:00Z",
+     "created_time": "2026-10-13T00:35:36.384031Z",
+     "custom_strike": {
+      "ufc_competitor": "75de1bd8-9c2e-4d21-8baa-48e18b1f8f82"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CHOYOU",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T03:00:00Z",
+     "expiration_time": "2026-10-19T22:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.4200",
+     "latest_expiration_time": "2026-10-19T22:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.5900",
+     "no_bid_dollars": "0.5800",
+     "no_sub_title": "Soyoung You",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:00:00Z",
+     "open_interest_fp": "178.52",
+     "open_time": "2026-10-13T00:40:00Z",
+     "previous_price_dollars": "0.0000",
+     "previous_yes_ask_dollars": "0.0000",
+     "previous_yes_bid_dollars": "0.0000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Soyoung You  wins the Cody Chovancek vs Soyoung You professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight ends in a draw/no contest, both markets will resolve to $0.50. Note that any revisions after Expiration will not be considered. Therefore, if a fighter is disqualified, removed, or the official result of the fight is reversed or changed in any way after the Contract expires, that will not impact resolution. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, both markets will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CHOYOU-YOU",
+     "title": "Soyoung You wins",
+     "updated_time": "2026-10-13T10:31:31.592323Z",
+     "volume_24h_fp": "169.70",
+     "volume_fp": "180.70",
+     "yes_ask_dollars": "0.4200",
+     "yes_ask_size_fp": "38.39",
+     "yes_bid_dollars": "0.4100",
+     "yes_bid_size_fp": "34.82",
+     "yes_sub_title": "Soyoung You"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Chovancek vs You (Oct 17)",
+   "title": "Fight Night: Cody Chovancek vs Soyoung You"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17CROCHA",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T10:31:32.386763Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:20:00Z",
+     "created_time": "2026-10-11T20:35:46.517475Z",
+     "custom_strike": {
+      "ufc_competitor": "b80fdc70-6daa-48c4-a2cc-378bfe4e2218"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CROCHA",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T04:20:00Z",
+     "expiration_time": "2026-10-19T22:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7200",
+     "latest_expiration_time": "2026-10-19T22:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.2900",
+     "no_bid_dollars": "0.2800",
+     "no_sub_title": "Melissa Croden",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:20:00Z",
+     "open_interest_fp": "666.81",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.7100",
+     "previous_yes_ask_dollars": "0.7200",
+     "previous_yes_bid_dollars": "0.7100",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Melissa Croden wins the Melissa Croden vs Chelsea Chandler professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CROCHA-CRO",
+     "title": "Melissa Croden wins",
+     "updated_time": "2026-10-13T10:31:32.390645Z",
+     "volume_24h_fp": "480.45",
+     "volume_fp": "667.07",
+     "yes_ask_dollars": "0.7200",
+     "yes_ask_size_fp": "762.47",
+     "yes_bid_dollars": "0.7100",
+     "yes_bid_size_fp": "39.74",
+     "yes_sub_title": "Melissa Croden"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:20:00Z",
+     "created_time": "2026-10-11T20:35:46.517475Z",
+     "custom_strike": {
+      "ufc_competitor": "00cdd9bf-e9cc-427d-a48b-4bca1156bb73"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17CROCHA",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T04:20:00Z",
+     "expiration_time": "2026-10-19T22:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3000",
+     "latest_expiration_time": "2026-10-19T22:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7200",
+     "no_bid_dollars": "0.7000",
+     "no_sub_title": "Chelsea Chandler",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:20:00Z",
+     "open_interest_fp": "1567.34",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.3000",
+     "previous_yes_ask_dollars": "0.3000",
+     "previous_yes_bid_dollars": "0.2900",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Chelsea Chandler wins the Melissa Croden vs Chelsea Chandler professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17CROCHA-CHA",
+     "title": "Chelsea Chandler wins",
+     "updated_time": "2026-10-13T10:31:32.390645Z",
+     "volume_24h_fp": "1247.09",
+     "volume_fp": "1683.51",
+     "yes_ask_dollars": "0.3000",
+     "yes_ask_size_fp": "4735.03",
+     "yes_bid_dollars": "0.2800",
+     "yes_bid_size_fp": "407.64",
+     "yes_sub_title": "Chelsea Chandler"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Croden vs Chandler",
+   "title": "Fight Night: Melissa Croden vs Chelsea Chandler"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17ANHKOS",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T11:01:07.833376Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:40:00Z",
+     "created_time": "2026-10-12T00:35:35.5621Z",
+     "custom_strike": {
+      "ufc_competitor": "2db7b374-3bfe-435c-8995-7445fe2801ba"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17ANHKOS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T04:40:00Z",
+     "expiration_time": "2026-10-19T22:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.4800",
+     "latest_expiration_time": "2026-10-19T22:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.5300",
+     "no_bid_dollars": "0.5200",
+     "no_sub_title": "Chad Anheliger",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:40:00Z",
+     "open_interest_fp": "2502.44",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.5200",
+     "previous_yes_ask_dollars": "0.5200",
+     "previous_yes_bid_dollars": "0.5000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Chad Anheliger wins the Chad Anheliger vs Steven Koslow professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17ANHKOS-ANH",
+     "title": "Chad Anheliger wins",
+     "updated_time": "2026-10-13T11:01:07.836611Z",
+     "volume_24h_fp": "373.00",
+     "volume_fp": "2506.38",
+     "yes_ask_dollars": "0.4800",
+     "yes_ask_size_fp": "3435.99",
+     "yes_bid_dollars": "0.4700",
+     "yes_bid_size_fp": "307.79",
+     "yes_sub_title": "Chad Anheliger"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T22:40:00Z",
+     "created_time": "2026-10-12T00:35:35.5621Z",
+     "custom_strike": {
+      "ufc_competitor": "f4129bab-c018-4fd8-a82e-402f2114d282"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17ANHKOS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T04:40:00Z",
+     "expiration_time": "2026-10-19T22:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.5300",
+     "latest_expiration_time": "2026-10-19T22:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.4800",
+     "no_bid_dollars": "0.4700",
+     "no_sub_title": "Steven Koslow",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T03:40:00Z",
+     "open_interest_fp": "3838.31",
+     "open_time": "2026-10-12T00:40:00Z",
+     "previous_price_dollars": "0.5100",
+     "previous_yes_ask_dollars": "0.5000",
+     "previous_yes_bid_dollars": "0.4800",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Steven Koslow wins the Chad Anheliger vs Steven Koslow professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17ANHKOS-KOS",
+     "title": "Steven Koslow wins",
+     "updated_time": "2026-10-13T11:01:07.836611Z",
+     "volume_24h_fp": "3364.18",
+     "volume_fp": "3838.31",
+     "yes_ask_dollars": "0.5300",
+     "yes_ask_size_fp": "3672.72",
+     "yes_bid_dollars": "0.5200",
+     "yes_bid_size_fp": "5164.00",
+     "yes_sub_title": "Steven Koslow"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Anheliger vs Koslow",
+   "title": "Fight Night: Chad Anheliger vs Steven Koslow"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17BOSDIN",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:25:08.242225Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T23:00:00Z",
+     "created_time": "2026-10-11T20:35:47.077538Z",
+     "custom_strike": {
+      "ufc_competitor": "e6786eee-7a3d-4cba-a7b2-15ec8d26a759"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BOSDIN",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T05:00:00Z",
+     "expiration_time": "2026-10-19T23:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3100",
+     "latest_expiration_time": "2026-10-19T23:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7000",
+     "no_bid_dollars": "0.6900",
+     "no_sub_title": "Tanner Boser",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T04:00:00Z",
+     "open_interest_fp": "556.39",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.3300",
+     "previous_yes_ask_dollars": "0.3100",
+     "previous_yes_bid_dollars": "0.3000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Tanner Boser wins the Tanner Boser vs Jhonata Diniz professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BOSDIN-BOS",
+     "title": "Tanner Boser wins",
+     "updated_time": "2026-10-11T21:23:44.147773Z",
+     "volume_24h_fp": "189.56",
+     "volume_fp": "559.46",
+     "yes_ask_dollars": "0.3100",
+     "yes_ask_size_fp": "2485.51",
+     "yes_bid_dollars": "0.3000",
+     "yes_bid_size_fp": "357.93",
+     "yes_sub_title": "Tanner Boser"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-19T23:00:00Z",
+     "created_time": "2026-10-11T20:35:47.077538Z",
+     "custom_strike": {
+      "ufc_competitor": "9c0b18e8-f504-43b0-92fa-5eeaef9ce2e2"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BOSDIN",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T05:00:00Z",
+     "expiration_time": "2026-10-19T23:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7000",
+     "latest_expiration_time": "2026-10-19T23:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.3100",
+     "no_bid_dollars": "0.3000",
+     "no_sub_title": "Jhonata Diniz",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T04:00:00Z",
+     "open_interest_fp": "352.54",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.6900",
+     "previous_yes_ask_dollars": "0.6900",
+     "previous_yes_bid_dollars": "0.6800",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Jhonata Diniz wins the Tanner Boser vs Jhonata Diniz professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BOSDIN-DIN",
+     "title": "Jhonata Diniz wins",
+     "updated_time": "2026-10-11T21:23:44.154546Z",
+     "volume_24h_fp": "286.30",
+     "volume_fp": "352.54",
+     "yes_ask_dollars": "0.7000",
+     "yes_ask_size_fp": "511.61",
+     "yes_bid_dollars": "0.6900",
+     "yes_bid_size_fp": "121.00",
+     "yes_sub_title": "Jhonata Diniz"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Boser vs Diniz",
+   "title": "Fight Night: Tanner Boser vs Jhonata Diniz"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17NALLAN",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:25:08.236067Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:00:00Z",
+     "created_time": "2026-10-11T20:35:49.894807Z",
+     "custom_strike": {
+      "ufc_competitor": "b8409b7b-caca-4018-9b8b-9c36ae976878"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17NALLAN",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T06:00:00Z",
+     "expiration_time": "2026-10-20T00:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7200",
+     "latest_expiration_time": "2026-10-20T00:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.2900",
+     "no_bid_dollars": "0.2800",
+     "no_sub_title": "Mandel Nallo",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:00:00Z",
+     "open_interest_fp": "347.74",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.7100",
+     "previous_yes_ask_dollars": "0.7100",
+     "previous_yes_bid_dollars": "0.7000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Mandel Nallo wins the Mandel Nallo vs Nate Landwehr professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17NALLAN-NAL",
+     "title": "Mandel Nallo wins",
+     "updated_time": "2026-10-11T21:24:03.372202Z",
+     "volume_24h_fp": "158.52",
+     "volume_fp": "347.74",
+     "yes_ask_dollars": "0.7200",
+     "yes_ask_size_fp": "3976.28",
+     "yes_bid_dollars": "0.7100",
+     "yes_bid_size_fp": "133.00",
+     "yes_sub_title": "Mandel Nallo"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:00:00Z",
+     "created_time": "2026-10-11T20:35:49.894807Z",
+     "custom_strike": {
+      "ufc_competitor": "01c2eab9-c08f-42b9-8114-05e4b4c1d8c4"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17NALLAN",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T06:00:00Z",
+     "expiration_time": "2026-10-20T00:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.2900",
+     "latest_expiration_time": "2026-10-20T00:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7200",
+     "no_bid_dollars": "0.7100",
+     "no_sub_title": "Nate Landwehr",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:00:00Z",
+     "open_interest_fp": "4447.71",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.2900",
+     "previous_yes_ask_dollars": "0.2900",
+     "previous_yes_bid_dollars": "0.2800",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Nate Landwehr wins the Mandel Nallo vs Nate Landwehr professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17NALLAN-LAN",
+     "title": "Nate Landwehr wins",
+     "updated_time": "2026-10-11T21:24:03.376453Z",
+     "volume_24h_fp": "1016.59",
+     "volume_fp": "4801.96",
+     "yes_ask_dollars": "0.2900",
+     "yes_ask_size_fp": "1615.30",
+     "yes_bid_dollars": "0.2800",
+     "yes_bid_size_fp": "453.86",
+     "yes_sub_title": "Nate Landwehr"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Nallo vs Landwehr",
+   "title": "Fight Night: Mandel Nallo vs Nate Landwehr"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17JOUCUA",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-13T00:36:16.164476Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:20:00Z",
+     "created_time": "2026-10-13T00:35:39.529259Z",
+     "custom_strike": {
+      "ufc_competitor": "6d19d469-48b9-4518-b684-43a2b17ff003"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17JOUCUA",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T05:20:00Z",
+     "expiration_time": "2026-10-20T00:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.6500",
+     "latest_expiration_time": "2026-10-20T00:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.3700",
+     "no_bid_dollars": "0.3600",
+     "no_sub_title": "Louis Jourdain",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:20:00Z",
+     "open_interest_fp": "29.39",
+     "open_time": "2026-10-13T00:40:00Z",
+     "previous_price_dollars": "0.0000",
+     "previous_yes_ask_dollars": "0.0000",
+     "previous_yes_bid_dollars": "0.0000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Louis Jourdain  wins the Louis Jourdain vs Timothy Angel Cuamba professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight ends in a draw/no contest, both markets will resolve to $0.50. Note that any revisions after Expiration will not be considered. Therefore, if a fighter is disqualified, removed, or the official result of the fight is reversed or changed in any way after the Contract expires, that will not impact resolution. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, both markets will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17JOUCUA-JOU",
+     "title": "Louis Jourdain wins",
+     "updated_time": "2026-10-13T00:40:00.903951Z",
+     "volume_24h_fp": "29.39",
+     "volume_fp": "29.39",
+     "yes_ask_dollars": "0.6400",
+     "yes_ask_size_fp": "409.00",
+     "yes_bid_dollars": "0.6300",
+     "yes_bid_size_fp": "34.00",
+     "yes_sub_title": "Louis Jourdain"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:20:00Z",
+     "created_time": "2026-10-13T00:35:39.529259Z",
+     "custom_strike": {
+      "ufc_competitor": "9f1fdbc3-e453-40ca-818a-af02120c5c4c"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17JOUCUA",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T05:20:00Z",
+     "expiration_time": "2026-10-20T00:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3600",
+     "latest_expiration_time": "2026-10-20T00:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.6500",
+     "no_bid_dollars": "0.6300",
+     "no_sub_title": "Timothy Angel Cuamba",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:20:00Z",
+     "open_interest_fp": "89.63",
+     "open_time": "2026-10-13T00:40:00Z",
+     "previous_price_dollars": "0.0000",
+     "previous_yes_ask_dollars": "0.0000",
+     "previous_yes_bid_dollars": "0.0000",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Timothy Angel Cuamba  wins the Louis Jourdain vs Timothy Angel Cuamba professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight ends in a draw/no contest, both markets will resolve to $0.50. Note that any revisions after Expiration will not be considered. Therefore, if a fighter is disqualified, removed, or the official result of the fight is reversed or changed in any way after the Contract expires, that will not impact resolution. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, both markets will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17JOUCUA-CUA",
+     "title": "Timothy Angel Cuamba wins",
+     "updated_time": "2026-10-13T00:40:00.903951Z",
+     "volume_24h_fp": "94.79",
+     "volume_fp": "94.79",
+     "yes_ask_dollars": "0.3700",
+     "yes_ask_size_fp": "2250.88",
+     "yes_bid_dollars": "0.3500",
+     "yes_bid_size_fp": "5473.28",
+     "yes_sub_title": "Timothy Angel Cuamba"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Jourdain vs Cuamba (Oct 17)",
+   "title": "Fight Night: Louis Jourdain vs Timothy Angel Cuamba"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17BARDAU",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:26:18.443555Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:40:00Z",
+     "created_time": "2026-10-11T20:35:50.481903Z",
+     "custom_strike": {
+      "ufc_competitor": "41d25333-4a0f-4ce5-9de4-dcf57530fe55"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BARDAU",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T06:40:00Z",
+     "expiration_time": "2026-10-20T00:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3500",
+     "latest_expiration_time": "2026-10-20T00:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.6700",
+     "no_bid_dollars": "0.6500",
+     "no_sub_title": "Marc Andre Barriault",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:40:00Z",
+     "open_interest_fp": "2330.30",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.3500",
+     "previous_yes_ask_dollars": "0.3500",
+     "previous_yes_bid_dollars": "0.3300",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Marc Andre Barriault wins the Marc Andre Barriault vs Kyle Daukaus professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BARDAU-BAR",
+     "title": "Marc Andre Barriault wins",
+     "updated_time": "2026-10-11T21:24:49.84573Z",
+     "volume_24h_fp": "1533.77",
+     "volume_fp": "2420.14",
+     "yes_ask_dollars": "0.3500",
+     "yes_ask_size_fp": "3658.58",
+     "yes_bid_dollars": "0.3300",
+     "yes_bid_size_fp": "773.16",
+     "yes_sub_title": "Marc Andre Barriault"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T00:40:00Z",
+     "created_time": "2026-10-11T20:35:50.481903Z",
+     "custom_strike": {
+      "ufc_competitor": "bd518654-3f71-4de0-acb5-be9685398f5c"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BARDAU",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T06:40:00Z",
+     "expiration_time": "2026-10-20T00:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.6700",
+     "latest_expiration_time": "2026-10-20T00:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.3500",
+     "no_bid_dollars": "0.3400",
+     "no_sub_title": "Kyle Daukaus",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T05:40:00Z",
+     "open_interest_fp": "983.51",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.6700",
+     "previous_yes_ask_dollars": "0.6700",
+     "previous_yes_bid_dollars": "0.6600",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Kyle Daukaus wins the Marc Andre Barriault vs Kyle Daukaus professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BARDAU-DAU",
+     "title": "Kyle Daukaus wins",
+     "updated_time": "2026-10-11T21:24:49.848515Z",
+     "volume_24h_fp": "584.80",
+     "volume_fp": "983.51",
+     "yes_ask_dollars": "0.6600",
+     "yes_ask_size_fp": "173.00",
+     "yes_bid_dollars": "0.6500",
+     "yes_bid_size_fp": "572.00",
+     "yes_sub_title": "Kyle Daukaus"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Barriault vs Daukaus",
+   "title": "Fight Night: Marc Andre Barriault vs Kyle Daukaus"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17NELPER",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:26:18.439286Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:00:00Z",
+     "created_time": "2026-10-11T20:35:51.046068Z",
+     "custom_strike": {
+      "ufc_competitor": "a9b58fc6-ad7e-4de2-a32d-dc6bcb5084e5"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17NELPER",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:00:00Z",
+     "expiration_time": "2026-10-20T01:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.2500",
+     "latest_expiration_time": "2026-10-20T01:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7600",
+     "no_bid_dollars": "0.7500",
+     "no_sub_title": "Kyle Nelson",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:00:00Z",
+     "open_interest_fp": "1004.46",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.2800",
+     "previous_yes_ask_dollars": "0.2700",
+     "previous_yes_bid_dollars": "0.2600",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Kyle Nelson wins the Kyle Nelson vs Cristian Perez professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17NELPER-NEL",
+     "title": "Kyle Nelson wins",
+     "updated_time": "2026-10-11T21:25:09.836695Z",
+     "volume_24h_fp": "598.56",
+     "volume_fp": "1017.76",
+     "yes_ask_dollars": "0.2500",
+     "yes_ask_size_fp": "3207.17",
+     "yes_bid_dollars": "0.2400",
+     "yes_bid_size_fp": "2925.35",
+     "yes_sub_title": "Kyle Nelson"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:00:00Z",
+     "created_time": "2026-10-11T20:35:51.046068Z",
+     "custom_strike": {
+      "ufc_competitor": "69f3a788-e186-4631-aeaa-63360384a00f"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17NELPER",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:00:00Z",
+     "expiration_time": "2026-10-20T01:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7600",
+     "latest_expiration_time": "2026-10-20T01:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.2500",
+     "no_bid_dollars": "0.2400",
+     "no_sub_title": "Cristian Perez",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:00:00Z",
+     "open_interest_fp": "397.74",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.7400",
+     "previous_yes_ask_dollars": "0.7500",
+     "previous_yes_bid_dollars": "0.7300",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Cristian Perez wins the Kyle Nelson vs Cristian Perez professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17NELPER-PER",
+     "title": "Cristian Perez wins",
+     "updated_time": "2026-10-11T21:25:09.842043Z",
+     "volume_24h_fp": "352.23",
+     "volume_fp": "397.74",
+     "yes_ask_dollars": "0.7600",
+     "yes_ask_size_fp": "130.84",
+     "yes_bid_dollars": "0.7500",
+     "yes_bid_size_fp": "1003.00",
+     "yes_sub_title": "Cristian Perez"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Nelson vs Perez",
+   "title": "Fight Night: Kyle Nelson vs Cristian Perez"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17BLAJAS",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:26:18.434388Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:20:00Z",
+     "created_time": "2026-10-11T20:35:51.504672Z",
+     "custom_strike": {
+      "ufc_competitor": "6f0da946-7f1a-497f-a38d-b499fff20418"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BLAJAS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:20:00Z",
+     "expiration_time": "2026-10-20T01:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.7400",
+     "latest_expiration_time": "2026-10-20T01:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.2700",
+     "no_bid_dollars": "0.2500",
+     "no_sub_title": "Erin Blanchfield",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:20:00Z",
+     "open_interest_fp": "2635.83",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.7400",
+     "previous_yes_ask_dollars": "0.7400",
+     "previous_yes_bid_dollars": "0.7300",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Erin Blanchfield wins the Erin Blanchfield vs Jasmine Jasudavicius professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BLAJAS-BLA",
+     "title": "Erin Blanchfield wins",
+     "updated_time": "2026-10-11T21:25:28.486138Z",
+     "volume_24h_fp": "1106.18",
+     "volume_fp": "2642.83",
+     "yes_ask_dollars": "0.7500",
+     "yes_ask_size_fp": "1316.56",
+     "yes_bid_dollars": "0.7300",
+     "yes_bid_size_fp": "1770.00",
+     "yes_sub_title": "Erin Blanchfield"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:20:00Z",
+     "created_time": "2026-10-11T20:35:51.504672Z",
+     "custom_strike": {
+      "ufc_competitor": "f8411254-ea1c-47fd-9df5-edc4db2428be"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BLAJAS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:20:00Z",
+     "expiration_time": "2026-10-20T01:20:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.2700",
+     "latest_expiration_time": "2026-10-20T01:20:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.7400",
+     "no_bid_dollars": "0.7300",
+     "no_sub_title": "Jasmine Jasudavicius",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:20:00Z",
+     "open_interest_fp": "4634.76",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.2800",
+     "previous_yes_ask_dollars": "0.2800",
+     "previous_yes_bid_dollars": "0.2600",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Jasmine Jasudavicius wins the Erin Blanchfield vs Jasmine Jasudavicius professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BLAJAS-JAS",
+     "title": "Jasmine Jasudavicius wins",
+     "updated_time": "2026-10-11T21:25:28.491017Z",
+     "volume_24h_fp": "704.56",
+     "volume_fp": "4648.28",
+     "yes_ask_dollars": "0.2700",
+     "yes_ask_size_fp": "29267.96",
+     "yes_bid_dollars": "0.2600",
+     "yes_bid_size_fp": "909.54",
+     "yes_sub_title": "Jasmine Jasudavicius"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Blanchfield vs Jasudavicius",
+   "title": "Fight Night: Erin Blanchfield vs Jasmine Jasudavicius"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT17BUCMAL",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T21:26:18.427164Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:40:00Z",
+     "created_time": "2026-10-11T20:35:51.968083Z",
+     "custom_strike": {
+      "ufc_competitor": "fac7b9d0-8746-45b5-a221-32aefecc6252"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BUCMAL",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:40:00Z",
+     "expiration_time": "2026-10-20T01:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.4700",
+     "latest_expiration_time": "2026-10-20T01:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.5400",
+     "no_bid_dollars": "0.5300",
+     "no_sub_title": "Joaquin Buckley",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:40:00Z",
+     "open_interest_fp": "18105.10",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.4800",
+     "previous_yes_ask_dollars": "0.4800",
+     "previous_yes_bid_dollars": "0.4700",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Joaquin Buckley wins the Joaquin Buckley vs Mike Malott professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BUCMAL-BUC",
+     "title": "Joaquin Buckley wins",
+     "updated_time": "2026-10-11T21:25:47.333349Z",
+     "volume_24h_fp": "10315.18",
+     "volume_fp": "18343.32",
+     "yes_ask_dollars": "0.4700",
+     "yes_ask_size_fp": "21086.53",
+     "yes_bid_dollars": "0.4600",
+     "yes_bid_size_fp": "29.00",
+     "yes_sub_title": "Joaquin Buckley"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-20T01:40:00Z",
+     "created_time": "2026-10-11T20:35:51.968083Z",
+     "custom_strike": {
+      "ufc_competitor": "dcf49dd4-0472-4f06-9b83-05f8723c6af6"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT17BUCMAL",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-18T07:40:00Z",
+     "expiration_time": "2026-10-20T01:40:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.5500",
+     "latest_expiration_time": "2026-10-20T01:40:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.4600",
+     "no_bid_dollars": "0.4500",
+     "no_sub_title": "Mike Malott",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-18T06:40:00Z",
+     "open_interest_fp": "7328.18",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.5400",
+     "previous_yes_ask_dollars": "0.5400",
+     "previous_yes_bid_dollars": "0.5300",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Mike Malott wins the Joaquin Buckley vs Mike Malott professional MMA fight originally scheduled for Oct 17, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT17BUCMAL-MAL",
+     "title": "Mike Malott wins",
+     "updated_time": "2026-10-11T21:25:47.337852Z",
+     "volume_24h_fp": "5029.39",
+     "volume_fp": "7577.42",
+     "yes_ask_dollars": "0.5500",
+     "yes_ask_size_fp": "3564.82",
+     "yes_bid_dollars": "0.5400",
+     "yes_bid_size_fp": "535.13",
+     "yes_sub_title": "Mike Malott"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Fight Night",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Buckley vs Malott",
+   "title": "Fight Night: Joaquin Buckley vs Mike Malott"
+  },
+  {
+   "category": "Sports",
+   "collateral_return_type": "MECNET",
+   "event_ticker": "KXUFCFIGHT-26OCT13ASHFOS",
+   "exchange_index": 0,
+   "last_updated_ts": "2026-10-11T20:36:37.802194Z",
+   "markets": [
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-15T23:00:00Z",
+     "created_time": "2026-10-11T20:35:29.963591Z",
+     "custom_strike": {
+      "ufc_competitor": "ada788c6-13dd-42ba-8913-94dc75e3d3f5"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT13ASHFOS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-14T04:00:00Z",
+     "expiration_time": "2026-10-15T23:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.6600",
+     "latest_expiration_time": "2026-10-15T23:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.3500",
+     "no_bid_dollars": "0.3400",
+     "no_sub_title": "Jason Asher",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-14T04:00:00Z",
+     "open_interest_fp": "15893.32",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.6500",
+     "previous_yes_ask_dollars": "0.6500",
+     "previous_yes_bid_dollars": "0.6400",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Jason Asher  wins the Jason Asher vs Greg Foster professional MMA fight originally scheduled for Oct 13, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT13ASHFOS-ASH",
+     "title": "Jason Asher wins",
+     "updated_time": "2026-10-11T20:40:00.674113Z",
+     "volume_24h_fp": "14692.09",
+     "volume_fp": "15950.33",
+     "yes_ask_dollars": "0.6600",
+     "yes_ask_size_fp": "36913.45",
+     "yes_bid_dollars": "0.6500",
+     "yes_bid_size_fp": "607.00",
+     "yes_sub_title": "Jason Asher"
+    },
+    {
+     "can_close_early": true,
+     "close_time": "2026-10-15T23:00:00Z",
+     "created_time": "2026-10-11T20:35:29.963591Z",
+     "custom_strike": {
+      "ufc_competitor": "48f0ce46-5e88-4e29-992a-debe23b269b9"
+     },
+     "early_close_condition": "This market will close and expire after a winner is declared.",
+     "event_ticker": "KXUFCFIGHT-26OCT13ASHFOS",
+     "exchange_index": 0,
+     "expected_expiration_time": "2026-10-14T04:00:00Z",
+     "expiration_time": "2026-10-15T23:00:00Z",
+     "expiration_value": "",
+     "last_price_dollars": "0.3600",
+     "latest_expiration_time": "2026-10-15T23:00:00Z",
+     "market_type": "binary",
+     "no_ask_dollars": "0.6500",
+     "no_bid_dollars": "0.6400",
+     "no_sub_title": "Greg Foster",
+     "notional_value_dollars": "1.0000",
+     "occurrence_datetime": "2026-10-14T04:00:00Z",
+     "open_interest_fp": "8559.37",
+     "open_time": "2026-10-11T20:40:00Z",
+     "previous_price_dollars": "0.3500",
+     "previous_yes_ask_dollars": "0.3500",
+     "previous_yes_bid_dollars": "0.3400",
+     "price_level_structure": "linear_cent",
+     "price_ranges": [
+      {
+       "end": "1.0000",
+       "start": "0.0000",
+       "step": "0.0100"
+      }
+     ],
+     "result": "",
+     "rules_primary": "If Greg Foster  wins the Jason Asher vs Greg Foster professional MMA fight originally scheduled for Oct 13, 2026, then the market resolves to Yes.",
+     "rules_secondary": "If the fight is declared a tie or no contest, both markets will resolve to $0.50. If the fight is postponed but begins within 48 hours of its originally scheduled start time, the market will remain open and resolve based on the official final result. If the fight is cancelled or not started within 48 hours of its originally scheduled start, the market will resolve to a fair price.\n\nThis market and these products have not been endorsed by Zuffa LLC, d/b/a Ultimate Fighting Championship, UFC. Any references to the \u201cUFC,\u201d or any other associated marks are descriptive only, and do not indicate an endorsement of this product or any affiliation between Zuffa and Kalshi.",
+     "settlement_bounds_type": "default",
+     "settlement_timer_seconds": 300,
+     "status": "active",
+     "strike_type": "structured",
+     "ticker": "KXUFCFIGHT-26OCT13ASHFOS-FOS",
+     "title": "Greg Foster wins",
+     "updated_time": "2026-10-11T20:40:00.674113Z",
+     "volume_24h_fp": "7683.57",
+     "volume_fp": "8889.96",
+     "yes_ask_dollars": "0.3600",
+     "yes_ask_size_fp": "27652.63",
+     "yes_bid_dollars": "0.3500",
+     "yes_bid_size_fp": "530.00",
+     "yes_sub_title": "Greg Foster"
+    }
+   ],
+   "mutually_exclusive": true,
+   "product_metadata": {
+    "competition": "Contender Series",
+    "competition_scope": "Game"
+   },
+   "series_ticker": "KXUFCFIGHT",
+   "settlement_sources": [
+    {
+     "name": "DAZN",
+     "url": "https://www.dazn.com/en-US"
+    },
+    {
+     "name": "ESPN",
+     "url": "https://www.espn.com"
+    },
+    {
+     "name": "Fox Sports",
+     "url": "https://foxsports.com"
+    },
+    {
+     "name": "Tapology",
+     "url": "https://www.tapology.com/"
+    },
+    {
+     "name": "the Governing League",
+     "url": "https://www.ufc.com/"
+    }
+   ],
+   "strike_period": "",
+   "sub_title": "Asher vs Foster",
+   "title": "Contender Series: Jason Asher vs Greg Foster"
+  }
+ ],
+ "milestones": []
+}

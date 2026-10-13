@@ -1,0 +1,1984 @@
+{
+ "events": [
+  {
+   "id": "600061541",
+   "uid": "s:3301~l:3321~e:600061541",
+   "date": "2026-10-10T21:00Z",
+   "name": "UFC Fight Night: Allen vs. Duncan",
+   "shortName": "UFC Fight Night",
+   "season": {
+    "year": 2026,
+    "type": 2,
+    "slug": "regular-season"
+   },
+   "competitions": [
+    {
+     "id": "401924511",
+     "uid": "s:3301~l:3321~e:600061541~c:401924511",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "1007",
+      "abbreviation": "W Flyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4420893",
+       "uid": "s:3301~a:4420893",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Melissa Gatto",
+        "displayName": "Melissa Gatto",
+        "shortName": "M. Gatto"
+       },
+       "linescores": [
+        {
+         "value": 83.0,
+         "displayValue": "83.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 27.0,
+           "displayValue": "27",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "9-3-3"
+        }
+       ]
+      },
+      {
+       "id": "5149147",
+       "uid": "s:3301~a:5149147",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Ernesta Kareckaite",
+        "displayName": "Ernesta Kareckaite",
+        "shortName": "E. Kareckaite"
+       },
+       "linescores": [
+        {
+         "value": 85.0,
+         "displayValue": "85.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "6-2-2"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 300.0,
+      "displayClock": "5:00",
+      "period": 3,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23453",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23452",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23451",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23450",
+       "type": {
+        "id": "16",
+        "text": "Submission Attempt"
+       }
+      },
+      {
+       "id": "23430",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23429",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23428",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23427",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23426",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23425",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401924512",
+     "uid": "s:3301~l:3321~e:600061541~c:401924512",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "1003",
+      "abbreviation": "W Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4894780",
+       "uid": "s:3301~a:4894780",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Daria Zhelezniakova",
+        "displayName": "Daria Zhelezniakova",
+        "shortName": "D. Zhelezniakova"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "10-4-0"
+        }
+       ]
+      },
+      {
+       "id": "5261515",
+       "uid": "s:3301~a:5261515",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Alice Pereira",
+        "displayName": "Alice Pereira",
+        "shortName": "A. Pereira"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "8-1-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 300.0,
+      "displayClock": "5:00",
+      "period": 1,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23472",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23473",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23471",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23470",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23460",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23459",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23458",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23457",
+       "type": {
+        "id": "3",
+        "text": "Tale of the tape"
+       }
+      },
+      {
+       "id": "23456",
+       "type": {
+        "id": "2",
+        "text": "Walkout"
+       }
+      },
+      {
+       "id": "23455",
+       "type": {
+        "id": "2",
+        "text": "Walkout"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927418",
+     "uid": "s:3301~l:3321~e:600061541~c:401927418",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "982",
+      "abbreviation": "Heavyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "5327626",
+       "uid": "s:3301~a:5327626",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Allen Frye Jr.",
+        "displayName": "Allen Frye Jr.",
+        "shortName": "A. Frye Jr."
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "7-1-0"
+        }
+       ]
+      },
+      {
+       "id": "5369555",
+       "uid": "s:3301~a:5369555",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "RJ Harris",
+        "displayName": "RJ Harris",
+        "shortName": "R. Harris"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "6-1-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 179.0,
+      "displayClock": "2:59",
+      "period": 1,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23495",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23496",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23494",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23493",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23492",
+       "type": {
+        "id": "17",
+        "text": "Knockdown"
+       }
+      },
+      {
+       "id": "23491",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23490",
+       "type": {
+        "id": "4",
+        "text": "Staredown"
+       }
+      },
+      {
+       "id": "23434",
+       "type": {
+        "id": "3",
+        "text": "Tale of the tape"
+       }
+      },
+      {
+       "id": "23433",
+       "type": {
+        "id": "2",
+        "text": "Walkout"
+       }
+      },
+      {
+       "id": "23432",
+       "type": {
+        "id": "2",
+        "text": "Walkout"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927420",
+     "uid": "s:3301~l:3321~e:600061541~c:401927420",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "990",
+      "abbreviation": "Light Heavyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4379328",
+       "uid": "s:3301~a:4379328",
+       "type": "athlete",
+       "order": 2,
+       "winner": true,
+       "athlete": {
+        "fullName": "Brendson Ribeiro",
+        "displayName": "Brendson Ribeiro",
+        "shortName": "B. Ribeiro"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "18-11-0"
+        }
+       ]
+      },
+      {
+       "id": "5292014",
+       "uid": "s:3301~a:5292014",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Felipe Franco",
+        "displayName": "Felipe Franco",
+        "shortName": "F. Franco"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "11-3-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 109.0,
+      "displayClock": "1:49",
+      "period": 1,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23510",
+       "type": {
+        "id": "20",
+        "text": "Unofficial Winner Submission"
+       }
+      },
+      {
+       "id": "23511",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23447",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23446",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23445",
+       "type": {
+        "id": "15",
+        "text": "Reversal"
+       }
+      },
+      {
+       "id": "23444",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23443",
+       "type": {
+        "id": "16",
+        "text": "Submission Attempt"
+       }
+      },
+      {
+       "id": "23442",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23441",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23440",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927419",
+     "uid": "s:3301~l:3321~e:600061541~c:401927419",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "969",
+      "abbreviation": "Welterweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4077451",
+       "uid": "s:3301~a:4077451",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Niko Price",
+        "displayName": "Niko Price",
+        "shortName": "N. Price"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "17-11-0"
+        }
+       ]
+      },
+      {
+       "id": "4423215",
+       "uid": "s:3301~a:4423215",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Leon Shahbazyan",
+        "displayName": "Leon Shahbazyan",
+        "shortName": "L. Shahbazyan"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "12-6-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 118.0,
+      "displayClock": "1:58",
+      "period": 1,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23535",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23536",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23534",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23533",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23552",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23551",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23550",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23449",
+       "type": {
+        "id": "4",
+        "text": "Staredown"
+       }
+      },
+      {
+       "id": "23448",
+       "type": {
+        "id": "3",
+        "text": "Tale of the tape"
+       }
+      },
+      {
+       "id": "23532",
+       "type": {
+        "id": "2",
+        "text": "Walkout"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401916277",
+     "uid": "s:3301~l:3321~e:600061541~c:401916277",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "986",
+      "abbreviation": "Lightweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "3093513",
+       "uid": "s:3301~a:3093513",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Ismael Bonfim",
+        "displayName": "Ismael Bonfim",
+        "shortName": "I. Bonfim"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "20-8-0"
+        }
+       ]
+      },
+      {
+       "id": "5123216",
+       "uid": "s:3301~a:5123216",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Francisco Prado",
+        "displayName": "Francisco Prado",
+        "shortName": "F. Prado"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "13-5-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 263.0,
+      "displayClock": "4:23",
+      "period": 1,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23553",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23554",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23580",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23579",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23578",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23577",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23576",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23575",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23574",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23573",
+       "type": {
+        "id": "3",
+        "text": "Tale of the tape"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927417",
+     "uid": "s:3301~l:3321~e:600061541~c:401927417",
+     "date": "2026-10-10T21:00Z",
+     "endDate": "2026-10-10T21:00Z",
+     "type": {
+      "id": "990",
+      "abbreviation": "Light Heavyweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "2553261",
+       "uid": "s:3301~a:2553261",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Gerald Meerschaert",
+        "displayName": "Gerald Meerschaert",
+        "shortName": "G. Meerschaert"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "37-23-0"
+        }
+       ]
+      },
+      {
+       "id": "5264398",
+       "uid": "s:3301~a:5264398",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Julius Walker",
+        "displayName": "Julius Walker",
+        "shortName": "J. Walker"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "8-3-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 215.0,
+      "displayClock": "3:35",
+      "period": 2,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23671",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23670",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23654",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23653",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23652",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23651",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23650",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23618",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23617",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23616",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-10T21:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927421",
+     "uid": "s:3301~l:3321~e:600061541~c:401927421",
+     "date": "2026-10-11T00:00Z",
+     "endDate": "2026-10-11T00:00Z",
+     "type": {
+      "id": "970",
+      "abbreviation": "Bantamweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "5212853",
+       "uid": "s:3301~a:5212853",
+       "type": "athlete",
+       "order": 2,
+       "winner": true,
+       "athlete": {
+        "fullName": "Otari Tanzilovi",
+        "displayName": "Otari Tanzilovi",
+        "shortName": "O. Tanzilovi"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "11-2-0"
+        }
+       ]
+      },
+      {
+       "id": "5212854",
+       "uid": "s:3301~a:5212854",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Malcolm Wellmaker",
+        "displayName": "Malcolm Wellmaker",
+        "shortName": "M. Wellmaker"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "10-3-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 159.0,
+      "displayClock": "2:39",
+      "period": 2,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23772",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23770",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23771",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23752",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23751",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23750",
+       "type": {
+        "id": "17",
+        "text": "Knockdown"
+       }
+      },
+      {
+       "id": "23737",
+       "type": {
+        "id": "17",
+        "text": "Knockdown"
+       }
+      },
+      {
+       "id": "23736",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23735",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23734",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-11T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927416",
+     "uid": "s:3301~l:3321~e:600061541~c:401927416",
+     "date": "2026-10-11T00:00Z",
+     "endDate": "2026-10-11T00:00Z",
+     "type": {
+      "id": "999",
+      "abbreviation": "Featherweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "3074464",
+       "uid": "s:3301~a:3074464",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Andre Fili",
+        "displayName": "Andre Fili",
+        "shortName": "A. Fili"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "26-14-0"
+        }
+       ]
+      },
+      {
+       "id": "4688447",
+       "uid": "s:3301~a:4688447",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Kai Kamaka III",
+        "displayName": "Kai Kamaka III",
+        "shortName": "K. Kamaka III"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "18-9-1"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 22.0,
+      "displayClock": "0:22",
+      "period": 2,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23850",
+       "type": {
+        "id": "21",
+        "text": "Unofficial Winner Kotko"
+       }
+      },
+      {
+       "id": "23851",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23836",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23835",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23834",
+       "type": {
+        "id": "17",
+        "text": "Knockdown"
+       }
+      },
+      {
+       "id": "23833",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23832",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23831",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23830",
+       "type": {
+        "id": "4",
+        "text": "Staredown"
+       }
+      },
+      {
+       "id": "23811",
+       "type": {
+        "id": "3",
+        "text": "Tale of the tape"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-11T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401924510",
+     "uid": "s:3301~l:3321~e:600061541~c:401924510",
+     "date": "2026-10-11T00:00Z",
+     "endDate": "2026-10-11T00:00Z",
+     "type": {
+      "id": "1006",
+      "abbreviation": "W Strawweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4566308",
+       "uid": "s:3301~a:4566308",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Ketlen Souza",
+        "displayName": "Ketlen Souza",
+        "shortName": "K. Souza"
+       },
+       "linescores": [
+        {
+         "value": 84.0,
+         "displayValue": "84.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "17-7-0"
+        }
+       ]
+      },
+      {
+       "id": "4700617",
+       "uid": "s:3301~a:4700617",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Loopy Godínez",
+        "displayName": "Loopy Godínez",
+        "shortName": "L. Godínez"
+       },
+       "linescores": [
+        {
+         "value": 87.0,
+         "displayValue": "87.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          },
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          },
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "15-6-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 300.0,
+      "displayClock": "5:00",
+      "period": 3,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23882",
+       "type": {
+        "id": "22",
+        "text": "Unofficial Winner Decision"
+       }
+      },
+      {
+       "id": "23881",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23880",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23879",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23878",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "23877",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23876",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23875",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23874",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23891",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-11T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401927415",
+     "uid": "s:3301~l:3321~e:600061541~c:401927415",
+     "date": "2026-10-11T00:00Z",
+     "endDate": "2026-10-11T00:00Z",
+     "type": {
+      "id": "986",
+      "abbreviation": "Lightweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4078246",
+       "uid": "s:3301~a:4078246",
+       "type": "athlete",
+       "order": 2,
+       "winner": true,
+       "athlete": {
+        "fullName": "Jai Herbert",
+        "displayName": "Jai Herbert",
+        "shortName": "J. Herbert"
+       },
+       "linescores": [
+        {
+         "value": 87.0,
+         "displayValue": "87.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          },
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          },
+          {
+           "value": 29.0,
+           "displayValue": "29",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "15-6-1"
+        }
+       ]
+      },
+      {
+       "id": "5170144",
+       "uid": "s:3301~a:5170144",
+       "type": "athlete",
+       "order": 1,
+       "winner": false,
+       "athlete": {
+        "fullName": "Matheus Camilo",
+        "displayName": "Matheus Camilo",
+        "shortName": "M. Camilo"
+       },
+       "linescores": [
+        {
+         "value": 84.0,
+         "displayValue": "84.0",
+         "period": 0,
+         "linescores": [
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          },
+          {
+           "value": 28.0,
+           "displayValue": "28",
+           "period": 0
+          }
+         ]
+        }
+       ],
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "11-4-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 300.0,
+      "displayClock": "5:00",
+      "period": 3,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "24011",
+       "type": {
+        "id": "22",
+        "text": "Unofficial Winner Decision"
+       }
+      },
+      {
+       "id": "24010",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "23994",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "23993",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23992",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23991",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23990",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "23884",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "23883",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "23970",
+       "type": {
+        "id": "15",
+        "text": "Reversal"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 3
+      }
+     },
+     "startDate": "2026-10-11T00:00Z",
+     "broadcast": "Paramount+"
+    },
+    {
+     "id": "401916276",
+     "uid": "s:3301~l:3321~e:600061541~c:401916276",
+     "date": "2026-10-11T00:00Z",
+     "endDate": "2026-10-11T00:00Z",
+     "type": {
+      "id": "972",
+      "abbreviation": "Middleweight"
+     },
+     "timeValid": true,
+     "neutralSite": false,
+     "playByPlayAvailable": true,
+     "recent": false,
+     "competitors": [
+      {
+       "id": "4025699",
+       "uid": "s:3301~a:4025699",
+       "type": "athlete",
+       "order": 1,
+       "winner": true,
+       "athlete": {
+        "fullName": "Brendan Allen",
+        "displayName": "Brendan Allen",
+        "shortName": "B. Allen"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "28-7-0"
+        }
+       ]
+      },
+      {
+       "id": "4848674",
+       "uid": "s:3301~a:4848674",
+       "type": "athlete",
+       "order": 2,
+       "winner": false,
+       "athlete": {
+        "fullName": "Christian Leroy Duncan",
+        "displayName": "Christian Leroy Duncan",
+        "shortName": "C. Duncan"
+       },
+       "records": [
+        {
+         "name": "overall",
+         "abbreviation": "TOT",
+         "type": "total",
+         "summary": "15-3-0"
+        }
+       ]
+      }
+     ],
+     "status": {
+      "clock": 166.0,
+      "displayClock": "2:46",
+      "period": 5,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      },
+      "featured": false
+     },
+     "details": [
+      {
+       "id": "23888",
+       "type": {
+        "id": "20",
+        "text": "Unofficial Winner Submission"
+       }
+      },
+      {
+       "id": "23889",
+       "type": {
+        "id": "23",
+        "text": "Results"
+       }
+      },
+      {
+       "id": "24117",
+       "type": {
+        "id": "19",
+        "text": "Fight Over"
+       }
+      },
+      {
+       "id": "24116",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      },
+      {
+       "id": "24115",
+       "type": {
+        "id": "16",
+        "text": "Submission Attempt"
+       }
+      },
+      {
+       "id": "24114",
+       "type": {
+        "id": "13",
+        "text": "Takedown"
+       }
+      },
+      {
+       "id": "24113",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "24112",
+       "type": {
+        "id": "12",
+        "text": "Takedown Attempt"
+       }
+      },
+      {
+       "id": "24111",
+       "type": {
+        "id": "5",
+        "text": "Round Start"
+       }
+      },
+      {
+       "id": "24110",
+       "type": {
+        "id": "18",
+        "text": "Round End"
+       }
+      }
+     ],
+     "format": {
+      "regulation": {
+       "periods": 5
+      }
+     },
+     "startDate": "2026-10-11T00:00Z",
+     "broadcast": "Paramount+"
+    }
+   ],
+   "venues": [
+    {
+     "id": "6176",
+     "fullName": "Meta APEX",
+     "address": {
+      "city": "Las Vegas",
+      "state": "NV",
+      "country": "USA"
+     }
+    }
+   ],
+   "status": {
+    "type": {
+     "id": "3",
+     "name": "STATUS_FINAL",
+     "state": "post",
+     "completed": true,
+     "description": "Final",
+     "detail": "Final",
+     "shortDetail": "Final"
+    }
+   }
+  }
+ ]
+}
