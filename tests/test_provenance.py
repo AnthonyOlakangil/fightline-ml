@@ -19,6 +19,7 @@ def _repo(tmp_path, monkeypatch):
     (tmp_path / "reports").mkdir()
     (tmp_path / "src" / "m.py").write_text("x = 1\n")
     (tmp_path / "reports" / "out.json").write_text("{}\n")
+    (tmp_path / "README.md").write_text("# r\n")
     subprocess.run(["git", "add", "-A"], check=True)
     subprocess.run(["git", "commit", "-q", "-m", "init"], check=True)
 
@@ -26,6 +27,7 @@ def _repo(tmp_path, monkeypatch):
 def test_an_output_only_change_leaves_the_code_tree_clean(tmp_path, monkeypatch):
     _repo(tmp_path, monkeypatch)
     (tmp_path / "reports" / "out.json").write_text('{"a": 1}\n')
+    (tmp_path / "README.md").write_text("# regenerated\n")
     assert git_state()["clean"] is False
     assert git_state(ignore=OUTPUT_DIRS)["clean"] is True
 

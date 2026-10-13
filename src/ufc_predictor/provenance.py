@@ -6,8 +6,9 @@ import subprocess
 
 #: Generated outputs. A step that writes them before they can be committed -- parlay
 #: pricing reads a freshly scored run's predictions -- checks the *code* is committed
-#: and records digests of its inputs instead.
-OUTPUT_DIRS = ("reports/", "app/artifacts/")
+#: and records digests of its inputs instead. README.md is included because scoring
+#: rewrites its generated blocks, and no computation reads it.
+OUTPUT_DIRS = ("reports/", "app/artifacts/", "README.md")
 
 
 def git_state(*, ignore: tuple[str, ...] = ()) -> dict:
