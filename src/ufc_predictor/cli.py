@@ -173,6 +173,18 @@ def bfo() -> None:
     write_snapshot()
 
 
+@app.command()
+def experiments() -> None:
+    """Run the pre-registered development stages (2010-2014 only) -> reports/dev/.
+
+    Refuses to run from a commit that lacks or has changed config/experiments.yaml, or
+    from a dirty tree. Never scores 2015 or the closed evaluation window.
+    """
+    from ufc_predictor.experiments.stages import run_all
+
+    run_all()
+
+
 @app.command("export-app")
 def export_app_cmd() -> None:
     """Export precomputed artefacts the Streamlit demo loads at startup."""
