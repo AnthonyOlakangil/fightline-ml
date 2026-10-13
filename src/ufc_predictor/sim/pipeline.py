@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 
 from ufc_predictor.config import Config, get_config
-from ufc_predictor.provenance import git_state
+from ufc_predictor.provenance import OUTPUT_DIRS, git_state
 from ufc_predictor.sim.bankroll import bootstrap_by_event, replay
 from ufc_predictor.sim.parlay import price_parlays
 
@@ -136,6 +136,12 @@ def _plot_predicted_vs_realized(results: dict, path) -> None:
     plt.close(fig)
 
 
+def _sha256(path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def _scored_eval_run(cfg: Config) -> int:
     """Which ledgered evaluation run produced the predictions being priced."""
     path = cfg.paths.reports_dir / "metrics.json"
@@ -146,7 +152,7 @@ def _scored_eval_run(cfg: Config) -> int:
 
 def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
     """Price parlays for every eval card under each probability source."""
-    git = git_state()
+    git = git_state(ignore=OUTPUT_DIRS)
     cfg = cfg or get_config()
     sim_cfg = cfg.sim
     preds = load_predictions(cfg, eval_only=True)
@@ -281,7 +287,8 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
         "reused_phase4_predictions": True,
         "priced_eval_run": _scored_eval_run(cfg),
         "git_commit": git["commit"],
-        "worktree_clean": git["clean"],
+        "code_tree_clean": git["clean"],
+        "predictions_sha256": _sha256(cfg.paths.reports_dir / "walkforward_predictions.csv"),
         "eval_window": [str(cfg.windows.eval_start), str(cfg.windows.eval_end)],
         "cards": int(preds["event_id"].nunique()),
         "fights": len(preds),
