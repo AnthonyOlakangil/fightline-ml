@@ -16,7 +16,9 @@ selects it, and the selected count is recorded so the backtest can report it.
 reasonably calibrated already, but not perfectly, and log loss and Brier both punish
 miscalibration directly. Isotonic regression is fitted on the holdout tail -- never on
 the data the trees were fitted to, which would be circular, and never on the evaluation
-period.
+period. Its output is bounded to ``calibration_bounds``: isotonic regression is a step
+function, and a step holding only wins or only losses would otherwise claim certainty --
+evaluation run 2 had 51 such predictions, and each miss cost 13.8 nats.
 
 Every seed comes from config; nothing in this module hardcodes one.
 """
@@ -46,7 +48,13 @@ class LightGBMModel(Model):
         early_stopping_rounds: int = 50,
         calibrate: bool = True,
         min_validation_rows: int = 300,
+        calibration_bounds: tuple[float, float] = (0.01, 0.99),
     ) -> None:
+        lo, hi = calibration_bounds
+        if not 0 < lo < 0.5 < hi < 1:
+            raise ValueError(
+                f"calibration_bounds {calibration_bounds} must satisfy 0 < lo < 0.5 < hi < 1"
+            )
         self.seed = seed
         self.params = dict(params or {})
         self.feature_cols = list(feature_cols or FEATURE_COLS)
@@ -54,6 +62,7 @@ class LightGBMModel(Model):
         self.early_stopping_rounds = early_stopping_rounds
         self.calibrate = calibrate
         self.min_validation_rows = min_validation_rows
+        self.calibration_bounds = (float(lo), float(hi))
 
         self._booster = None
         self._calibrator: IsotonicRegression | None = None
@@ -145,7 +154,8 @@ class LightGBMModel(Model):
         self._calibrator = None
         if self.calibrate:
             raw_va = model.predict_proba(X_va)[:, 1]
-            iso = IsotonicRegression(out_of_bounds="clip", y_min=0.0, y_max=1.0)
+            lo, hi = self.calibration_bounds
+            iso = IsotonicRegression(out_of_bounds="clip", y_min=lo, y_max=hi)
             iso.fit(raw_va, y_va)
             self._calibrator = iso
 

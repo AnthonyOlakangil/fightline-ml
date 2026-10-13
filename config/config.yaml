@@ -125,6 +125,17 @@ lightgbm_fit:
   # reported in the same column as properly validated folds. Paired with
   # min_train_fights below, every fold now gets a real holdout.
   min_validation_rows: 200
+  # Bounds on the calibrated probability, added for evaluation run 3. Isotonic regression
+  # is a step function, and a step holding only wins or only losses output exactly 0 or 1:
+  # run 2 had 25 dev and 26 eval such predictions, and each miss cost ln(1e6) = 13.8 nats.
+  # [0.01, 0.99] was fixed a priori as a loose, round bound, not searched. Dev-window
+  # evidence only (2010-2015, 2,154 priced fights; `ufc-predictor diagnose` regenerates
+  # it into reports/leakage_diagnostics.json): the vig-free closing line never left
+  # [0.070, 0.930], and favourites priced at 0.85 or more still lost 8.3% of 72 bouts.
+  # So the bound sits far outside anything the line or the outcomes support, removes only
+  # literal certainty, and caps a miss at ln(100) = 4.6 nats. Hyperparameters are
+  # unchanged: tuning fits without calibration, so the bound cannot affect it.
+  calibration_bounds: [0.01, 0.99]
 
 # ---------------------------------------------------------------------------
 # Backtest

@@ -455,3 +455,47 @@ def test_config_holds_the_tuned_and_frozen_parameters(cfg):
     assert f["calibrate"] is True
     assert 0 < f["validation_fraction"] < 0.5
     assert f["early_stopping_rounds"] > 0
+
+
+# ---------------------------------------------------------------------------
+# The calibrator may never claim certainty
+# ---------------------------------------------------------------------------
+
+
+def _separable_frame(n: int = 2000, seed: int = 0) -> pd.DataFrame:
+    """Fights whose outcome is near-certain at both extremes of one feature.
+
+    Isotonic regression fitted on such a tail ends in steps that hold only wins or only
+    losses -- exactly the condition that made run 2's calibrator emit 0 and 1.
+    """
+    rng = np.random.default_rng(seed)
+    x = np.sort(rng.uniform(-1, 1, n))
+    frame = pd.DataFrame(0.0, index=range(n), columns=FEATURE_COLS)
+    frame["elo_diff"] = x
+    frame = frame.sample(frac=1.0, random_state=seed).reset_index(drop=True)
+    frame["label"] = (rng.uniform(size=n) < np.clip(0.5 + frame["elo_diff"], 0, 1)).astype(int)
+    frame["date"] = [dt.date(2000, 1, 1) + dt.timedelta(days=i) for i in range(n)]
+    return frame
+
+
+def test_calibrated_lightgbm_never_outputs_a_certainty(cfg):
+    """Regression test for the run-2 defect: an isotonic step holding only one class
+    mapped to exactly 0 or 1, and each miss then cost 13.8 nats."""
+    frame = _separable_frame()
+    model = build_model("lightgbm", cfg)
+    model.fit(frame, frame["label"])
+    p = model.predict_proba(frame)
+    near_certain = (p <= 1e-5) | (p >= 1 - 1e-5)
+    assert not near_certain.any(), f"{int(near_certain.sum())} calibrated predictions at 0 or 1"
+
+
+def test_calibrated_lightgbm_stays_inside_the_configured_bounds(cfg, split):
+    lo, hi = cfg.lightgbm_fit["calibration_bounds"]
+    assert 0 < lo < 0.5 < hi < 1
+    train, test = split
+    for frame, fit_on in ((_separable_frame(), None), (test, train)):
+        model = build_model("lightgbm", cfg)
+        source = frame if fit_on is None else fit_on
+        model.fit(source, source["label"].astype(int))
+        p = model.predict_proba(frame)
+        assert p.min() >= lo and p.max() <= hi, (p.min(), p.max())

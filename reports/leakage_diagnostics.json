@@ -28,6 +28,31 @@
       "2015-12-31"
     ]
   },
+  "calibration_bound": {
+    "bounds": [
+      0.01,
+      0.99
+    ],
+    "cost_of_a_miss_at_the_bound_nats": 4.605170185988091,
+    "cost_of_a_miss_unbounded_nats": 13.815510557964274,
+    "favourites_at_or_above_0_85": {
+      "lost": 0.08333333333333333,
+      "n": 72
+    },
+    "market_max": 0.9212198221092757,
+    "market_min": 0.0704225352112676,
+    "market_outside_bounds": 0,
+    "n": 2154,
+    "top_1pct_favourites": {
+      "lost": 0.047619047619047616,
+      "min_probability": 0.8829483445955498,
+      "n": 21
+    },
+    "window": [
+      "2010-01-01",
+      "2015-12-31"
+    ]
+  },
   "chance_log_loss": 0.6931471805599453,
   "control": {
     "auc": 0.5862590095326669,

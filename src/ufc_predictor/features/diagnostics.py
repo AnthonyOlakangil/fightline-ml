@@ -145,6 +145,51 @@ def attribute_leak_evidence(tables: dict, feats: pd.DataFrame, cfg: Config) -> d
     }
 
 
+def calibration_bound_evidence(cfg: Config) -> dict:
+    """Dev-window evidence for LightGBM's calibration bounds, fixed a priori in config.
+
+    Descriptive only -- the bound was not searched. It reports how extreme the vig-free
+    closing line ever got in the dev window, and how often even its heaviest favourites
+    lost, so the reader can see the bound sits outside anything either supports.
+    """
+    from ufc_predictor.backtest.walkforward import load_panel
+
+    lo, hi = (float(b) for b in cfg.lightgbm_fit["calibration_bounds"])
+    panel = load_panel(cfg)
+    dev = panel.loc[
+        panel["scorable"]
+        & (panel["date"] >= cfg.windows.dev_start)
+        & (panel["date"] <= cfg.windows.dev_end)
+    ]
+    if dev["date"].max() > cfg.windows.dev_end:
+        raise RuntimeError("calibration-bound evidence reached the evaluation window")
+    m = dev["p1_market"].to_numpy(dtype=float)
+    y = dev["label"].to_numpy(dtype=float)
+    fav = np.maximum(m, 1 - m)
+    fav_lost = np.where(m >= 0.5, 1 - y, y)
+    heavy = fav >= 0.85
+    top = np.argsort(-fav, kind="stable")[: max(1, len(fav) // 100)]
+    return {
+        "bounds": [lo, hi],
+        "window": [str(cfg.windows.dev_start), str(cfg.windows.dev_end)],
+        "n": len(dev),
+        "market_min": float(m.min()),
+        "market_max": float(m.max()),
+        "market_outside_bounds": int(((m < lo) | (m > hi)).sum()),
+        "favourites_at_or_above_0_85": {
+            "n": int(heavy.sum()),
+            "lost": float(fav_lost[heavy].mean()),
+        },
+        "top_1pct_favourites": {
+            "n": len(top),
+            "min_probability": float(fav[top].min()),
+            "lost": float(fav_lost[top].mean()),
+        },
+        "cost_of_a_miss_at_the_bound_nats": float(-math.log(lo)),
+        "cost_of_a_miss_unbounded_nats": float(-math.log(1e-6)),
+    }
+
+
 def run(cfg: Config | None = None, *, n_draws: int = 8, verbose: bool = True) -> dict:
     """Compute every diagnostic and write ``reports/leakage_diagnostics.json``."""
     cfg = cfg or get_config()
@@ -189,6 +234,7 @@ def run(cfg: Config | None = None, *, n_draws: int = 8, verbose: bool = True) ->
         },
         "control": control,
         "attribute_leak": attribute_leak_evidence(tables, real, cfg),
+        "calibration_bound": calibration_bound_evidence(cfg),
     }
     path = cfg.paths.reports_dir / "leakage_diagnostics.json"
     path.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")

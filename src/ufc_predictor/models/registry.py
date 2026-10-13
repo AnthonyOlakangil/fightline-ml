@@ -34,6 +34,7 @@ def build_model(name: str, cfg: Config | None = None) -> Model:
             early_stopping_rounds=int(fit_cfg.get("early_stopping_rounds", 50)),
             calibrate=bool(fit_cfg.get("calibrate", True)),
             min_validation_rows=int(fit_cfg.get("min_validation_rows", 300)),
+            calibration_bounds=tuple(float(b) for b in fit_cfg["calibration_bounds"]),
         )
     raise KeyError(f"unknown model {name!r}; expected one of {MODEL_NAMES}")
 

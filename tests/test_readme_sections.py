@@ -112,3 +112,12 @@ def _assert_close(a, b, path="post_hoc"):
         assert math.isclose(a, b, rel_tol=1e-6, abs_tol=1e-9), f"{path}: {a} != {b}"
     else:
         assert a == b, f"{path}: {a!r} != {b!r}"
+
+
+def test_calibration_bound_evidence_is_dev_only_and_reproduces(cfg):
+    from ufc_predictor.features import diagnostics
+
+    committed = _load(cfg, "leakage_diagnostics.json")["calibration_bound"]
+    assert committed["window"][1] <= str(cfg.windows.dev_end)
+    assert committed["bounds"] == list(cfg.lightgbm_fit["calibration_bounds"])
+    _assert_close(diagnostics.calibration_bound_evidence(cfg), committed, "calibration_bound")
