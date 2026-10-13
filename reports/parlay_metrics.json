@@ -3586,6 +3586,7 @@
     "2026-10-03"
   ],
   "fights": 4636,
+  "git_commit": "7e026f0655b13685fcd6c9f14d468137c62ea90a",
   "legs_priced": "Moneyline only. The odds snapshot contains no method-of-victory or round prices, and none were invented.",
   "priced_eval_run": 2,
   "reused_phase4_predictions": true,
@@ -3605,5 +3606,6 @@
     "correlation": 0.001286371229785214,
     "n_pairs": 24069,
     "note": "Pearson correlation between pairs of same-card residuals. Near zero supports treating fights on a card as conditionally independent given features, which is what the parlay joint probability assumes."
-  }
+  },
+  "worktree_clean": true
 }

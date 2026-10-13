@@ -431,6 +431,13 @@ def test_readme_parlay_block_matches_parlay_metrics(parlay_metrics):
     assert readme[start:end] == expected, "parlay block is stale; run `make parlay`"
 
 
+def test_committed_parlay_metrics_name_a_clean_commit(parlay_metrics):
+    """Pricing reads the eval window's stored predictions, so the committed result must
+    say which code produced it, and that the tree matched that code."""
+    assert len(parlay_metrics["git_commit"]) == 40
+    assert parlay_metrics["worktree_clean"] is True
+
+
 def test_parlay_block_names_the_eval_run_it_priced(parlay_metrics):
     from ufc_predictor.backtest.readme_block import render_parlay
 
