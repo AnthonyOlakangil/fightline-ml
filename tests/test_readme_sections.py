@@ -90,5 +90,25 @@ def test_post_hoc_checks_reproduce_from_the_stored_predictions(cfg):
 
     committed = _load(cfg, "post_hoc.json")
     fresh = json.loads(json.dumps(post_hoc.compute(cfg)))
-    assert fresh == committed
+    # Logistic fits and BLAS differ across platforms in the last few bits, so the CI
+    # runner (Linux) cannot reproduce a macOS-written file bit-for-bit; agreement to
+    # 1e-6 relative is far tighter than any figure the README prints.
+    _assert_close(fresh, committed)
     assert committed["variant_decomposition"]["replay_matches_stored_variant"] is True
+
+
+def _assert_close(a, b, path="post_hoc"):
+    import math
+
+    if isinstance(a, dict):
+        assert isinstance(b, dict) and a.keys() == b.keys(), path
+        for k in a:
+            _assert_close(a[k], b[k], f"{path}.{k}")
+    elif isinstance(a, list):
+        assert isinstance(b, list) and len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b, strict=True)):
+            _assert_close(x, y, f"{path}[{i}]")
+    elif isinstance(a, float) or isinstance(b, float):
+        assert math.isclose(a, b, rel_tol=1e-6, abs_tol=1e-9), f"{path}: {a} != {b}"
+    else:
+        assert a == b, f"{path}: {a!r} != {b!r}"
