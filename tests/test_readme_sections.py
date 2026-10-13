@@ -15,7 +15,7 @@ from ufc_predictor.backtest import readme_sections
 from ufc_predictor.config import get_config
 
 REPO_ROOT = get_config().paths.raw_dir.parent.parent
-SECTIONS = ("HEADLINE", "DIAGNOSTICS", "TUNING", "DEVCARDS", "LEAK")
+SECTIONS = ("HEADLINE", "DIAGNOSTICS", "TUNING", "DEVCARDS", "LEAK", "POSTHOC")
 
 
 @pytest.fixture(scope="module")
@@ -82,3 +82,13 @@ def test_attribute_leak_evidence_reproduces_from_the_data(cfg):
     feats = diagnostics.build(tables["fights"], tables, cfg)
     fresh = diagnostics.attribute_leak_evidence(tables, feats, cfg)
     assert fresh == _load(cfg, "leakage_diagnostics.json")["attribute_leak"]
+
+
+def test_post_hoc_checks_reproduce_from_the_stored_predictions(cfg):
+    """post_hoc.json is a pure function of the committed predictions CSV."""
+    from ufc_predictor.backtest import post_hoc
+
+    committed = _load(cfg, "post_hoc.json")
+    fresh = json.loads(json.dumps(post_hoc.compute(cfg)))
+    assert fresh == committed
+    assert committed["variant_decomposition"]["replay_matches_stored_variant"] is True

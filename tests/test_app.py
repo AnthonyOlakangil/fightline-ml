@@ -309,6 +309,34 @@ def test_backtest_reports_the_market_winning():
 
 
 @requires_artifacts
+def test_backtest_never_labels_the_market_consuming_variant_as_beating_the_market():
+    at = run_page("Backtest")
+    for df in at.dataframe:
+        frame = df.value
+        if "Verdict" in frame.columns:
+            rows = frame.loc[frame["Model"].str.contains("variant", case=False)]
+            assert not rows["Verdict"].str.contains("beats").any()
+
+
+@requires_artifacts
+def test_app_explains_the_variant_gain_with_the_post_hoc_control():
+    """The app may not say the variant's gain is indistinguishable from zero when it is
+    not; it must give the decomposition the README gives."""
+    summary = json.loads((ARTIFACTS / "summary.json").read_text(encoding="utf-8"))
+    assert "post_hoc" in summary
+    text = all_text(run_page("Overview"))
+    assert "recalibrat" in text
+    assert "not statistically distinguishable from zero" not in text
+
+
+@requires_artifacts
+def test_backtest_does_not_claim_lightgbm_avoids_confident_predictions():
+    text = all_text(run_page("Backtest"))
+    assert "refuses to commit" not in text
+    assert "certaint" in text
+
+
+@requires_artifacts
 def test_parlay_lab_is_framed_as_selection_bias_not_recommendations():
     at = run_page("Parlay Lab")
     text = all_text(at)

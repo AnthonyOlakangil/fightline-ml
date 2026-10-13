@@ -266,7 +266,10 @@ noise would pass the shuffle test trivially.
 
 At n ≈ 1,000 a single AUC estimate carries a standard error of about 0.016, so one draw
 can read 0.53 with no leakage at all. The committed test therefore averages three
-independent shuffles and asserts on log loss, rather than resting on one draw. The table
+independent shuffles, asserting that their mean AUC sits at chance and that none of their
+log losses beats chance. Since the re-tune, the real-outcome control's log loss is also
+worse than chance, so only AUC now separates real from shuffled outcomes, and the control
+test asserts on AUC accordingly. The table
 is produced by `uv run ufc-predictor diagnose`, which shares its code with the tests.
 
 **What these tests could not see.** Both behavioural tests mutate fights and round
@@ -307,14 +310,15 @@ Paired per-fight log-loss difference against the market, with a 95% confidence i
 |---|---:|---|---|
 | LightGBM | +0.0853 | [+0.0703, +0.1020] | market wins |
 | Elo | +0.0786 | [+0.0694, +0.0879] | market wins |
-| Market + model *(variant)* | -0.0009 | [-0.0017, -0.0000] | **beats the market** |
+| Market + model *(variant)* | -0.0009 | [-0.0017, -0.00004] | lower than the market; see [the control](#what-the-variants-gain-is-made-of) |
 
 **Reading this honestly:**
 
 - The closing line **beats** the feature-based model by 0.0853 nats per fight. The model does not beat the market, and this is the project's headline result.
-- The market-anchored variant does improve on the market (-0.0009, CI [-0.0017, -0.0000]). Because it takes the closing line as an input it cannot support a 'beats the market' claim on its own; it is evidence about whether the features carry information the market has not already priced.
+- The market-anchored variant scores -0.0009 against the market (CI [-0.0017, -0.00004]). It takes the closing line as an input, so this cannot show an edge over that line; whether any of the difference comes from the model is tested by [the control](#what-the-variants-gain-is-made-of) after this section.
 - How much that is worth: 0.0009 nats is 0.14% of the market's own log loss. Unadjusted p = 0.038; Bonferroni-adjusted across the 3 comparisons, p = 0.114. In the dev window the same variant scored +0.0011 (CI [-0.0012, +0.0034]).
 - LightGBM scores worse than a coin flip in the dev window (0.7370 against ln 2 = 0.6931), yet ranks fights better than chance (AUC 0.5852): its probabilities are too confident, not inverted.
+- On the evaluation window LightGBM scores 0.6916: only 0.0016 better than a coin flip, and worse than one-feature Elo (0.6849).
 
 ### Window reconciliation
 
@@ -357,6 +361,31 @@ Every priced, decisive fight is accounted for: **2,154 dev + 0 gap + 4,636 eval 
 
 <!-- RESULTS:END -->
 
+<!-- POSTHOC:START -->
+### What the variant's gain is made of
+
+*A post-hoc check on the stored predictions, prompted by the second review ([`reports/review_run2.md`](reports/review_run2.md)). No evaluated model is refitted; the market-only control is new, and is listed in the glimpse disclosure.*
+
+The variant is a walk-forward logistic stacker on the market's and LightGBM's log-odds. Replaying that protocol on the stored predictions reproduces every variant prediction exactly; replaying it on the market's log-odds alone separates what the market contributes from what the model adds.
+
+| Comparison on the 4,636 eval fights (paired, event-resampled) | Δ log loss | 95% CI | p |
+|---|---:|---|---:|
+| Market recalibrated on its own past errors, vs the vig-free market | -0.0009 | [-0.0016, -0.0001] | 0.018 |
+| Market + model, vs the recalibrated market | -0.00001 | [-0.0004, +0.0004] | 0.925 |
+| Market + model, vs the vig-free market (as reported above) | -0.0009 | [-0.0017, -0.00004] | 0.038 |
+
+Adding LightGBM to the recalibrated market changes nothing that can be told from zero, and the stacker weights LightGBM's log-odds at 0.006–0.035 against 1.01–1.11 for the market's. **The variant's gain is the closing line correcting itself, not information from the features.** Proportional de-vig leaves a favourite–longshot bias, which a recalibration slope of 1.02–1.11 undoes. So the vig-free baseline used throughout this README is slightly beatable without any model: it is a marginally *easier* bar than a recalibrated reading of the same closing line, and the feature model still fails to clear it.
+
+### Where LightGBM's excess log loss comes from
+
+| Window | Fights | LightGBM predictions within 1e-05 of 0 or 1 | Of those, wrong | Log loss | Log loss without them | Share of all log loss from the wrong ones |
+|---|---:|---:|---:|---:|---:|---:|
+| Dev | 2,154 | 25 | 9 | 0.7370 | 0.6873 | 7.8% |
+| Eval | 4,636 | 26 | 6 | 0.6916 | 0.6775 | 2.6% |
+
+Each walk-forward fold calibrates LightGBM with isotonic regression, a step function. When its most extreme step holds only wins or only losses it outputs exactly 1 or 0, which scoring clips to 1e-06; a miss then costs 13.8 nats, 20 times what a coin flip pays. Without those predictions LightGBM scores 0.6873 in the dev window, better than a coin flip, and 0.6775 on eval, still far behind the market's 0.6063. This is a defect in the fitting regime, not leakage, and it does not change the headline. Fixing it changes the model, so it would need a third scored run; that has not been done.
+<!-- POSTHOC:END -->
+
 ---
 
 <!-- PARLAY:START -->
@@ -371,19 +400,21 @@ Priced on the **stored out-of-sample predictions** from the walk-forward backtes
 
 Each simulation resolves every fight on the card once and evaluates all legs against that same draw, so two legs from one bout are exactly dependent: backing both fighters gives a joint probability of zero rather than the product of two probabilities. Across different bouts the model treats fights as conditionally independent, and that assumption is measured rather than asserted — the correlation between same-card residuals is **+0.0013** over 24,069 pairs.
 
-| Ranked by | Candidates | Staked | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |
-|---|---:|---:|---:|---:|---:|---:|
-| lightgbm | 83,265 | 1,261 | **+6.3228** | **-0.5057** | 0.0206 | 0.1323 |
-| market plus model | 81 | 29 | **+0.0357** | **+0.0963** | 0.6182 | 0.5975 |
-| market | 0 | 0 | — | — | — | — |
+Predicted EV, realised ROI and both hit rates are per unit at flat stakes over all top-ranked parlays. The bankroll replay stakes Kelly-sized amounts only on those that clear the stake threshold, in date order, and stops if the bankroll is ruined.
+
+| Ranked by | Candidates | Top-ranked | Cleared stake threshold | Placed in bankroll replay | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| lightgbm | 83,265 | 1,261 | 1,261 | 250 | **+6.3228** | **-0.5057** | 0.0206 | 0.1323 |
+| market plus model | 81 | 55 | 29 | 29 | **+0.0357** | **+0.0963** | 0.6182 | 0.5975 |
+| market | 0 | 0 | 0 | 0 | — | — | — | — |
 
 **The headline of this section.** Ranking by the model's own expected value selected parlays it priced at **+632.3% expected return**. They actually returned **-50.6%** per unit staked. The model expected those parlays to land 13.2% of the time; they landed 2.1% of the time.
 
 That gap is the whole lesson. Ranking by estimated edge does not select the best bets — it selects the fights the model is most *wrong* about, because the biggest apparent edges come from the largest overestimates. Multiplying three such legs together compounds the error, which is why the three-leg parlays are the worst of all.
 
-A £1000 bankroll staked this way ends at **£198.82** (-80.1%) with a maximum drawdown of 94.0%. Resampling whole events 2,000 times gives a 90% band of £196 to £200; **100.0% of histories lose money** and **100.0% hit ruin** (defined as falling to 20% of the starting bankroll).
+A £1000 bankroll staked this way places 250 of the 1,261 qualifying bets before it is ruined, and ends at **£198.82** (-80.1%) with a maximum drawdown of 94.0%. Resampling whole events 2,000 times gives a 90% band of £196 to £200; **100.0% of histories lose money** and **100.0% hit ruin** (defined as falling to 20% of the starting bankroll).
 
-**The market-anchored variant** staked only 29 bets. Its bankroll ends at **£1,057.80** (+5.8%); resampling whole events 2,000 times gives a 90% band of £949 to £1,175, and **20.1% of histories lose money**. The band contains the starting bankroll, so this cannot be distinguished from breaking even. It also takes the closing line as an input, so it cannot show an edge *over* that line on its own.
+**The market-anchored variant** ranks only 55 parlays, of which 29 clear the stake threshold. At flat stakes those 29 returned +21.8% per unit, and all 55 returned +9.6%. Staked by the bankroll replay, its bankroll ends at **£1,057.80** (+5.8%); resampling whole events 2,000 times gives a 90% band of £949 to £1,175, and **20.1% of histories lose money**. The band contains the starting bankroll, so this cannot be distinguished from breaking even. It also takes the closing line as an input, so it cannot show an edge *over* that line on its own.
 
 **The control works.** Ranking by the market's own de-vigged probabilities finds **zero** positive-EV parlays, which is exactly right: a de-vigged probability priced against the book's vig-inclusive payout cannot show an edge. If this row had found value, the pricing code would be wrong.
 
@@ -426,7 +457,8 @@ with how experienced each fighter is, still identifies the fighter who was later
 all three attributes were dropped (126 → 117 features). Two regression tests were written
 first, watched failing on the run-1 code, and now guard the fix.
 
-Nothing else changed, so the difference between the runs is attributable to the fix:
+Apart from the re-tune the fix forced, nothing else changed, so the difference between
+the runs is attributable to the fix:
 same features otherwise, same tuning grid and tie rule, same walk-forward, same seed. Elo,
 which never used the attributes, scores identically in both runs — a built-in check that
 nothing else moved.
@@ -442,9 +474,11 @@ nothing else moved.
    test checks that the hyperparameters in `metrics.json` are the ones in
    `config/config.yaml` at that commit.
 
-Run 1 cannot meet that bar, and should be read accordingly: it is stamped `1c1e1f0`, but
-one fitting setting it used (`min_validation_rows: 200`, the fix from its dry run) was
-only committed seven minutes after it ran, in `ab82faf`.
+Run 1 cannot meet that bar, and should be read accordingly. It is stamped `1c1e1f0`, but
+that commit contains none of the backtest code: the walk-forward engine, the metrics and
+bootstrap, and the report generator were first committed about seven minutes after the
+run (`4ebb622`, `d3ba0ca`, `496a8e4`), together with one fitting setting it used,
+`min_validation_rows: 200` (`ab82faf`).
 
 <!-- LEAK:START -->
 **Evidence, dev window 2010-01-01 → 2015-12-31** (2,198 decisive bouts):
@@ -467,16 +501,18 @@ Blanking both sides would not have closed the leak. In pairs with a one-sided bl
 | Eval log loss — Market + model *(variant)* | 0.6030 | 0.6054 | +0.0024 |
 | Eval Δ vs market — LightGBM | +0.0710 [+0.0548, +0.0887] | +0.0853 [+0.0703, +0.1020] | +0.0143 |
 | Eval Δ vs market — Elo | +0.0786 [+0.0694, +0.0879] | +0.0786 [+0.0694, +0.0879] | +0.0000 |
-| Eval Δ vs market — Market + model *(variant)* | -0.0033 [-0.0069, +0.0006] | -0.0009 [-0.0017, -0.0000] | +0.0024 |
+| Eval Δ vs market — Market + model *(variant)* | -0.0033 [-0.0069, +0.0006] | -0.0009 [-0.0017, -0.00004] | +0.0024 |
 | Dev log loss — LightGBM | 0.6675 | 0.7370 | +0.0695 |
 | Dev Δ vs market — Market + model *(variant)* | -0.0220 [-0.0305, -0.0130] | +0.0011 [-0.0012, +0.0034] | +0.0231 |
-| Parlays ranked by LightGBM — bets staked | 1,262 | 1,261 | -1 |
-| Parlays ranked by LightGBM — predicted EV | +562.0% | +632.3% | +70.3 pp |
-| Parlays ranked by LightGBM — realised ROI | -22.5% | -50.6% | -28.1 pp |
+| Parlays ranked by LightGBM — top-ranked | 1,263 | 1,261 | -2 |
+| Parlays ranked by LightGBM — placed in bankroll replay | 208 | 250 | +42 |
+| Parlays ranked by LightGBM — predicted EV, flat stakes | +562.0% | +632.3% | +70.3 pp |
+| Parlays ranked by LightGBM — realised ROI, flat stakes | -22.5% | -50.6% | -28.1 pp |
 | Parlays ranked by LightGBM — ending bankroll (from £1,000) | £199.29 | £198.82 | -0.47 |
-| Parlays ranked by market + model — bets staked | 1,124 | 29 | -1,095 |
-| Parlays ranked by market + model — predicted EV | +27.1% | +3.6% | -23.5 pp |
-| Parlays ranked by market + model — realised ROI | -7.3% | +9.6% | +16.9 pp |
+| Parlays ranked by market + model — top-ranked | 1,196 | 55 | -1,141 |
+| Parlays ranked by market + model — placed in bankroll replay | 1,124 | 29 | -1,095 |
+| Parlays ranked by market + model — predicted EV, flat stakes | +27.1% | +3.6% | -23.5 pp |
+| Parlays ranked by market + model — realised ROI, flat stakes | -7.3% | +9.6% | +16.9 pp |
 | Parlays ranked by market + model — ending bankroll (from £1,000) | £826.70 | £1,057.80 | +231.10 |
 <!-- LEAK:END -->
 
@@ -486,13 +522,15 @@ Blanking both sides would not have closed the leak. In pairs with a one-sided bl
   without it the market's margin widens.
 - **The market-anchored variant's dev-window win was the leak.** Run 1 reported that
   adding the model to the closing line beat the line in the dev window, with an interval
-  excluding zero; without the leak that disappears. Its eval-window result is in the
-  results block above, with its size and a multiple-comparison correction.
-- **LightGBM's probabilities are now worse than a coin flip in the dev window**, while it
-  still ranks fights better than chance. The calibration plot shows why: its most extreme
-  predictions are far too confident. That is a fitting-regime weakness, listed under
-  [Limitations](#limitations); fixing it would need a third scored run, which has not
-  been spent.
+  excluding zero; without the leak that disappears. Its small remaining eval-window gain
+  is the closing line recalibrating itself, and the model adds nothing to it ([the
+  control](#what-the-variants-gain-is-made-of)).
+- **LightGBM is now worse than a coin flip in the dev window**, and the cause is narrow:
+  a few dozen predictions of exactly 0 or 1 from its calibrator ([where the excess comes
+  from](#where-lightgbms-excess-log-loss-comes-from)). The leak had hidden this in run 1.
+  The dev-window dry run before run 2 showed the symptom, but it was not traced to this
+  cause until the second review. Fixing it changes the model and would need a third
+  scored run, which has not been spent.
 - **The variant's parlays shrink to a handful.** Without the leak it believes far fewer
   parlays are positive-EV, so it stakes far fewer bets, and what remains is too small to
   distinguish from breaking even; the [parlay section](#parlay-pricing--how-much-of-the-edge-was-real)
@@ -596,7 +634,7 @@ it into a second training set.
 <!-- TUNING:START -->
 - **216 candidates searched**, biased toward strong regularization, on a chronological holdout inside the dev window (train 2,581 fights, validate 860 fights 2014-03-23 → 2015-12-19). Selected: `max_depth=6`, `num_leaves=31`, `min_child_samples=80`, `learning_rate=0.05`, `colsample_bytree=0.7`, `reg_lambda=1.0`. Early stopping kept 31 trees on the tuning split.
 - Its validation log loss is **0.6775**; a coin flip scores 0.6931, and the settings in force before this search scored 0.6825 on the same split.
-- **Ties are broken by a coded rule, not by the score.** 2 candidates scored within 0.001 log loss of the best, which is noise at 860 validation fights, so a coded rule picks the *most regularized* model among those tied. Here the tied candidates had equal capacity, so the rule kept the lowest-scoring one.
+- **Ties are broken by a coded rule, not by the score.** 2 candidates scored within 0.001 log loss of the best, which is noise at 860 validation fights, so a coded rule picks the *most regularized* model among those tied. Here the rule's pick is also the lowest-scoring candidate.
 <!-- TUNING:END -->
 - **Re-tuned exactly once, after the leak fix**, with the same grid and the same tie
   rule, still inside the dev window. The new settings were committed and pushed before
@@ -628,9 +666,9 @@ exactly the same rows.
 
 **On this dev holdout the closing line beats both models.** That is the expected shape of
 the problem and the reason the project is framed as a measurement rather than a product.
-Whether it holds on the held-out period is the walk-forward backtest's question, and **no evaluation-window
-number appears anywhere in this repository until the walk-forward backtest generates it**
-into `reports/metrics.json`, with the exact `n` stated there.
+Whether it holds on the held-out period is the walk-forward backtest's question. Every
+evaluation-window figure in this repository comes from that backtest, apart from the looks
+listed in the glimpse disclosure below.
 
 ### Known coverage limits
 
@@ -687,6 +725,12 @@ evaluation period was measured during this project:
    froze the re-tuned settings. Its ledger entry names that full commit and the reason
    for the run. [What changed between runs 1 and
    2](#what-changed-between-evaluation-runs-1-and-2) has the before-and-after.
+6. **The second review and its post-hoc checks** — the reviewer recomputed run 2's
+   intervals from the stored predictions, and two checks it prompted are now generated
+   by `make report`: a market-only recalibration control fitted on walk-forward history
+   and scored on the evaluation window, and an audit of LightGBM's stored eval
+   predictions. Neither refits an evaluated model, and both were used only to correct
+   claims.
 
 Everything else — all tuning, every diagnostic, the dev-window sanity tables — was
 confined to 2010–2015. `make report` regenerates charts and the README from existing
@@ -694,12 +738,10 @@ artefacts and deliberately cannot re-score the evaluation window; only `make bac
 can, it always appends to the ledger, and it refuses to run with uncommitted changes so
 that the ledger can always name the exact code and settings that produced a result.
 
-**What this means for the result.** Glimpse 2 is the one that matters, and its effect is
-bounded: it revealed roughly how a simple LightGBM scores on recent fights, before any
-tuning was done, and it was measured on the leaky features. The hyperparameters were
-selected afterwards on dev data only, and the published model scores *worse* on eval than
-that glimpse suggested — the opposite direction from what eval-window peeking would
-produce.
+**What this means for the result.** None of these looks can have flattered the headline.
+Glimpse 2 came before any tuning, and the published model scores worse than it suggested.
+Looks 4 and 6 were used only to correct claims, and each one removed an apparent
+advantage rather than creating one. Run 2's settings were committed before it was scored.
 
 ---
 
@@ -761,16 +803,25 @@ Research backtest only. Nothing here is betting advice or should be used to wage
 
 - **The model does not beat the market**, and the features available — the public fight
   record — appear to carry little that the closing line has not already priced.
-- **LightGBM's probabilities are poorly calibrated at the extremes.** Each walk-forward
-  fold fits its isotonic calibrator on the same small chronological tail it uses for
-  early stopping (review finding 7), and the calibration plot shows its most extreme
-  predictions landing far from the diagonal. A better-calibrated model would probably
-  score closer to the market, but changing the fitting regime means scoring the
-  evaluation window a third time, and that has not been done.
+- **LightGBM's calibrator emits literal certainties.** Each fold's isotonic calibrator,
+  fitted on the same small chronological tail used for early stopping, can output exactly
+  0 or 1. A handful of those predictions are wrong, and they account for most of its
+  excess log loss ([details](#where-lightgbms-excess-log-loss-comes-from)). Bounding the
+  calibrator would fix this, but it changes the model, which means scoring the evaluation
+  window a third time; that has not been done.
+- **The re-tune's gain did not transfer.** The new settings beat the old ones on the
+  uncalibrated tuning split but are slightly worse in the calibrated dev walk-forward
+  (`reports/review_run2.md`, finding 9): the search optimises a different objective from
+  the one the backtest deploys.
+- **The vig-free baseline has a favourite–longshot bias.** Proportional de-vig leaves
+  one, and recalibrating the line on its own past errors beats it slightly ([the
+  control](#what-the-variants-gain-is-made-of)). It is the baseline this project fixed in
+  advance; it is a marginally easier bar than a recalibrated line, and the model still
+  loses to it.
 - **The evaluation window has been scored twice.** Both runs are ledgered and both are
   shown; run 2 is the result.
 - **Two minor issues are known and deliberately left in place**, so that run 2 differs
-  from run 1 only by the leak fix (both are in `reports/review.md`):
+  from run 1 only by the leak fix and the re-tune it required (both are in `reports/review.md`):
   - when two events share a date, the market-anchored variant's refit for the second
     sees the first one's results. This happened on one dev-window date, 2014-08-23, and
     touches no evaluation fight;
@@ -785,6 +836,8 @@ Research backtest only. Nothing here is betting advice or should be used to wage
   optimistic, and irrelevant to a negative result.
 - **Overturned results are treated as no contests from the start**, although the
   overturn came months later. That removes a little information; it adds none.
+- **Parlay pricing is not ledgered as an evaluation run**, because it rescores nothing,
+  but each pricing records its commit and whether the working tree was clean.
 - **No live predictions.** UFCStats is behind an anti-bot challenge and no current odds
   feed is reachable, so every prediction log is a replay that cannot prove foresight.
 - **The demo's hypothetical matchups** use a model fitted on all the data, and its "never

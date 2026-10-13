@@ -537,8 +537,10 @@ def regenerate(cfg: Config | None = None, *, verbose: bool = True) -> dict:
     inject(metrics, cfg)
     if (reports / "parlay_metrics.json").is_file():
         inject_parlay(cfg=cfg)
+    from ufc_predictor.backtest import post_hoc
     from ufc_predictor.backtest.readme_sections import inject_all
 
+    post_hoc.run(cfg)
     inject_all(cfg)
     if verbose:
         print("  charts redrawn and README results/parlay blocks refreshed from metrics")

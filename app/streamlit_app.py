@@ -193,8 +193,30 @@ make the interval look narrower than it is.
     )
 
     st.subheader("Why that is the interesting answer")
+    vd = summary["post_hoc"]["variant_decomposition"]
+    tot, recal, add = (
+        vd["variant_minus_market"],
+        vd["recalibrated_minus_market"],
+        vd["variant_minus_recalibrated"],
+    )
+    if add["ci_lower"] <= 0 <= add["ci_hi"]:
+        features_finding = (
+            "- **The features add nothing the market has not already priced.** Feeding the "
+            "market's and the model's probabilities into one regression improves on the "
+            f"market by {abs(tot['observed']):.4f} nats per fight, but a regression on the "
+            f"market alone gets {abs(recal['observed']):.4f} of that: the closing line "
+            "recalibrating its own favourite–longshot bias. Adding the model to that changes "
+            f"log loss by {add['observed']:+.5f} (95% CI {add['ci_lower']:+.4f} to "
+            f"{add['ci_hi']:+.4f}), which cannot be told from zero."
+        )
+    else:
+        features_finding = (
+            "- **The features add a little beyond the recalibrated market**: "
+            f"{add['observed']:+.5f} nats per fight (95% CI {add['ci_lower']:+.4f} to "
+            f"{add['ci_hi']:+.4f})."
+        )
     st.markdown(
-        """
+        f"""
 A closing line aggregates the opinions of people with money at risk, so beating it is
 a high bar — much higher than beating a coin flip, which any reasonable model clears.
 Reporting a model that loses to it, with an interval that proves the loss, is a more
@@ -202,9 +224,7 @@ useful result than a tuned number that would not survive contact with a real mar
 
 Two findings sharpen it:
 
-- **The features add almost nothing the market has not already priced.** Feeding both
-  the market's probability and the model's into one regression barely improves on the
-  market alone, and the improvement is not statistically distinguishable from zero.
+{features_finding}
 - **Ranking parlays by the model's own edge is actively harmful.** It selects the
   fights the model is most wrong about. See the Parlay Lab.
 """
@@ -398,12 +418,15 @@ def page_backtest(summary: dict) -> None:
             "ECE": st.column_config.NumberColumn(format="%.4f"),
         },
     )
+    cert = summary["post_hoc"]["lightgbm_certainties"]["eval"]
     st.caption(
         "Lower is better for log loss, Brier and ECE; higher is better for AUC and "
-        "accuracy. Note that LightGBM has the **best calibration** of any model here "
-        "while having nearly the worst log loss — it is well calibrated across a narrow "
-        "range but refuses to commit to confident predictions, so it lacks "
-        "discrimination rather than being miscalibrated."
+        "accuracy. ECE averages miscalibration over probability bins, so it can look good "
+        "while a few extreme predictions are badly wrong. LightGBM's calibrator emits "
+        f"literal certainties — {cert['certain']} predictions of exactly 0 or 1 on the "
+        f"evaluation window, {cert['certain_and_wrong']} of them wrong — and without "
+        f"them its log loss would be {cert['log_loss_without_certainties']:.4f}, still "
+        "far behind the market."
     )
 
     st.subheader("Difference from the market")
@@ -415,10 +438,18 @@ def page_backtest(summary: dict) -> None:
                 "CI low": p["ci_lower"],
                 "CI high": p["ci_hi"],
                 "Verdict": (
-                    "beats market"
-                    if p["beats_market"]
+                    "no difference shown"
+                    if p["ci_lower"] <= 0 <= p["ci_hi"]
                     else (
-                        "no difference shown" if p["ci_lower"] <= 0 <= p["ci_hi"] else "market wins"
+                        "market wins"
+                        if not p["beats_market"]
+                        # The variant takes the closing line as an input; its lower log
+                        # loss is the line recalibrating itself, not an edge over it.
+                        else (
+                            "lower than market (the line recalibrating itself)"
+                            if k == "market_plus_model"
+                            else "beats market"
+                        )
                     )
                 ),
             }
@@ -537,7 +568,7 @@ def page_parlay(summary: dict) -> None:
             rows.append(
                 {
                     "Ranked by": source,
-                    "Parlays": 0,
+                    "Top-ranked parlays": 0,
                     "Predicted EV": None,
                     "Realised ROI": None,
                     "Hit rate": None,
@@ -548,7 +579,7 @@ def page_parlay(summary: dict) -> None:
         rows.append(
             {
                 "Ranked by": source.replace("_", " "),
-                "Parlays": pv["n"],
+                "Top-ranked parlays": pv["n"],
                 "Predicted EV": pv["mean_predicted_ev"],
                 "Realised ROI": pv["realized_roi"],
                 "Hit rate": pv["hit_rate"],
@@ -561,7 +592,7 @@ def page_parlay(summary: dict) -> None:
         hide_index=True,
         use_container_width=True,
         column_config={
-            "Parlays": st.column_config.NumberColumn(format="%d"),
+            "Top-ranked parlays": st.column_config.NumberColumn(format="%d"),
             "Predicted EV": st.column_config.NumberColumn(format="%+.4f"),
             "Realised ROI": st.column_config.NumberColumn(format="%+.4f"),
             "Hit rate": st.column_config.NumberColumn(format="%.4f"),

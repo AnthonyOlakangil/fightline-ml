@@ -13,7 +13,7 @@ import math
 
 import pytest
 
-from ufc_predictor.backtest.readme_block import END, START, render
+from ufc_predictor.backtest.readme_block import END, LABELS, START, render
 from ufc_predictor.backtest.walkforward import VARIANT_NAME
 from ufc_predictor.config import get_config
 
@@ -349,3 +349,26 @@ def test_eval_run_rebuilds_its_inputs_and_refuses_if_that_changes_tracked_files(
     with pytest.raises(RuntimeError, match="rebuilding"):
         report.run(_cfg_with_reports(cfg, tmp_path), verbose=False, reason="test")
     assert rebuilt == [True]
+
+
+def test_the_market_consuming_variant_is_never_labelled_as_beating_the_market(metrics):
+    """It takes the closing line as an input, and review 2 showed its gain is the line
+    recalibrating itself. Neither the verdict nor the prose may present it as an edge."""
+    block = render(metrics)
+    row = next(ln for ln in block.splitlines() if ln.startswith(f"| {LABELS[VARIANT_NAME]} |"))
+    assert "beats the market" not in row
+    assert "features carry information the market has not already priced" not in block
+
+
+def test_no_interval_bound_renders_as_a_signed_zero(metrics):
+    import re
+
+    block = render(metrics)
+    assert not re.search(r"[+-]0\.0000(?!\d)", block), "an interval bound printed as a signed zero"
+
+
+def test_readme_says_when_lightgbm_trails_elo_on_eval(metrics):
+    ev = metrics["results"]["eval"]
+    if ev["lightgbm"]["log_loss"] <= ev["elo"]["log_loss"]:
+        pytest.skip("LightGBM does not trail Elo in this run")
+    assert "worse than one-feature Elo" in render(metrics)

@@ -211,6 +211,12 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
             "legs_priced": parlay.get("legs_priced", ""),
         },
         "n_fighters": len(snapshots),
+        # Post-hoc checks on the stored predictions (reports/post_hoc.json), so the app
+        # explains the variant's gain and LightGBM's excess log loss exactly as the
+        # README does.
+        "post_hoc": json.loads(
+            (cfg.paths.reports_dir / "post_hoc.json").read_text(encoding="utf-8")
+        ),
     }
     (out / "summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True, default=str) + "\n", encoding="utf-8"

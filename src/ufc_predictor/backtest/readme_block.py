@@ -27,6 +27,15 @@ LABELS = {
 }
 
 
+def signed(x: float, places: int = 4) -> str:
+    """Signed fixed-point, widened until a non-zero value no longer prints as 0.0000."""
+    text = f"{x:+.{places}f}"
+    while x != 0 and float(text) == 0 and places < 8:
+        places += 1
+        text = f"{x:+.{places}f}"
+    return text
+
+
 def _fmt(x: float | None, places: int = 4) -> str:
     return "—" if x is None else f"{x:.{places}f}"
 
@@ -92,14 +101,19 @@ def render(metrics: dict) -> str:
         if name == "market" or name not in paired:
             continue
         p = paired[name]
-        verdict = (
-            "**beats the market**"
-            if p["beats_market"]
-            else ("no difference shown" if p["ci_lower"] <= 0 <= p["ci_hi"] else "market wins")
-        )
+        if p["ci_lower"] <= 0 <= p["ci_hi"]:
+            verdict = "no difference shown"
+        elif not p["beats_market"]:
+            verdict = "market wins"
+        elif name == VARIANT_NAME:
+            # It takes the closing line as an input, so a lower log loss is not an edge
+            # over that line; the post-hoc control below says what the gain is made of.
+            verdict = "lower than the market; see [the control](#what-the-variants-gain-is-made-of)"
+        else:
+            verdict = "**beats the market**"
         lines.append(
-            f"| {LABELS[name]} | {p['observed']:+.4f} | "
-            f"[{p['ci_lower']:+.4f}, {p['ci_hi']:+.4f}] | {verdict} |"
+            f"| {LABELS[name]} | {signed(p['observed'])} | "
+            f"[{signed(p['ci_lower'])}, {signed(p['ci_hi'])}] | {verdict} |"
         )
 
     lgbm_p = paired.get("lightgbm")
@@ -123,13 +137,12 @@ def render(metrics: dict) -> str:
                 "and this is the project's headline result."
             )
     if var_p is not None:
-        direction = "does" if var_p["beats_market"] else "does not"
         lines.append(
-            f"- The market-anchored variant {direction} improve on the market "
-            f"({var_p['observed']:+.4f}, CI [{var_p['ci_lower']:+.4f}, {var_p['ci_hi']:+.4f}]). "
-            "Because it takes the closing line as an input it cannot support a "
-            "'beats the market' claim on its own; it is evidence about whether the "
-            "features carry information the market has not already priced."
+            f"- The market-anchored variant scores {signed(var_p['observed'])} against the "
+            f"market (CI [{signed(var_p['ci_lower'])}, {signed(var_p['ci_hi'])}]). It takes "
+            "the closing line as an input, so this cannot show an edge over that line; "
+            "whether any of the difference comes from the model is tested by [the "
+            "control](#what-the-variants-gain-is-made-of) after this section."
         )
         if var_p["beats_market"]:
             n_cmp = len(paired)
@@ -144,8 +157,8 @@ def render(metrics: dict) -> str:
             )
             if dev_var is not None:
                 text += (
-                    f" In the dev window the same variant scored {dev_var['observed']:+.4f} "
-                    f"(CI [{dev_var['ci_lower']:+.4f}, {dev_var['ci_hi']:+.4f}])."
+                    f" In the dev window the same variant scored {signed(dev_var['observed'])} "
+                    f"(CI [{signed(dev_var['ci_lower'])}, {signed(dev_var['ci_hi'])}])."
                 )
             lines.append(text)
     for window in ("dev", "eval"):
@@ -158,6 +171,14 @@ def render(metrics: dict) -> str:
                     f"than chance (AUC {s['auc']:.4f}): its probabilities are too confident, "
                     "not inverted."
                 )
+    ev = metrics["results"].get("eval", {})
+    if "lightgbm" in ev and "elo" in ev:
+        lg, elo = ev["lightgbm"]["log_loss"], ev["elo"]["log_loss"]
+        if elo < lg < LN2:
+            lines.append(
+                f"- On the evaluation window LightGBM scores {lg:.4f}: only {LN2 - lg:.4f} "
+                f"better than a coin flip, and worse than one-feature Elo ({elo:.4f})."
+            )
 
     lines += [
         "",
@@ -270,18 +291,25 @@ def render_parlay(m: dict) -> str:
         f"**{m['within_card_residual_correlation']['correlation']:+.4f}** over "
         f"{m['within_card_residual_correlation']['n_pairs']:,} pairs.",
         "",
-        "| Ranked by | Candidates | Staked | Predicted EV | Realised ROI | Hit rate | Predicted hit rate |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "Predicted EV, realised ROI and both hit rates are per unit at flat stakes over all "
+        "top-ranked parlays. The bankroll replay stakes Kelly-sized amounts only on those "
+        "that clear the stake threshold, in date order, and stops if the bankroll is ruined.",
+        "",
+        "| Ranked by | Candidates | Top-ranked | Cleared stake threshold | "
+        "Placed in bankroll replay | Predicted EV | Realised ROI | Hit rate | "
+        "Predicted hit rate |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
 
     for source in ("lightgbm", "market_plus_model", "market"):
         res = m["by_source"].get(source, {})
         if not res.get("n_candidates"):
-            lines.append(f"| {source.replace('_', ' ')} | 0 | 0 | — | — | — | — |")
+            lines.append(f"| {source.replace('_', ' ')} | 0 | 0 | 0 | 0 | — | — | — | — |")
             continue
         pv = res["predicted_vs_realized"]["all_top_ranked"]
         lines.append(
-            f"| {source.replace('_', ' ')} | {res['n_candidates']:,} | {res['n_staked']:,} | "
+            f"| {source.replace('_', ' ')} | {res['n_candidates']:,} | {res['n_top_ranked']:,} | "
+            f"{res['n_staked']:,} | {res['bankroll']['n_bets']:,} | "
             f"**{pv['mean_predicted_ev']:+.4f}** | **{pv['realized_roi']:+.4f}** | "
             f"{pv['hit_rate']:.4f} | {pv['mean_predicted_prob']:.4f} |"
         )
@@ -306,7 +334,9 @@ def render_parlay(m: dict) -> str:
             "three such legs together compounds the error, which is why the three-leg "
             "parlays are the worst of all.",
             "",
-            f"A £{bk['starting_bankroll']:.0f} bankroll staked this way ends at "
+            f"A £{bk['starting_bankroll']:.0f} bankroll staked this way places "
+            f"{bk['n_bets']:,} of the {lg['n_staked']:,} qualifying bets before "
+            f"{'it is ruined' if bk.get('ruined') else 'the card list ends'}, and ends at "
             f"**£{bk['ending_bankroll']:.2f}** ({bk['total_return']:+.1%}) with a maximum "
             f"drawdown of {bk['max_drawdown']:.1%}. Resampling whole events "
             f"{bs['n_resamples']:,} times gives a 90% band of "
@@ -328,10 +358,16 @@ def render_parlay(m: dict) -> str:
             if lo <= start <= hi
             else "The band excludes the starting bankroll."
         )
+        top_pv = var["predicted_vs_realized"]["all_top_ranked"]
+        cleared = var["predicted_vs_realized"]["cleared_stake_threshold"]
         lines += [
             "",
-            f"**The market-anchored variant** staked only {var['n_staked']:,} bets. Its "
-            f"bankroll ends at **£{bk['ending_bankroll']:,.2f}** ({bk['total_return']:+.1%}); "
+            f"**The market-anchored variant** ranks only {var['n_top_ranked']:,} parlays, of "
+            f"which {var['n_staked']:,} clear the stake threshold. At flat stakes those "
+            f"{var['n_staked']:,} returned {cleared['realized_roi']:+.1%} per unit, and all "
+            f"{var['n_top_ranked']:,} returned {top_pv['realized_roi']:+.1%}. Staked by the "
+            f"bankroll replay, its bankroll ends at **£{bk['ending_bankroll']:,.2f}** "
+            f"({bk['total_return']:+.1%}); "
             f"resampling whole events {bs['n_resamples']:,} times gives a 90% band of "
             f"£{lo:,.0f} to £{hi:,.0f}, and **{bs['share_losing_money']:.1%} of histories "
             f"lose money**. {verdict} It also takes the closing line as an input, so it "

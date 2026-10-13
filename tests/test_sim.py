@@ -438,6 +438,22 @@ def test_committed_parlay_metrics_name_a_clean_commit(parlay_metrics):
     assert parlay_metrics["worktree_clean"] is True
 
 
+def test_parlay_table_separates_ranked_staked_and_placed_bets(parlay_metrics):
+    """Rates computed over the top-ranked parlays must not sit beside a count of a
+    different set of bets without saying so (review 2, finding 3)."""
+    from ufc_predictor.backtest.readme_block import render_parlay
+
+    block = render_parlay(parlay_metrics)
+    header = next(ln for ln in block.splitlines() if ln.startswith("| Ranked by"))
+    for col in ("Top-ranked", "Cleared stake threshold", "Placed in bankroll replay"):
+        assert col in header
+    assert "per unit at flat stakes over all top-ranked parlays" in block
+    var = parlay_metrics["by_source"]["market_plus_model"]
+    if var.get("n_staked"):
+        cleared = var["predicted_vs_realized"]["cleared_stake_threshold"]
+        assert f"{cleared['realized_roi']:+.1%}" in block
+
+
 def test_parlay_block_names_the_eval_run_it_priced(parlay_metrics):
     from ufc_predictor.backtest.readme_block import render_parlay
 

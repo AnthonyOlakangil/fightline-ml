@@ -18,7 +18,7 @@ import json
 import math
 from pathlib import Path
 
-from ufc_predictor.backtest.readme_block import LABELS
+from ufc_predictor.backtest.readme_block import LABELS, signed
 from ufc_predictor.backtest.walkforward import VARIANT_NAME
 from ufc_predictor.config import Config, get_config
 
@@ -37,7 +37,7 @@ def _wrap(name: str, lines: list[str]) -> str:
 
 
 def _ci(p: dict) -> str:
-    return f"{p['observed']:+.4f} [{p['ci_lower']:+.4f}, {p['ci_hi']:+.4f}]"
+    return f"{signed(p['observed'])} [{signed(p['ci_lower'])}, {signed(p['ci_hi'])}]"
 
 
 # ---------------------------------------------------------------------------
@@ -137,10 +137,9 @@ def render_tuning(t: dict) -> str:
             f"is noise at {t['validation_rows']:,} validation fights, so a coded rule picks "
             "the *most regularized* model among those tied. "
             + (
-                "Here the tied candidates had equal capacity, so the rule kept the "
-                "lowest-scoring one."
+                "Here the rule's pick is also the lowest-scoring candidate."
                 if s == t["lowest_log_loss_candidate"]
-                else "It did not pick the nominal winner."
+                else "Here the rule's pick is not the lowest-scoring candidate."
             ),
         ],
     )
@@ -227,12 +226,17 @@ def render_leak(run1: dict, run2: dict, parlay1: dict, parlay2: dict, diagnostic
         px = x["predicted_vs_realized"]["all_top_ranked"]
         py = y["predicted_vs_realized"]["all_top_ranked"]
         lines += [
-            f"| Parlays ranked by {label} — bets staked | {x['n_staked']:,} | "
-            f"{y['n_staked']:,} | {y['n_staked'] - x['n_staked']:+,} |",
-            f"| Parlays ranked by {label} — predicted EV | {px['mean_predicted_ev']:+.1%} | "
+            f"| Parlays ranked by {label} — top-ranked | {x['n_top_ranked']:,} | "
+            f"{y['n_top_ranked']:,} | {y['n_top_ranked'] - x['n_top_ranked']:+,} |",
+            f"| Parlays ranked by {label} — placed in bankroll replay | "
+            f"{x['bankroll']['n_bets']:,} | {y['bankroll']['n_bets']:,} | "
+            f"{y['bankroll']['n_bets'] - x['bankroll']['n_bets']:+,} |",
+            f"| Parlays ranked by {label} — predicted EV, flat stakes | "
+            f"{px['mean_predicted_ev']:+.1%} | "
             f"{py['mean_predicted_ev']:+.1%} | "
             f"{(py['mean_predicted_ev'] - px['mean_predicted_ev']) * 100:+.1f} pp |",
-            f"| Parlays ranked by {label} — realised ROI | {px['realized_roi']:+.1%} | "
+            f"| Parlays ranked by {label} — realised ROI, flat stakes | "
+            f"{px['realized_roi']:+.1%} | "
             f"{py['realized_roi']:+.1%} | "
             f"{(py['realized_roi'] - px['realized_roi']) * 100:+.1f} pp |",
             f"| Parlays ranked by {label} — ending bankroll (from "
@@ -241,6 +245,103 @@ def render_leak(run1: dict, run2: dict, parlay1: dict, parlay2: dict, diagnostic
             f"| {y['bankroll']['ending_bankroll'] - x['bankroll']['ending_bankroll']:+,.2f} |",
         ]
     return _wrap("LEAK", lines)
+
+
+def render_post_hoc(ph: dict, metrics: dict) -> str:
+    vd, cert = ph["variant_decomposition"], ph["lightgbm_certainties"]
+    rec, add, tot = (
+        vd["recalibrated_minus_market"],
+        vd["variant_minus_recalibrated"],
+        vd["variant_minus_market"],
+    )
+    coef = vd["eval_fold_coefficients"]
+    lines = [
+        "### What the variant's gain is made of",
+        "",
+        "*A post-hoc check on the stored predictions, prompted by the second review "
+        "([`reports/review_run2.md`](reports/review_run2.md)). No evaluated model is refitted; "
+        "the market-only control is new, and is listed in the glimpse disclosure.*",
+        "",
+        "The variant is a walk-forward logistic stacker on the market's and LightGBM's "
+        "log-odds. Replaying that protocol on the stored predictions reproduces every variant "
+        "prediction exactly; replaying it on the market's log-odds alone separates what the "
+        "market contributes from what the model adds.",
+        "",
+        f"| Comparison on the {vd['n_fights']:,} eval fights (paired, event-resampled) | "
+        "Δ log loss | 95% CI | p |",
+        "|---|---:|---|---:|",
+    ]
+    for label, p in (
+        ("Market recalibrated on its own past errors, vs the vig-free market", rec),
+        ("Market + model, vs the recalibrated market", add),
+        ("Market + model, vs the vig-free market (as reported above)", tot),
+    ):
+        lines.append(
+            f"| {label} | {signed(p['observed'])} | [{signed(p['ci_lower'])}, "
+            f"{signed(p['ci_hi'])}] | {p['p_value_two_sided']:.3f} |"
+        )
+    lg, mk = coef["variant_weight_on_logit_lightgbm"], coef["variant_weight_on_logit_market"]
+    slope = coef["recalibration_slope_on_logit_market"]
+    lines.append("")
+    if add["ci_lower"] <= 0 <= add["ci_hi"]:
+        text = (
+            "Adding LightGBM to the recalibrated market changes nothing that can be told from "
+            f"zero, and the stacker weights LightGBM's log-odds at {lg[0]:.3f}{EN_DASH}{lg[1]:.3f} "
+            f"against {mk[0]:.2f}{EN_DASH}{mk[1]:.2f} for the market's. **The variant's gain is the "
+            "closing line correcting itself, not information from the features.**"
+        )
+    else:
+        text = (
+            "Adding LightGBM to the recalibrated market moves log loss by "
+            f"{signed(add['observed'])}, an interval that excludes zero."
+        )
+    if rec["ci_hi"] < 0:
+        text += (
+            f" Proportional de-vig leaves a favourite{EN_DASH}longshot bias, which a recalibration "
+            f"slope of {slope[0]:.2f}{EN_DASH}{slope[1]:.2f} undoes. So the vig-free baseline used "
+            "throughout this README is slightly beatable without any model: it is a "
+            "marginally *easier* bar than a recalibrated reading of the same closing line, "
+            "and the feature model still fails to clear it."
+        )
+    lines.append(text)
+
+    cost = cert["cost_of_a_miss_nats"]
+    lines += [
+        "",
+        "### Where LightGBM's excess log loss comes from",
+        "",
+        "| Window | Fights | LightGBM predictions within "
+        f"{cert['tolerance']:g} of 0 or 1 | Of those, wrong | Log loss | Log loss without them "
+        "| Share of all log loss from the wrong ones |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for w in ("dev", "eval"):
+        c = cert[w]
+        lines.append(
+            f"| {w.capitalize()} | {c['n']:,} | {c['certain']} | {c['certain_and_wrong']} | "
+            f"{c['log_loss']:.4f} | {c['log_loss_without_certainties']:.4f} | "
+            f"{c['share_of_total_loss_from_wrong_certainties']:.1%} |"
+        )
+    dev, ev = cert["dev"], cert["eval"]
+    market_ev = metrics["results"]["eval"]["market"]["log_loss"]
+    dev_clause = (
+        "still worse than a coin flip"
+        if dev["log_loss_without_certainties"] >= LN2
+        else "better than a coin flip"
+    )
+    lines += [
+        "",
+        "Each walk-forward fold calibrates LightGBM with isotonic regression, a step "
+        "function. When its most extreme step holds only wins or only losses it outputs "
+        f"exactly 1 or 0, which scoring clips to {math.exp(-cost):g}; a miss then costs "
+        f"{cost:.1f} nats, {cost / LN2:.0f} times what a coin flip pays. Without those "
+        f"predictions LightGBM scores {dev['log_loss_without_certainties']:.4f} in the dev "
+        f"window, {dev_clause}, and {ev['log_loss_without_certainties']:.4f} on eval, still "
+        f"far behind the market's {market_ev:.4f}. This is a defect in the fitting regime, "
+        "not leakage, and it does not change the headline. Fixing it changes the model, so "
+        "it would need a third scored run; that has not been done.",
+    ]
+    return _wrap("POSTHOC", lines)
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +366,7 @@ def render_all(cfg: Config | None = None) -> dict[str, str]:
         "DIAGNOSTICS": render_diagnostics(diagnostics),
         "TUNING": render_tuning(_load(r / "tuning.json")),
         "DEVCARDS": render_dev_cards(_load(r / "model_cards.json")),
+        "POSTHOC": render_post_hoc(_load(r / "post_hoc.json"), metrics),
         "LEAK": render_leak(
             _load(r / RUN_1_ARCHIVE / "metrics.json"),
             metrics,
