@@ -27,10 +27,10 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from sklearn.isotonic import IsotonicRegression
 
 from ufc_predictor.features.pit import FEATURE_COLS
 from ufc_predictor.models.base import Model
+from ufc_predictor.models.calibration import Calibrator, build_calibrator
 
 
 class LightGBMModel(Model):
@@ -49,6 +49,7 @@ class LightGBMModel(Model):
         calibrate: bool = True,
         min_validation_rows: int = 300,
         calibration_bounds: tuple[float, float] = (0.01, 0.99),
+        calibration: str = "isotonic_bounded",
     ) -> None:
         lo, hi = calibration_bounds
         if not 0 < lo < 0.5 < hi < 1:
@@ -63,9 +64,12 @@ class LightGBMModel(Model):
         self.calibrate = calibrate
         self.min_validation_rows = min_validation_rows
         self.calibration_bounds = (float(lo), float(hi))
+        # Phase 8 compares calibrators; "isotonic_bounded" is evaluation run 3's.
+        build_calibrator(calibration, self.calibration_bounds)  # validates the name
+        self.calibration = calibration
 
         self._booster = None
-        self._calibrator: IsotonicRegression | None = None
+        self._calibrator: Calibrator | None = None
         #: Trees actually used after early stopping, for reporting.
         self.best_iteration_: int | None = None
 
@@ -153,11 +157,9 @@ class LightGBMModel(Model):
         # training rows would be circular and would look better than it is.
         self._calibrator = None
         if self.calibrate:
-            raw_va = model.predict_proba(X_va)[:, 1]
-            lo, hi = self.calibration_bounds
-            iso = IsotonicRegression(out_of_bounds="clip", y_min=lo, y_max=hi)
-            iso.fit(raw_va, y_va)
-            self._calibrator = iso
+            calibrator = build_calibrator(self.calibration, self.calibration_bounds)
+            if calibrator is not None:
+                self._calibrator = calibrator.fit(model.predict_proba(X_va)[:, 1], y_va)
 
         return self
 
