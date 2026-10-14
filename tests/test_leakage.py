@@ -61,6 +61,7 @@ def build_kwargs(cfg) -> dict:
         "elo_params": cfg.elo,
         "families": tuple(FEATURE_FAMILIES),
         "recency_half_life_fights": float(cfg.features["recency_half_life_fights"]),
+        "glicko_params": dict(cfg.glicko2),
     }
 
 
@@ -245,7 +246,13 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
 
 # Families whose paired columns describe one fighter's own state, not the matchup. ("style"
 # is the exception: its interactions depend on the opponent, so differ between bouts.)
-PER_FIGHTER_FAMILIES = ("base", "adjusted", "recency", "decline")
+PER_FIGHTER_FAMILIES = ("base", "adjusted", "recency", "decline", "glicko")
+
+
+def _paired_stems(cols: list[str]) -> set[str]:
+    """Stems with both a ``_1`` and a ``_2`` column. A one-sided matchup value such as
+    ``glicko_expected_1`` has no ``_2`` and describes the bout, not a fighter."""
+    return {c[:-2] for c in cols if c.endswith("_1") and f"{c[:-2]}_2" in cols}
 
 
 def _same(a, b) -> bool:
@@ -263,7 +270,7 @@ def test_a_fighters_second_fight_on_one_night_does_not_see_the_first(tables, cfg
     # (Matchup columns depend on the opponent, so legitimately differ between bouts.) Elo
     # is compared separately below, rounded, as it always has been.
     per_fighter = sorted(
-        {c[:-2] for fam in PER_FIGHTER_FAMILIES for c in FEATURE_FAMILIES[fam] if c.endswith("_1")}
+        set().union(*(_paired_stems(FEATURE_FAMILIES[fam]) for fam in PER_FIGHTER_FAMILIES))
         - {"elo"}
     )
 
@@ -497,7 +504,7 @@ def test_a_blank_feature_never_predicts_who_loses(features, cfg):
 
     lo, hi = BLANK_SIDE_WIN_RATE_BAND
     offenders = []
-    for base in sorted({c[:-2] for c in ALL_FEATURE_COLS if c.endswith("_1")}):
+    for base in sorted(_paired_stems(ALL_FEATURE_COLS)):
         blank_1 = dev[f"{base}_1"].isna() & dev[f"{base}_2"].notna()
         blank_2 = dev[f"{base}_2"].isna() & dev[f"{base}_1"].notna()
         n = int(blank_1.sum() + blank_2.sum())

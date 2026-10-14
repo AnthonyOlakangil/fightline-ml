@@ -123,6 +123,7 @@ class Config:
     ingest: dict[str, Any] = field(default_factory=dict)
     features: dict[str, Any] = field(default_factory=dict)
     elo: dict[str, Any] = field(default_factory=dict)
+    glicko2: dict[str, Any] = field(default_factory=dict)
     lightgbm: dict[str, Any] = field(default_factory=dict)
     lightgbm_fit: dict[str, Any] = field(default_factory=dict)
     backtest: dict[str, Any] = field(default_factory=dict)
@@ -190,6 +191,7 @@ def load_config(path: str | Path | None = None) -> Config:
         ingest=raw.get("ingest", {}),
         features=raw.get("features", {}),
         elo=raw.get("elo", {}),
+        glicko2=raw.get("glicko2", {}),
         lightgbm=raw.get("lightgbm", {}),
         lightgbm_fit=raw.get("lightgbm_fit", {}),
         backtest=raw.get("backtest", {}),

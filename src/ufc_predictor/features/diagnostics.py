@@ -52,6 +52,7 @@ def build(
         elo_params=cfg.elo,
         families=families,
         recency_half_life_fights=float(cfg.features["recency_half_life_fights"]),
+        glicko_params=dict(cfg.glicko2),
     )
 
 

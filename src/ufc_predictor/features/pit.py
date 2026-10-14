@@ -45,15 +45,16 @@ from __future__ import annotations
 
 import datetime as dt
 from collections import defaultdict, deque
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 import pandas as pd
 
-from ufc_predictor.features import adjusted, decline, styles
+from ufc_predictor.features import adjusted, decline, glicko2, styles
 from ufc_predictor.features.adjusted import ADJUSTED_COLS, RECENCY_COLS
 from ufc_predictor.features.decline import DECLINE_COLS
 from ufc_predictor.features.elo import build_elo
+from ufc_predictor.features.glicko2 import GLICKO_COLS
 from ufc_predictor.features.styles import STYLE_COLS
 
 # Seconds in a championship/standard round. Durations are reconstructed as
@@ -130,6 +131,7 @@ FEATURE_FAMILIES: dict[str, list[str]] = {
     "recency": RECENCY_COLS,  # recency-weighted rates (features/adjusted.py)
     "style": STYLE_COLS,  # style-matchup interactions (features/styles.py)
     "decline": DECLINE_COLS,  # tenure, recent finishes and form trends (features/decline.py)
+    "glicko": GLICKO_COLS,  # point-in-time Glicko-2 rating (features/glicko2.py)
 }
 ALL_FEATURE_COLS: list[str] = [c for cols in FEATURE_FAMILIES.values() for c in cols]
 
@@ -371,6 +373,7 @@ def build_features(
     elo_params: dict | None = None,
     families: Sequence[str] = ("base",),
     recency_half_life_fights: float = 3.0,
+    glicko_params: Mapping[str, float] | None = None,
 ) -> pd.DataFrame:
     """Build the point-in-time feature table: one row per fight.
 
@@ -385,10 +388,12 @@ def build_features(
     ``families`` names the ``FEATURE_FAMILIES`` to emit. The base columns always come
     first; each requested family's columns follow in registry order. The default emits
     the base family alone. ``recency_half_life_fights`` is the "recency" family's
-    half-life, in bouts.
+    half-life, in bouts. ``glicko_params`` is the "glicko" family's ``glicko2`` config
+    block; it has no default and is ignored unless that family is requested.
 
     Raises:
-        ValueError: on an unknown family name or a non-positive half-life.
+        ValueError: on an unknown family name, a non-positive half-life, or the "glicko"
+            family requested without valid ``glicko_params``.
     """
     elo_params = elo_params or {}
     windows = tuple(rolling_windows)
@@ -401,6 +406,8 @@ def build_features(
         raise ValueError(
             f"recency_half_life_fights must be positive, got {recency_half_life_fights!r}"
         )
+    if "glicko" in requested:
+        glicko_params = glicko2.check_params(glicko_params)  # fail before the long loop
     family_cols = [
         c
         for name, cols in FEATURE_FAMILIES.items()
@@ -452,8 +459,12 @@ def build_features(
                     state = states[fid]
                     cache[fid] = _snapshot(state, event_date, windows)
                     career = _bare(cache[fid], CAREER)
-                    if track_bouts or track_style:
-                        absorbed = adjusted.absorbed_rates(state.fights)
+                    # Always bound, so no branch can read the previous fighter's value.
+                    absorbed = (
+                        adjusted.absorbed_rates(state.fights)
+                        if (track_bouts or track_style)
+                        else None
+                    )
                     if track_bouts:
                         cache[fid].update(
                             adjusted.family_snapshot(state.bouts, recency_half_life_fights)
@@ -513,6 +524,12 @@ def build_features(
         scale=float(elo_params.get("scale", 400.0)),
     )
     feats = feats.merge(elo, on="fight_id", how="left", validate="one_to_one")
+    if "glicko" in requested:
+        rated = glicko2.build_glicko(fights, glicko_params)
+        feats = feats.merge(rated, on="fight_id", how="left", validate="one_to_one")
+        unrated = feats[rated.columns].isna().any(axis=1)
+        if unrated.any():
+            raise RuntimeError(f"{int(unrated.sum())} fights have no Glicko-2 rating")
 
     for base in diff_bases:
         if base == "elo":

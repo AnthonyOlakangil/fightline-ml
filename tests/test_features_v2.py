@@ -23,6 +23,7 @@ from ufc_predictor.features.pit import (
     DECLINE_COLS,
     FEATURE_COLS,
     FEATURE_FAMILIES,
+    GLICKO_COLS,
     RATE_METRICS,
     RECENCY_COLS,
     ROUND_SECONDS,
@@ -35,8 +36,10 @@ from ufc_predictor.models.symmetric import mirror
 from ufc_predictor.storage import db
 
 META_COLS = ["fight_id", "date", "fighter_1", "fighter_2", "label", "is_decisive"]
-NEW_FAMILIES = ("adjusted", "recency", "style", "decline")
+NEW_FAMILIES = ("adjusted", "recency", "style", "decline", "glicko")
 NEW_COLS = [c for family in NEW_FAMILIES for c in FEATURE_FAMILIES[family]]
+# Stems with a _1 and a _2 column (glicko_expected_1 is one-sided: it has no _2).
+NEW_PAIRED = [c[:-2] for c in NEW_COLS if c.endswith("_1") and f"{c[:-2]}_2" in NEW_COLS]
 # Toy builds use a single 3-fight window, so their base columns are this subset.
 TOY_BASE = feature_columns((3,))
 
@@ -117,6 +120,7 @@ def _ids(fights: pd.DataFrame) -> list[str]:
 
 def _build(fights, stats, **kw):
     kw.setdefault("families", NEW_FAMILIES)
+    kw.setdefault("glicko_params", dict(get_config().glicko2))
     return build_features(fights, stats, _fighters(_ids(fights)), rolling_windows=(3,), **kw)
 
 
@@ -655,7 +659,7 @@ def test_an_opponents_later_fight_cannot_move_an_earlier_adjustment():
     early_b = b.loc[b["date"] <= D2, cols].sort_values("fight_id").reset_index(drop=True)
     pd.testing.assert_frame_equal(early_a, early_b, check_exact=True)
 
-    for col in [c[:-2] for c in NEW_COLS if c.endswith("_1")]:
+    for col in NEW_PAIRED:
         va, vb = _side(a, "f4", "f", col), _side(b, "f4", "f", col)
         assert (pd.isna(va) and pd.isna(vb)) or va == vb, f"{col} moved for f at f4"
 
@@ -705,13 +709,14 @@ def test_a_fighters_two_bouts_on_one_night_use_the_pre_night_baseline():
 
 
 def test_registry_holds_base_then_the_new_families():
-    assert list(FEATURE_FAMILIES)[:5] == ["base", "adjusted", "recency", "style", "decline"]
+    assert list(FEATURE_FAMILIES) == ["base", "adjusted", "recency", "style", "decline", "glicko"]
     assert FEATURE_FAMILIES["base"] == FEATURE_COLS
     assert len(FEATURE_COLS) == 117
     assert FEATURE_FAMILIES["adjusted"] == ADJUSTED_COLS
     assert FEATURE_FAMILIES["recency"] == RECENCY_COLS
     assert FEATURE_FAMILIES["style"] == STYLE_COLS
     assert FEATURE_FAMILIES["decline"] == DECLINE_COLS
+    assert FEATURE_FAMILIES["glicko"] == GLICKO_COLS
     assert [c for cols in FEATURE_FAMILIES.values() for c in cols] == ALL_FEATURE_COLS
     assert len(set(ALL_FEATURE_COLS)) == len(ALL_FEATURE_COLS), "duplicate feature name"
 
@@ -769,6 +774,9 @@ def test_requested_families_append_after_the_base_columns():
     assert list(_build(fights, stats, families=("decline", "style")).columns) == (
         META_COLS + TOY_BASE + STYLE_COLS + DECLINE_COLS
     )
+    assert list(_build(fights, stats, families=("glicko", "recency")).columns) == (
+        META_COLS + TOY_BASE + RECENCY_COLS + GLICKO_COLS
+    )
 
 
 def test_an_unknown_family_raises():
@@ -824,6 +832,7 @@ def full_build(tables, cfg):
         elo_params=cfg.elo,
         families=tuple(FEATURE_FAMILIES),
         recency_half_life_fights=float(cfg.features["recency_half_life_fights"]),
+        glicko_params=dict(cfg.glicko2),
     )
 
 
@@ -931,3 +940,57 @@ def test_new_columns_are_in_plausible_ranges(full_build):
     # The same physical ceiling tests/test_features.py applies to the career rate.
     rate = full_build["ewm_sig_str_landed_pm_1"].dropna()
     assert rate.between(0, 120).all()
+
+
+def test_ko_power_vs_chin_is_its_definition_over_the_opponents_prior_bouts(tables, cfg, full_build):
+    """Ruling S1 for the one interaction no base column can check: on 50 sampled bouts,
+    ko_power_vs_chin_<side> = kd_p15_career_<side> x the opponent's knockdowns absorbed
+    per 15 minutes over the opponent's bouts dated strictly before the fight."""
+    history = fighter_fight_history(tables["fights"], tables["fight_stats"])
+    by_fighter = dict(iter(history.groupby("fighter_id")))
+    rated = full_build.loc[full_build["ko_power_vs_chin_1"].notna()]
+    sample = rated.sample(50, random_state=cfg.seed)
+
+    for row in sample.itertuples(index=False):
+        for side, opponent in (("1", row.fighter_2), ("2", row.fighter_1)):
+            prior = by_fighter[opponent]
+            prior = prior.loc[prior["date"] < row.date].to_dict("records")
+            chin = adjusted.absorbed_rates(prior)["kd_absorbed_p15"]
+            expected = getattr(row, f"kd_p15_career_{side}") * chin
+            got = getattr(row, f"ko_power_vs_chin_{side}")
+            assert (np.isnan(got) and np.isnan(expected)) or got == expected, (
+                row.fight_id,
+                side,
+                got,
+                expected,
+            )
+
+
+def test_glicko_debutants_carry_the_initial_rating_and_rd(full_build, cfg):
+    """A debutant's Glicko-2 values are the configured initial ones -- real values, not
+    missing -- and is_debut flags them. No glicko value is ever missing."""
+    initial_rating = float(cfg.glicko2["initial_rating"])
+    initial_rd = float(cfg.glicko2["initial_rd"])
+    for s in ("1", "2"):
+        debut = full_build[f"is_debut_{s}"]
+        assert debut.sum() > 100
+        np.testing.assert_allclose(full_build.loc[debut, f"glicko_mu_{s}"], initial_rating)
+        np.testing.assert_allclose(full_build.loc[debut, f"glicko_rd_{s}"], initial_rd)
+    assert not full_build[GLICKO_COLS].isna().any().any()
+
+
+def test_glicko_columns_are_their_definitions_over_the_same_row(full_build, cfg):
+    """glicko_expected_1, glicko_rd_sum and glicko_mu_diff restated over the real table
+    from the same row's ratings and RDs; every RD lies in (0, initial RD]."""
+    f = full_build
+    scale = 173.7178
+    phi_1, phi_2 = f["glicko_rd_1"] / scale, f["glicko_rd_2"] / scale
+    combined = np.sqrt(phi_1**2 + phi_2**2)
+    g = 1.0 / np.sqrt(1.0 + 3.0 * combined**2 / np.pi**2)
+    expected = 1.0 / (1.0 + np.exp(-g * (f["glicko_mu_1"] - f["glicko_mu_2"]) / scale))
+    np.testing.assert_allclose(f["glicko_expected_1"], expected, rtol=1e-9, atol=1e-12)
+    np.testing.assert_array_equal(f["glicko_rd_sum"], f["glicko_rd_1"] + f["glicko_rd_2"])
+    np.testing.assert_array_equal(f["glicko_mu_diff"], f["glicko_mu_1"] - f["glicko_mu_2"])
+    for s in ("1", "2"):
+        assert (f[f"glicko_rd_{s}"] > 0).all()
+        assert (f[f"glicko_rd_{s}"] <= float(cfg.glicko2["initial_rd"]) + 1e-9).all()

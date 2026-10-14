@@ -86,6 +86,13 @@ elo:
   k_factor: 32.0
   scale: 400.0
 
+glicko2:            # Glickman's recommended defaults, fixed a priori, not searched
+  tau: 0.5
+  initial_rating: 1500.0
+  initial_rd: 350.0
+  initial_vol: 0.06
+  period_days: 30
+
 # ---------------------------------------------------------------------------
 # Models
 # ---------------------------------------------------------------------------

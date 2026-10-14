@@ -123,7 +123,10 @@ def base_panel(cfg: Config) -> pd.DataFrame:
 
 def family_kwargs(cfg: Config) -> dict:
     """Family parameters passed to ``build_features``; all fixed a priori in config."""
-    return {"recency_half_life_fights": float(cfg.features["recency_half_life_fights"])}
+    return {
+        "recency_half_life_fights": float(cfg.features["recency_half_life_fights"]),
+        "glicko_params": dict(cfg.glicko2),
+    }
 
 
 def build_v2_features(cfg: Config) -> pd.DataFrame:
