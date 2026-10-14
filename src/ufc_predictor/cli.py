@@ -173,6 +173,18 @@ def bfo() -> None:
     write_snapshot()
 
 
+@app.command("bfo-join")
+def bfo_join() -> None:
+    """Join the BestFightOdds snapshot to fights (same date, same pair; no network).
+
+    Writes data/processed/bfo_lines.parquet, reports/bfo_join.json and
+    reports/bfo_unjoined.csv. Needs `make data` first.
+    """
+    from ufc_predictor.ingest.bfo_join import run
+
+    run()
+
+
 @app.command()
 def experiments() -> None:
     """Run the pre-registered development stages (2010-2014 only) -> reports/dev/.
