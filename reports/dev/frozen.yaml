@@ -1,0 +1,41 @@
+# The frozen development configuration (Phase 8), written by `ufc-predictor experiments`.
+baseline_spec:
+  calibration: isotonic_bounded
+  features:
+  - base
+  lightgbm_params:
+    colsample_bytree: 0.7
+    learning_rate: 0.05
+    max_depth: 4
+    min_child_samples: 20
+    n_estimators: 2000
+    num_leaves: 7
+    reg_alpha: 0.1
+    reg_lambda: 5.0
+    subsample: 0.8
+    subsample_freq: 1
+    verbosity: -1
+  model: lightgbm
+  symmetric: false
+  top_k: null
+  train_window: all_history
+spec:
+  calibration: isotonic_bounded
+  features:
+  - base
+  lightgbm_params:
+    colsample_bytree: 0.7
+    learning_rate: 0.05
+    max_depth: 4
+    min_child_samples: 20
+    n_estimators: 2000
+    num_leaves: 7
+    reg_alpha: 0.1
+    reg_lambda: 5.0
+    subsample: 0.8
+    subsample_freq: 1
+    verbosity: -1
+  model: lightgbm
+  symmetric: true
+  top_k: null
+  train_window: all_history
