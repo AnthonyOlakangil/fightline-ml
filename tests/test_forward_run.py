@@ -98,6 +98,20 @@ def test_predict_writes_one_row_per_bout_with_model_and_market_prices(cfg, root)
     assert meta["history_through"] <= "2026-10-17" and meta["spec"]["features"] == ["base"]
 
 
+def test_predict_first_saves_results_of_every_finished_card_since_the_snapshot(cfg, root):
+    """The Oct 10 card was never predicted, but its bouts are history for Oct 17."""
+    now = CARD_START - dt.timedelta(hours=50)
+    path = run.predict(
+        "600060773", cfg, now=now, fetcher=FixtureFetcher(ROUTES), root=root, spec=ExperimentSpec()
+    )
+    saved = root / cfg.forward["results_dir"] / "600061541.json"
+    assert saved.is_file()
+    assert json.loads(saved.read_text())["date"] == "2026-10-10"
+    meta = json.loads((path.parent / "meta.json").read_text())
+    assert meta["history_through"] == "2026-10-10"
+    assert meta["espn_results_files"] == ["600061541.json"]
+
+
 def test_predict_debutants_are_flagged(cfg, root):
     now = CARD_START - dt.timedelta(hours=50)
     path = run.predict(

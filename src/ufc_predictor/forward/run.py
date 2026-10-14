@@ -131,6 +131,39 @@ def _match_pair(a: str, b: str, candidates: list, names) -> tuple[object, bool] 
 # ---------------------------------------------------------------------------
 
 
+def sync_results(fetcher, cfg: Config, *, before: dt.date, root: Path = REPO_ROOT) -> list[str]:
+    """Save ESPN results for every finished UFC card after the snapshot and before ``before``.
+
+    A card the forward test never predicted is still history for later cards, so it must
+    not be skipped. A card whose bouts are not all final (still under way, or ESPN has not
+    posted results) raises rather than entering history half-known.
+
+    Returns the event ids saved by this call.
+    """
+    _, results_dir = _dirs(cfg, root)
+    snapshot_end = db.read_table(cfg.paths.processed_dir, "fights")["date"].max()
+    saved = []
+    for entry in espn.calendar(fetcher):
+        path = results_dir / f"{entry.event_id}.json"
+        # The calendar's UTC start can fall a day after the card's US date.
+        if path.exists() or entry.start_utc.date() <= snapshot_end:
+            continue
+        if entry.start_utc.date() - dt.timedelta(days=1) >= before:
+            continue
+        card = espn.card(fetcher, entry)
+        if not snapshot_end < card.date < before:
+            continue
+        pending = [b for b in card.bouts if b.status not in ("STATUS_FINAL", "STATUS_CANCELED")]
+        if pending:
+            raise ForwardError(
+                f"{card.name} ({card.date}) is history for a later card but has "
+                f"{len(pending)} bouts not final on ESPN"
+            )
+        cards.save_results(path, card, espn.results(fetcher, entry))
+        saved.append(entry.event_id)
+    return saved
+
+
 def _model_probabilities(
     card: espn.Card, spec: ExperimentSpec, cfg: Config, results_dir: Path
 ) -> tuple[pd.DataFrame, dict]:
@@ -253,6 +286,7 @@ def predict(
         raise ForwardError(f"predictions for {event_id} already exist; they are never overwritten")
     spec = spec or frozen_spec(cfg)
 
+    sync_results(fetcher, cfg, before=card.date, root=root)
     target, info = _model_probabilities(card, spec, cfg, results_dir)
     kalshi_by_bout, kalshi_raw = _kalshi_rows(card, fetcher)
     bfo_by_bout, bfo_status = _bfo_rows(card, fetcher)
