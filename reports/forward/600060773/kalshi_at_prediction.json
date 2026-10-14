@@ -1,0 +1,262 @@
+[
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17CHOSTI",
+  "names": [
+   "Katlyn Cerminara",
+   "Mackenzie Stiller"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17CHOSTI-CHO",
+    0.7,
+    0.71
+   ],
+   [
+    "KXUFCFIGHT-26OCT17CHOSTI-STI",
+    0.28,
+    0.29
+   ]
+  ],
+  "volume": 5724.2300000000005
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17MAHFAG",
+  "names": [
+   "Javad Mahjoub",
+   "Joel Faglier"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17MAHFAG-MAH",
+    0.47,
+    0.48
+   ],
+   [
+    "KXUFCFIGHT-26OCT17MAHFAG-FAG",
+    0.51,
+    0.52
+   ]
+  ],
+  "volume": 13398.25
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17LEBGAL",
+  "names": [
+   "Julien Leblanc",
+   "Nick Galanti"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17LEBGAL-LEB",
+    0.16,
+    0.17
+   ],
+   [
+    "KXUFCFIGHT-26OCT17LEBGAL-GAL",
+    0.83,
+    0.84
+   ]
+  ],
+  "volume": 13860.68
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17CHOYOU",
+  "names": [
+   "Cody Chovancek",
+   "Soyoung You"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17CHOYOU-CHO",
+    0.54,
+    0.55
+   ],
+   [
+    "KXUFCFIGHT-26OCT17CHOYOU-YOU",
+    0.45,
+    0.46
+   ]
+  ],
+  "volume": 8894.18
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17CROCHA",
+  "names": [
+   "Melissa Croden",
+   "Chelsea Chandler"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17CROCHA-CRO",
+    0.71,
+    0.73
+   ],
+   [
+    "KXUFCFIGHT-26OCT17CROCHA-CHA",
+    0.28,
+    0.29
+   ]
+  ],
+  "volume": 4272.43
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17ANHKOS",
+  "names": [
+   "Chad Anheliger",
+   "Steven Koslow"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17ANHKOS-ANH",
+    0.41,
+    0.42
+   ],
+   [
+    "KXUFCFIGHT-26OCT17ANHKOS-KOS",
+    0.58,
+    0.59
+   ]
+  ],
+  "volume": 16880.78
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17BOSDIN",
+  "names": [
+   "Tanner Boser",
+   "Jhonata Diniz"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17BOSDIN-BOS",
+    0.3,
+    0.31
+   ],
+   [
+    "KXUFCFIGHT-26OCT17BOSDIN-DIN",
+    0.69,
+    0.7
+   ]
+  ],
+  "volume": 2703.9300000000003
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17NALLAN",
+  "names": [
+   "Mandel Nallo",
+   "Nate Landwehr"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17NALLAN-NAL",
+    0.71,
+    0.72
+   ],
+   [
+    "KXUFCFIGHT-26OCT17NALLAN-LAN",
+    0.29,
+    0.3
+   ]
+  ],
+  "volume": 7315.35
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17JOUCUA",
+  "names": [
+   "Louis Jourdain",
+   "Timothy Angel Cuamba"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17JOUCUA-JOU",
+    0.61,
+    0.62
+   ],
+   [
+    "KXUFCFIGHT-26OCT17JOUCUA-CUA",
+    0.37,
+    0.38
+   ]
+  ],
+  "volume": 3672.9800000000005
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17BARDAU",
+  "names": [
+   "Marc Andre Barriault",
+   "Kyle Daukaus"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17BARDAU-BAR",
+    0.35,
+    0.36
+   ],
+   [
+    "KXUFCFIGHT-26OCT17BARDAU-DAU",
+    0.65,
+    0.66
+   ]
+  ],
+  "volume": 10242.82
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17NELPER",
+  "names": [
+   "Kyle Nelson",
+   "Cristian Perez"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17NELPER-NEL",
+    0.24,
+    0.25
+   ],
+   [
+    "KXUFCFIGHT-26OCT17NELPER-PER",
+    0.75,
+    0.76
+   ]
+  ],
+  "volume": 2536.36
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17BLAJAS",
+  "names": [
+   "Erin Blanchfield",
+   "Jasmine Jasudavicius"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17BLAJAS-BLA",
+    0.75,
+    0.76
+   ],
+   [
+    "KXUFCFIGHT-26OCT17BLAJAS-JAS",
+    0.24,
+    0.25
+   ]
+  ],
+  "volume": 9001.82
+ },
+ {
+  "event_ticker": "KXUFCFIGHT-26OCT17BUCMAL",
+  "names": [
+   "Joaquin Buckley",
+   "Mike Malott"
+  ],
+  "sides": [
+   [
+    "KXUFCFIGHT-26OCT17BUCMAL-BUC",
+    0.45,
+    0.46
+   ],
+   [
+    "KXUFCFIGHT-26OCT17BUCMAL-MAL",
+    0.53,
+    0.54
+   ]
+  ],
+  "volume": 42926.01
+ }
+]

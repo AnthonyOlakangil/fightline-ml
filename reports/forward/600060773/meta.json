@@ -1,0 +1,44 @@
+{
+  "event_id": "600060773",
+  "event_name": "UFC Fight Night: Buckley vs. Malott",
+  "start_utc": "2026-10-17T21:00:00+00:00",
+  "predicted_at_utc": "2026-10-14T23:35:16.915408+00:00",
+  "code_commit": "7b2355ccf90911bc19030d160f97cc75c139f929",
+  "code_tree_clean": false,
+  "spec": {
+    "features": [
+      "base"
+    ],
+    "top_k": null,
+    "train_window": "all_history",
+    "symmetric": true,
+    "calibration": "isotonic_bounded",
+    "model": "lightgbm",
+    "lightgbm_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "n_estimators": 2000,
+      "num_leaves": 7,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    }
+  },
+  "spec_sha256": "85c40043872ba818d53a450128430f911df316d69b7c4a894a6e7805cedf43b4",
+  "kalshi_matched_bouts": 13,
+  "bfo_status": "ok",
+  "bfo_matched_bouts": 13,
+  "history_through": "2026-10-10",
+  "n_training_fights": 8700,
+  "training_floor_extended": false,
+  "n_features": 117,
+  "espn_results_files": [
+    "600061541.json"
+  ],
+  "actions_run_id": "38654969288",
+  "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/38654969288"
+}

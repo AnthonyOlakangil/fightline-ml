@@ -763,7 +763,9 @@ ESPN's public schedule and acts on each card:
 - **Alerts.** Any failure, or a missed card, opens an issue.
 
 <!-- P8_FORWARD:START -->
-*No card predicted yet. The schedule predicts each card 24-72 hours before it starts.*
+| Card | Predicted | Settled | Scored bouts | Model log loss | Kalshi close log loss | Commitment verified |
+|---|---|---|---:|---:|---:|:---:|
+| UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | |
 <!-- P8_FORWARD:END -->
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot

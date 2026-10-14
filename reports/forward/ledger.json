@@ -1,0 +1,12 @@
+[
+  {
+    "event_id": "600060773",
+    "event_name": "UFC Fight Night: Buckley vs. Malott",
+    "action": "predict",
+    "at_utc": "2026-10-14T23:35:16.915408+00:00",
+    "start_utc": "2026-10-17T21:00:00+00:00",
+    "n_bouts": 13,
+    "actions_run_id": "38654969288",
+    "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/38654969288"
+  }
+]

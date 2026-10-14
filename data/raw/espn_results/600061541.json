@@ -1,0 +1,140 @@
+{
+ "event_id": "600061541",
+ "name": "UFC Fight Night: Allen vs. Duncan",
+ "date": "2026-10-10",
+ "start_utc": "2026-10-10T21:00:00+00:00",
+ "bouts": [
+  {
+   "competition_id": "401924511",
+   "fighter_a": "Ernesta Kareckaite",
+   "fighter_b": "Melissa Gatto",
+   "scheduled_rounds": 3,
+   "weight_class": "W Flyweight",
+   "completed": true,
+   "winner": null,
+   "method_class": null,
+   "finish_round": 3
+  },
+  {
+   "competition_id": "401924512",
+   "fighter_a": "Alice Pereira",
+   "fighter_b": "Daria Zhelezniakova",
+   "scheduled_rounds": 3,
+   "weight_class": "W Bantamweight",
+   "completed": true,
+   "winner": "Alice Pereira",
+   "method_class": "KO/TKO",
+   "finish_round": 1
+  },
+  {
+   "competition_id": "401927418",
+   "fighter_a": "Allen Frye Jr.",
+   "fighter_b": "RJ Harris",
+   "scheduled_rounds": 3,
+   "weight_class": "Heavyweight",
+   "completed": true,
+   "winner": "Allen Frye Jr.",
+   "method_class": "KO/TKO",
+   "finish_round": 1
+  },
+  {
+   "competition_id": "401927420",
+   "fighter_a": "Felipe Franco",
+   "fighter_b": "Brendson Ribeiro",
+   "scheduled_rounds": 3,
+   "weight_class": "Light Heavyweight",
+   "completed": true,
+   "winner": "Brendson Ribeiro",
+   "method_class": "SUB",
+   "finish_round": 1
+  },
+  {
+   "competition_id": "401927419",
+   "fighter_a": "Niko Price",
+   "fighter_b": "Leon Shahbazyan",
+   "scheduled_rounds": 3,
+   "weight_class": "Welterweight",
+   "completed": true,
+   "winner": "Niko Price",
+   "method_class": "KO/TKO",
+   "finish_round": 1
+  },
+  {
+   "competition_id": "401916277",
+   "fighter_a": "Francisco Prado",
+   "fighter_b": "Ismael Bonfim",
+   "scheduled_rounds": 3,
+   "weight_class": "Lightweight",
+   "completed": true,
+   "winner": "Francisco Prado",
+   "method_class": "KO/TKO",
+   "finish_round": 1
+  },
+  {
+   "competition_id": "401927417",
+   "fighter_a": "Julius Walker",
+   "fighter_b": "Gerald Meerschaert",
+   "scheduled_rounds": 3,
+   "weight_class": "Light Heavyweight",
+   "completed": true,
+   "winner": "Julius Walker",
+   "method_class": "KO/TKO",
+   "finish_round": 2
+  },
+  {
+   "competition_id": "401927421",
+   "fighter_a": "Malcolm Wellmaker",
+   "fighter_b": "Otari Tanzilovi",
+   "scheduled_rounds": 3,
+   "weight_class": "Bantamweight",
+   "completed": true,
+   "winner": "Otari Tanzilovi",
+   "method_class": "KO/TKO",
+   "finish_round": 2
+  },
+  {
+   "competition_id": "401927416",
+   "fighter_a": "Andre Fili",
+   "fighter_b": "Kai Kamaka III",
+   "scheduled_rounds": 3,
+   "weight_class": "Featherweight",
+   "completed": true,
+   "winner": "Andre Fili",
+   "method_class": "KO/TKO",
+   "finish_round": 2
+  },
+  {
+   "competition_id": "401924510",
+   "fighter_a": "Loopy Godínez",
+   "fighter_b": "Ketlen Souza",
+   "scheduled_rounds": 3,
+   "weight_class": "W Strawweight",
+   "completed": true,
+   "winner": "Loopy Godínez",
+   "method_class": "DEC",
+   "finish_round": 3
+  },
+  {
+   "competition_id": "401927415",
+   "fighter_a": "Matheus Camilo",
+   "fighter_b": "Jai Herbert",
+   "scheduled_rounds": 3,
+   "weight_class": "Lightweight",
+   "completed": true,
+   "winner": "Jai Herbert",
+   "method_class": "DEC",
+   "finish_round": 3
+  },
+  {
+   "competition_id": "401916276",
+   "fighter_a": "Brendan Allen",
+   "fighter_b": "Christian Leroy Duncan",
+   "scheduled_rounds": 5,
+   "weight_class": "Middleweight",
+   "completed": true,
+   "winner": "Brendan Allen",
+   "method_class": "SUB",
+   "finish_round": 5
+  }
+ ]
+}
