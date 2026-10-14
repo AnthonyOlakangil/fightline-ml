@@ -186,6 +186,18 @@ def experiments() -> None:
 
 
 @app.command()
+def confirm() -> None:
+    """Score the frozen configuration on 2015, once (refuses a second run)."""
+    from ufc_predictor.experiments.confirm import ConfirmationError, run
+
+    try:
+        run()
+    except ConfirmationError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@app.command()
 def clv() -> None:
     """Closing-line value on the development window (BestFightOdds open vs close)."""
     from ufc_predictor.analysis.clv import run
