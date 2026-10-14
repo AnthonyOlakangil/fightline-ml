@@ -14,9 +14,12 @@ each column over the trees the early-stopped model actually uses.
 **Groups.** A matchup feature comes as ``<base>_1``, ``<base>_2`` and ``<base>_diff``;
 keeping one fighter's side without the other's would make the model depend on which
 fighter is listed first. So columns are ranked as groups (summed gain, ties by base name),
-whole groups are taken while they fit, and only then is a group split -- ``_diff`` first,
-because a difference alone is antisymmetric under swapping the fighters. The result is
-exactly ``k`` columns, in the order they appear in ``features``.
+whole groups are taken from the top of the ranking until the next one does not fit, and
+only then is a group split -- ``_diff`` first, because a difference alone is antisymmetric
+under swapping the fighters. A low-ranked small group never jumps ahead of a better
+group's ``_diff`` just because it fits; zero-gain groups rank last and are used only when
+needed to reach ``k``. The result is exactly ``k`` columns, in the order they appear in
+``features``.
 """
 
 from __future__ import annotations
@@ -95,11 +98,11 @@ def gain_importance(
 def pick_top_k(features: list[str], gains: dict[str, float], k: int) -> list[str]:
     """Exactly ``k`` columns of ``features`` by grouped gain (ruling K2).
 
-    1. Whole groups in rank order while the total stays within ``k``; a group that does
-       not fit is skipped and the next one tried.
+    1. Whole groups in rank order, stopping at the first group that does not fit (it is
+       not skipped in favour of a smaller, lower-ranked group).
     2. Then the ``_diff`` of each group not yet taken, in rank order.
     3. Then the remaining members of incomplete groups, in rank order, ``_diff`` before
-       ``_1`` before ``_2``.
+       ``_1`` before ``_2`` before a bare column.
 
     Groups rank by summed gain, descending, ties by base name ascending. With ``k`` at or
     above ``len(features)`` the features come back unchanged.
@@ -116,8 +119,9 @@ def pick_top_k(features: list[str], gains: dict[str, float], k: int) -> list[str
     ranked = sorted(groups, key=lambda base: (-sum(gains[c] for c in groups[base]), base))
     chosen: set[str] = set()
     for base in ranked:  # pass 1
-        if len(chosen) + len(groups[base]) <= k:
-            chosen.update(groups[base])
+        if len(chosen) + len(groups[base]) > k:
+            break
+        chosen.update(groups[base])
     for base in ranked:  # pass 2
         if len(chosen) == k:
             break
