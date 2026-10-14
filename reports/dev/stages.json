@@ -1,0 +1,955 @@
+{
+  "preregistration_commit": "906ac9cf2c777c3858efe6f6fdeac862eb50319f",
+  "git_commit": "d9fa5476cf5980121165c63aa65bd36d1f7ef879",
+  "selection_window": [
+    "2010-01-01",
+    "2014-12-31"
+  ],
+  "alpha": 0.1,
+  "stages": [
+    {
+      "name": "stage_0_retune",
+      "kind": "retune",
+      "train_rows": 2624,
+      "train_span": [
+        "1994-03-11",
+        "2014-04-19"
+      ],
+      "validation_rows": 355,
+      "validation_span": [
+        "2014-04-26",
+        "2014-12-20"
+      ],
+      "n_candidates": 216,
+      "n_tied": 1,
+      "selected": {
+        "num_leaves": 7,
+        "max_depth": 4,
+        "min_child_samples": 20,
+        "learning_rate": 0.05,
+        "colsample_bytree": 0.7,
+        "reg_lambda": 5.0,
+        "log_loss": 0.6706967756126354,
+        "best_iteration": 35
+      },
+      "params": {
+        "n_estimators": 2000,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "reg_alpha": 0.1,
+        "verbosity": -1,
+        "num_leaves": 7,
+        "max_depth": 4,
+        "min_child_samples": 20,
+        "learning_rate": 0.05,
+        "colsample_bytree": 0.7,
+        "reg_lambda": 5.0
+      },
+      "lowest_log_loss": 0.6706967756126354,
+      "baseline_spec": {
+        "features": [
+          "base"
+        ],
+        "top_k": null,
+        "train_window": "all_history",
+        "symmetric": false,
+        "calibration": "isotonic_bounded",
+        "model": "lightgbm",
+        "lightgbm_params": {
+          "colsample_bytree": 0.7,
+          "learning_rate": 0.05,
+          "max_depth": 4,
+          "min_child_samples": 20,
+          "n_estimators": 2000,
+          "num_leaves": 7,
+          "reg_alpha": 0.1,
+          "reg_lambda": 5.0,
+          "subsample": 0.8,
+          "subsample_freq": 1,
+          "verbosity": -1
+        }
+      }
+    },
+    {
+      "name": "stage_1_features",
+      "kind": "compare",
+      "field": "features",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": false,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6885196821819893,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "base+adjusted",
+          "spec": {
+            "features": [
+              "base",
+              "adjusted"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6995473669764579,
+          "observed": 0.011027684794468418,
+          "ci_lower": -0.004485939944539186,
+          "ci_hi": 0.028932652512140222,
+          "ci_level": 0.95,
+          "p_one_sided": 0.912,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "base+recency",
+          "spec": {
+            "features": [
+              "base",
+              "recency"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6965208217166646,
+          "observed": 0.008001139534675173,
+          "ci_lower": -0.003239805369928001,
+          "ci_hi": 0.020253021754810085,
+          "ci_level": 0.95,
+          "p_one_sided": 0.9089,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "base+style",
+          "spec": {
+            "features": [
+              "base",
+              "style"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6947718612640885,
+          "observed": 0.006252179082099063,
+          "ci_lower": -0.003511124187456893,
+          "ci_hi": 0.016676927120631187,
+          "ci_level": 0.95,
+          "p_one_sided": 0.8887,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "base+decline",
+          "spec": {
+            "features": [
+              "base",
+              "decline"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6950038541982215,
+          "observed": 0.0064841720162319314,
+          "ci_lower": -0.00431941418497242,
+          "ci_hi": 0.01872421855342661,
+          "ci_level": 0.95,
+          "p_one_sided": 0.8611,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "base+glicko",
+          "spec": {
+            "features": [
+              "base",
+              "glicko"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.690979478640531,
+          "observed": 0.002459796458541584,
+          "ci_lower": -0.009543409614635623,
+          "ci_hi": 0.015303004321427446,
+          "ci_level": 0.95,
+          "p_one_sided": 0.6482,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "all",
+          "spec": {
+            "features": [
+              "base",
+              "adjusted",
+              "recency",
+              "style",
+              "decline",
+              "glicko"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6984475956220104,
+          "observed": 0.009927913440020883,
+          "ci_lower": -0.003860340054164401,
+          "ci_hi": 0.02484262216153064,
+          "ci_level": 0.95,
+          "p_one_sided": 0.9128,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    },
+    {
+      "name": "stage_2_selection",
+      "kind": "compare",
+      "field": "top_k",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": false,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6885196821819893,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "top_k_25",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": 25,
+            "train_window": "all_history",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6929774039363742,
+          "observed": 0.004457721754384723,
+          "ci_lower": -0.005269875631078942,
+          "ci_hi": 0.014220826892253501,
+          "ci_level": 0.95,
+          "p_one_sided": 0.8218,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 0.8218,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    },
+    {
+      "name": "stage_3_train_window",
+      "kind": "compare",
+      "field": "train_window",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": false,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6885196821819893,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "from_2001",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "from_2001",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.7000637491237018,
+          "observed": 0.01154406694171239,
+          "ci_lower": -0.001107000389352312,
+          "ci_hi": 0.025003358097562288,
+          "ci_level": 0.95,
+          "p_one_sided": 0.9621,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 1.0,
+          "adopted": false
+        },
+        {
+          "name": "last_8_years",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "last_8_years",
+            "symmetric": false,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.7037338289776632,
+          "observed": 0.015214146795673842,
+          "ci_lower": 0.001366516796914168,
+          "ci_hi": 0.0298399755581796,
+          "ci_level": 0.95,
+          "p_one_sided": 0.9837,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 1,
+          "p_holm": 1.0,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    },
+    {
+      "name": "stage_4_symmetry",
+      "kind": "compare",
+      "field": "symmetric",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": false,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6885196821819893,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "symmetric",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": true,
+            "calibration": "isotonic_bounded",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6801699561562781,
+          "observed": -0.008349726025711341,
+          "ci_lower": -0.01954234182026803,
+          "ci_hi": 0.0023531150169112266,
+          "ci_level": 0.95,
+          "p_one_sided": 0.066,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 0.066,
+          "adopted": true
+        }
+      ],
+      "adopted": "symmetric"
+    },
+    {
+      "name": "stage_5_calibration",
+      "kind": "compare",
+      "field": "calibration",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": true,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6801699561562781,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "platt",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": true,
+            "calibration": "platt",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6781355530315791,
+          "observed": -0.002034403124699061,
+          "ci_lower": -0.00774965542867474,
+          "ci_hi": 0.0029604990749188677,
+          "ci_level": 0.95,
+          "p_one_sided": 0.245,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 0.49,
+          "adopted": false
+        },
+        {
+          "name": "none",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": true,
+            "calibration": "none",
+            "model": "lightgbm",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6784699324424281,
+          "observed": -0.00170002371385005,
+          "ci_lower": -0.007331039882405909,
+          "ci_hi": 0.003345737302097957,
+          "ci_level": 0.95,
+          "p_one_sided": 0.2859,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 0.49,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    },
+    {
+      "name": "stage_6_model",
+      "kind": "compare",
+      "field": "model",
+      "incumbent": {
+        "spec": {
+          "features": [
+            "base"
+          ],
+          "top_k": null,
+          "train_window": "all_history",
+          "symmetric": true,
+          "calibration": "isotonic_bounded",
+          "model": "lightgbm",
+          "lightgbm_params": {
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "max_depth": 4,
+            "min_child_samples": 20,
+            "n_estimators": 2000,
+            "num_leaves": 7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 5.0,
+            "subsample": 0.8,
+            "subsample_freq": 1,
+            "verbosity": -1
+          }
+        },
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6801699561562781,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "logistic",
+          "spec": {
+            "features": [
+              "base"
+            ],
+            "top_k": null,
+            "train_window": "all_history",
+            "symmetric": true,
+            "calibration": "isotonic_bounded",
+            "model": "logistic",
+            "lightgbm_params": {
+              "colsample_bytree": 0.7,
+              "learning_rate": 0.05,
+              "max_depth": 4,
+              "min_child_samples": 20,
+              "n_estimators": 2000,
+              "num_leaves": 7,
+              "reg_alpha": 0.1,
+              "reg_lambda": 5.0,
+              "subsample": 0.8,
+              "subsample_freq": 1,
+              "verbosity": -1
+            }
+          },
+          "log_loss": 0.6859592131348141,
+          "observed": 0.0057892569785359905,
+          "ci_lower": -0.0042493754526093785,
+          "ci_hi": 0.015739670322395816,
+          "ci_level": 0.95,
+          "p_one_sided": 0.8775,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "folds_floor_extended": 0,
+          "p_holm": 0.8775,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    },
+    {
+      "name": "final_retune",
+      "kind": "final_retune",
+      "retune": {
+        "train_rows": 2624,
+        "train_span": [
+          "1994-03-11",
+          "2014-04-19"
+        ],
+        "validation_rows": 355,
+        "validation_span": [
+          "2014-04-26",
+          "2014-12-20"
+        ],
+        "n_candidates": 216,
+        "n_tied": 12,
+        "selected": {
+          "num_leaves": 7,
+          "max_depth": 3,
+          "min_child_samples": 80,
+          "learning_rate": 0.05,
+          "colsample_bytree": 0.5,
+          "reg_lambda": 5.0,
+          "log_loss": 0.6715686070511442,
+          "best_iteration": 43
+        },
+        "params": {
+          "n_estimators": 2000,
+          "subsample": 0.8,
+          "subsample_freq": 1,
+          "reg_alpha": 0.1,
+          "verbosity": -1,
+          "num_leaves": 7,
+          "max_depth": 3,
+          "min_child_samples": 80,
+          "learning_rate": 0.05,
+          "colsample_bytree": 0.5,
+          "reg_lambda": 5.0
+        },
+        "lowest_log_loss": 0.6708715159422288
+      },
+      "incumbent": {
+        "n_fights": 1693,
+        "n_events": 157,
+        "log_loss": 0.6801699561562781,
+        "market_log_loss": 0.6037330606307165,
+        "date_span": [
+          "2010-03-21",
+          "2014-12-20"
+        ],
+        "folds": 16,
+        "folds_floor_extended": 0
+      },
+      "candidates": [
+        {
+          "name": "retuned",
+          "log_loss": 0.6796046124383709,
+          "observed": -0.0005653437179073048,
+          "ci_lower": -0.006281164732351543,
+          "ci_hi": 0.004760820589288598,
+          "ci_level": 0.95,
+          "p_one_sided": 0.4358,
+          "n_fights": 1693,
+          "n_events": 157,
+          "n_resamples": 10000,
+          "p_holm": 0.4358,
+          "adopted": false
+        }
+      ],
+      "adopted": null
+    }
+  ],
+  "baseline_spec": {
+    "features": [
+      "base"
+    ],
+    "top_k": null,
+    "train_window": "all_history",
+    "symmetric": false,
+    "calibration": "isotonic_bounded",
+    "model": "lightgbm",
+    "lightgbm_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "n_estimators": 2000,
+      "num_leaves": 7,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    }
+  },
+  "frozen_spec": {
+    "features": [
+      "base"
+    ],
+    "top_k": null,
+    "train_window": "all_history",
+    "symmetric": true,
+    "calibration": "isotonic_bounded",
+    "model": "lightgbm",
+    "lightgbm_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "n_estimators": 2000,
+      "num_leaves": 7,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    }
+  },
+  "frozen_selection_log_loss": 0.6801699561562781,
+  "frozen_selection_market_log_loss": 0.6037330606307165
+}
