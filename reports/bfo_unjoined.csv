@@ -1,0 +1,221 @@
+date,event,bfo_event_id,fighter,opponent,name_fighter,name_opponent,reason,nearest_fight_date,days_apart,open_fighter,open_opponent,close_lo_fighter,close_hi_fighter,close_lo_opponent,close_hi_opponent
+2010-02-06,UFC 109: Relentless,226,Melvin Guillard,Ronnys Torres,melvin guillard,ronnys torres,no_name_match,,,-130,100,105,105,-125,-125
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Anthony Perosh,Mirko Filipovic,anthony perosh,mirko filipovic,date_mismatch,2010-02-20,-1,170,-230,385,385,-485,-485
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Antonio Rodrigo Nogueira,Cain Velasquez,antonio rodrigo nogueira,cain velasquez,date_mismatch,2010-02-20,-1,-150,120,-110,-110,100,100
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Brian Foster,Chris Lytle,brian foster,chris lytle,date_mismatch,2010-02-20,-1,130,-160,110,110,-130,-130
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,C.B. Dollaway,Goran Reljic,c b dollaway,goran reljic,no_name_match,,,195,-255,180,180,-220,-220
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,George Sotiropoulos,Joe Stevenson,george sotiropoulos,joe stevenson,date_mismatch,2010-02-20,-1,240,-300,205,205,-225,-225
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Igor Pokrajac,James Te Huna,igor pokrajac,james te huna,date_mismatch,2010-02-20,-1,145,-175,150,150,-170,-170
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Keith Jardine,Ryan Bader,keith jardine,ryan bader,date_mismatch,2010-02-20,-1,130,-160,130,130,-140,-140
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Krzysztof Soszynski,Stephan Bonnar,krzysztof soszynski,stephan bonnar,date_mismatch,2010-02-20,-1,-155,125,-210,-210,175,175
+2010-02-21,UFC 110: Nogueira vs. Velasquez,225,Michael Bisping,Wanderlei Silva,michael bisping,wanderlei silva,date_mismatch,2010-02-20,-1,130,-160,170,170,-200,-200
+2010-03-27,UFC 111: St-Pierre vs. Hardy,236,Greg Soto,Matt Riddle,greg soto,matt riddle,no_name_match,,,175,-225,190,190,-230,-230
+2010-03-31,UFC Fight Night 21: Florian vs. Gomi,246,Jacob Volkmann,Ronnys Torres,jacob volkmann,ronnys torres,no_name_match,,,180,-240,190,190,-230,-230
+2010-04-10,UFC 112: Invincible,245,B.J. Penn,Frankie Edgar,b j penn,frankie edgar,no_name_match,,,-750,525,-780,-780,620,620
+2010-05-08,UFC 113: Machida vs. Shogun II,247,Johny Hendricks,T.J. Grant,johny hendricks,t j grant,no_name_match,,,-465,340,-400,-400,325,325
+2010-05-08,UFC 113: Machida vs. Shogun II,247,Kimbo Slice,Matt Mitrione,kimbo slice,matt mitrione,no_name_match,,,-150,120,-103,-103,-107,-107
+2010-05-29,UFC 114: Jackson vs. Evans,256,Cyrille Diabate,Luis Cane,cyrille diabate,luis cane,no_name_match,,,360,-540,255,255,-310,-310
+2010-05-29,UFC 114: Jackson vs. Evans,256,Jason Brilz,Antonio Rogerio Nogueira,jason brilz,antonio rogerio nogueira,no_name_match,,,450,-750,435,435,-500,-500
+2010-08-01,UFC On Versus 2,281,Matt Riddle,Damarques Johnson,matt riddle,damarques johnson,no_name_match,,,-180,150,-220,-220,180,180
+2010-08-28,UFC 118: Edgar vs. Penn 2,278,B.J. Penn,Frankie Edgar,b j penn,frankie edgar,no_name_match,,,-365,275,-270,-270,248,248
+2010-09-15,UFC Fight Night 22: Marquardt vs. Palhares,295,Anthony Waldburger,David Mitchell,anthony waldburger,david mitchell,no_name_match,,,170,-215,140,140,-160,-160
+2010-09-25,UFC 119: Mir vs. Cro Cop,296,C.B. Dollaway,Joe Doerksen,c b dollaway,joe doerksen,no_name_match,,,-325,250,-255,-255,235,235
+2010-09-25,UFC 119: Mir vs. Cro Cop,296,Julio Paulino,T.J. Grant,julio paulino,t j grant,no_name_match,,,120,-150,180,180,-220,-220
+2010-09-25,UFC 119: Mir vs. Cro Cop,296,Ryan Bader,Antonio Rogerio Nogueira,ryan bader,antonio rogerio nogueira,no_name_match,,,-150,120,-170,-170,160,160
+2010-10-16,UFC 120: Bisping vs. Akiyama,294,Rob Broughton,Vinicius Kappke de Quieroz,rob broughton,vinicius kappke de quieroz,no_name_match,,,135,-165,145,145,-165,-165
+2010-10-16,UFC 120: Bisping vs. Akiyama,294,Spencer Fisher,Kurt Warburton,spencer fisher,kurt warburton,no_name_match,,,-210,175,-210,-210,175,175
+2010-11-20,UFC 123: Rampage vs. Machida,317,B.J. Penn,Matt Hughes,b j penn,matt hughes,no_name_match,,,-115,-105,-215,-215,195,195
+2010-11-20,UFC 123: Rampage vs. Machida,317,Paul Kelly,T.J. Obrien,paul kelly,t j obrien,no_name_match,,,-170,140,-200,-200,170,170
+2010-12-11,UFC 124: St-Pierre vs. Koscheck II,313,Matt Riddle,Sean Pierson,matt riddle,sean pierson,no_name_match,,,-300,240,-250,-250,210,210
+2010-12-11,UFC 124: St-Pierre vs. Koscheck II,313,Ricardo Almeida,T.J. Grant,ricardo almeida,t j grant,no_name_match,,,-175,145,-150,-150,130,130
+2011-01-22,UFC Fight Night 23: Fight For The Troops II,342,Will Campuzano,Chris Caraiso,will campuzano,chris caraiso,no_name_match,,,-120,100,100,100,-120,-120
+2011-02-26,UFC 127: Penn vs. Fitch,344,Jon Fitch,B.J. Penn,jon fitch,b j penn,no_name_match,,,-170,140,-185,-185,170,170
+2011-03-03,UFC On Versus 3: Sanchez vs. Kampmann,351,Mark Munoz,C.B. Dollaway,mark munoz,c b dollaway,no_name_match,,,-225,175,-170,-170,160,160
+2011-03-19,UFC 128: Shogun vs. Jones,346,Eliot Marshall,Luis Cane,eliot marshall,luis cane,no_name_match,,,120,-160,160,160,-185,-185
+2011-03-26,UFC Fight Night 24: Nogueira vs. Davis,354,Edwin Figueroa,Michael McDonald,edwin figueroa,michael mcdonald,no_name_match,,,260,-350,365,365,-460,-460
+2011-03-26,UFC Fight Night 24: Nogueira vs. Davis,354,Johny Hendricks,T.J. Waldburger,johny hendricks,t j waldburger,no_name_match,,,-350,260,-325,-325,265,265
+2011-03-26,UFC Fight Night 24: Nogueira vs. Davis,354,Phil Davis,Antonio Rogerio Nogueira,phil davis,antonio rogerio nogueira,no_name_match,,,-285,205,-255,-255,235,235
+2011-05-28,UFC 130: Rampage vs. Hamill,357,Chris Caraiso,Michael McDonald,chris caraiso,michael mcdonald,no_name_match,,,225,-265,340,340,-380,-380
+2011-06-26,UFC On Versus 4,379,Tyson Griffin,Manny Gamburyan,tyson griffin,manny gamburyan,no_name_match,,,-205,165,-255,-255,215,215
+2011-08-14,UFC On Versus 5: Hardy vs. Lytle,399,C.B. Dollaway,Jared Hamman,c b dollaway,jared hamman,no_name_match,,,-260,200,-240,-240,220,220
+2011-08-14,UFC On Versus 5: Hardy vs. Lytle,399,Cole Miller,T.J. Obrien,cole miller,t j obrien,no_name_match,,,-410,315,-440,-440,390,390
+2011-08-27,UFC 134: Silva vs. Okami,389,Felipe Arantes,Yuri Alcantara,felipe arantes,yuri alcantara,no_name_match,,,250,-350,420,420,-475,-475
+2011-08-27,UFC 134: Silva vs. Okami,389,Luis Cane,Stanislav Nedkov,luis cane,stanislav nedkov,no_name_match,,,-180,140,-240,-240,220,220
+2011-09-17,UFC Fight Night 25: Battle on the Bayou,406,Matt Riddle,Lance Benoist,matt riddle,lance benoist,no_name_match,,,-190,165,-210,-210,175,175
+2011-09-17,UFC Fight Night 25: Battle on the Bayou,406,T.J. Waldburger,Mike Stumpf,t j waldburger,mike stumpf,no_name_match,,,-240,200,-230,-230,210,210
+2011-10-01,UFC On Versus 6: Cruz vs. Johnson,429,T.J. Grant,Shane Roller,t j grant,shane roller,no_name_match,,,165,-205,164,164,-174,-174
+2011-10-29,UFC 137: Penn vs. Diaz,410,B.J. Penn,Nick Diaz,b j penn,nick diaz,no_name_match,,,-135,-105,105,105,-115,-115
+2011-11-05,UFC 138: Leben vs. Munoz,430,Rob Broughton,Phil de Fries,rob broughton,phil de fries,no_name_match,,,-105,-135,145,145,-155,-155
+2011-11-19,UFC 139: Shogun vs. Henderson,424,Michael McDonald,Alex Soto,michael mcdonald,alex soto,no_name_match,,,-425,320,-410,-410,365,365
+2011-12-03,UFC: The Ultimate Fighter 14 Finale,469,John Dodson,T.J. Dillashaw,john dodson,t j dillashaw,no_name_match,,,180,-240,195,195,-215,-215
+2011-12-10,UFC 140: Jones vs. Machida,451,Antonio Rogerio Nogueira,Tito Ortiz,antonio rogerio nogueira,tito ortiz,no_name_match,,,-165,135,-265,-265,245,245
+2011-12-30,UFC 141: Lesnar vs. Overeem,452,Diego Nunes,Manny Gamburyan,diego nunes,manny gamburyan,no_name_match,,,-350,250,-215,-215,195,195
+2012-01-14,UFC 142: Aldo vs. Mendes,474,Michihiro Omigawa,Yuri Alcantara,michihiro omigawa,yuri alcantara,no_name_match,,,140,-170,177,177,-192,-192
+2012-02-04,UFC 143: Condit vs. Diaz,478,Matt Riddle,Henry Martinez,matt riddle,henry martinez,no_name_match,,,-350,260,-365,-365,328,328
+2012-02-15,UFC on FUEL TV 1: Ellenberger vs. Sanchez,485,Walel Watson,T.J. Dillashaw,walel watson,t j dillashaw,no_name_match,,,200,-260,235,235,-255,-255
+2012-03-02,UFC on FX 2: Alves vs. Kampmann,487,T.J. Waldburger,Jake Hecht,t j waldburger,jake hecht,no_name_match,,,-110,-110,-140,-140,120,120
+2012-03-23,UFC: The Ultimate Fighter 15 Episode 3,523,Cristiano Marcello,Justin Lawrence,cristiano marcello,justin lawrence,no_name_match,,,170,-200,205,205,-225,-225
+2012-03-30,UFC: The Ultimate Fighter 15 Episode 4,525,Al Iaquinta,Myles Jury,al iaquinta,myles jury,no_name_match,,,145,-185,340,340,-380,-380
+2012-04-06,UFC: The Ultimate Fighter 15 Episode 5,528,Jeremy Larsen,Michael Chiesa,jeremy larsen,michael chiesa,no_name_match,,,290,-410,348,348,-390,-390
+2012-04-13,UFC: The Ultimate Fighter 15 Episode 6,534,Chris Tickle,Joe Proctor,chris tickle,joe proctor,no_name_match,,,240,-300,245,245,-265,-265
+2012-04-20,UFC: The Ultimate Fighter 15 Episode 7,538,John Cofer,Vinc Pichel,john cofer,vinc pichel,no_name_match,,,130,-160,135,135,-145,-145
+2012-04-21,UFC 145: Jones vs. Evans,490,Miguel Torres,Michael McDonald,miguel torres,michael mcdonald,no_name_match,,,-150,120,-105,-105,-105,-105
+2012-04-27,UFC: The Ultimate Fighter 15 Episode 8,539,Chris Saunders,Sam Sicilia,chris saunders,sam sicilia,no_name_match,,,300,-360,260,260,-320,-320
+2012-05-04,UFC: The Ultimate Fighter 15 Episode 9,548,Andy Ogle,Mike Rio,andy ogle,mike rio,no_name_match,,,350,-530,405,435,-500,-500
+2012-05-11,UFC: The Ultimate Fighter 15 Episode 10,549,Joe Proctor,James Vick,joe proctor,james vick,no_name_match,,,-210,180,-210,-205,175,190
+2012-05-11,UFC: The Ultimate Fighter 15 Episode 10,549,Justin Lawrence,Michael Chiesa,justin lawrence,michael chiesa,no_name_match,,,-260,220,-311,-290,260,261
+2012-05-15,UFC on FUEL TV 3: Korean Zombie vs. Poirier,499,T.J. Grant,Carlo Prater,t j grant,carlo prater,no_name_match,,,-390,300,-430,-415,345,380
+2012-05-18,UFC: The Ultimate Fighter 15 Episode 11,552,Al Iaquinta,Andy Ogle,al iaquinta,andy ogle,no_name_match,,,-475,390,-410,-370,330,340
+2012-05-18,UFC: The Ultimate Fighter 15 Episode 11,552,Vinc Pichel,Chris Saunders,vinc pichel,chris saunders,no_name_match,,,-345,290,-350,-335,290,305
+2012-05-25,UFC: The Ultimate Fighter 15 Episode 12,554,Al Iaquinta,Vinc Pichel,al iaquinta,vinc pichel,no_name_match,,,-180,150,-185,-178,165,167
+2012-05-25,UFC: The Ultimate Fighter 15 Episode 12,554,Michael Chiesa,James Vick,michael chiesa,james vick,no_name_match,,,130,-160,130,140,-150,-150
+2012-05-26,UFC 146: Dos Santos vs. Mir,502,C.B. Dollaway,Jason Miller,c b dollaway,jason miller,no_name_match,,,130,-160,145,150,-170,-155
+2012-06-22,UFC on FX 4: Guida vs. Maynard,521,Brian Ebersole,T.J. Waldburger,brian ebersole,t j waldburger,no_name_match,,,-230,170,-260,-230,190,220
+2012-06-22,UFC on FX 4: Guida vs. Maynard,521,Ramsey Nijem,C.J. Keith,ramsey nijem,c j keith,no_name_match,,,-195,160,-150,-150,140,140
+2012-06-23,UFC 147: Silva vs. Franklin II,517,Delson Heleno,Francisco Drinaldo,delson heleno,francisco drinaldo,no_name_match,,,-165,125,-127,-120,107,110
+2012-06-23,UFC 147: Silva vs. Franklin II,517,Godofredo Castro,Rony Mariano Bezerra,godofredo castro,rony mariano bezerra,no_name_match,,,250,-350,225,240,-265,-260
+2012-06-23,UFC 147: Silva vs. Franklin II,517,Leonardo Mafra Teixeira,Thiago de Oliveira Perpetuo,leonardo mafra teixeira,thiago de oliveira perpetuo,no_name_match,,,140,-170,105,130,-150,-115
+2012-06-23,UFC 147: Silva vs. Franklin II,517,Yuri Alcantara,Hacran Dias,yuri alcantara,hacran dias,no_name_match,,,-300,220,-240,-178,167,200
+2012-07-11,UFC on FUEL TV 4: Munoz vs. Weidman,545,Vaughan Lee,T.J. Dillashaw,vaughan lee,t j dillashaw,no_name_match,,,320,-425,360,370,-435,-415
+2012-07-21,UFC 149: Faber vs. Barao,527,Matt Riddle,Chris Clements,matt riddle,chris clements,no_name_match,,,-170,140,-165,-165,145,155
+2012-08-04,UFC on FOX 4: Shogun vs. Vera,546,Michihiro Omigawa,Manny Gamburyan,michihiro omigawa,manny gamburyan,no_name_match,,,120,-140,175,175,-200,-190
+2012-08-04,UFC on FOX 4: Shogun vs. Vera,546,Phil de Fries,Oli Thompson,phil de fries,oli thompson,no_name_match,,,-205,175,-220,-210,190,190
+2012-08-11,UFC 150: Henderson vs. Edgar II,547,Dennis Bermudez,Tom Hayden,dennis bermudez,tom hayden,no_name_match,,,-490,330,-330,-315,275,285
+2012-09-22,UFC 152: Jones vs. Belfort,561,Evan Dunham,T.J. Grant,evan dunham,t j grant,no_name_match,,,-280,200,-145,-125,115,125
+2012-10-05,UFC on FX 5: Browne vs. Bigfoot,579,John Dodson,Jussier da Silva,john dodson,jussier da silva,no_name_match,,,-230,170,-270,-255,230,235
+2012-10-13,UFC 153: Silva vs. Bonnar,571,Luis Cane,Chris Camozzi,luis cane,chris camozzi,no_name_match,,,-155,115,-155,-145,135,135
+2012-10-13,UFC 153: Silva vs. Bonnar,571,Sam Sicilia,Rony Mariano Bezerra,sam sicilia,rony mariano bezerra,no_name_match,,,200,-280,190,205,-245,-210
+2012-11-17,UFC 154: St-Pierre vs. Condit,565,Matt Riddle,John Maguire,matt riddle,john maguire,no_name_match,,,-170,130,-230,-220,200,200
+2012-12-08,UFC on FOX 5: Henderson vs. Diaz,584,Rory Macdonald,B.J. Penn,rory macdonald,b j penn,no_name_match,,,-285,240,-335,-330,275,275
+2012-12-15,UFC: The Ultimate Fighter 16 Finale,602,Nick Catone,T.J. Waldburger,nick catone,t j waldburger,no_name_match,,,105,-135,-110,-105,-110,-105
+2013-01-19,UFC on FX 7: Belfort vs. Bisping,612,C.B. Dollaway,Daniel Sarafian,c b dollaway,daniel sarafian,no_name_match,,,-180,140,130,130,-150,-140
+2013-01-19,UFC on FX 7: Belfort vs. Bisping,612,C.J. Keith,Francisco Drinaldo,c j keith,francisco drinaldo,no_name_match,,,275,-365,380,390,-455,-440
+2013-01-19,UFC on FX 7: Belfort vs. Bisping,612,Godofredo Castro,Milton Vieira,godofredo castro,milton vieira,no_name_match,,,-195,160,155,175,-200,-165
+2013-01-19,UFC on FX 7: Belfort vs. Bisping,612,Yuri Alcantara,Pedro Nobre,yuri alcantara,pedro nobre,no_name_match,,,-450,330,-600,-570,450,480
+2013-01-26,UFC on FOX 6: Johnson vs. Dodson,613,T.J. Grant,Matt Wiman,t j grant,matt wiman,no_name_match,,,-120,-120,-190,-185,165,170
+2013-02-02,UFC 156: Aldo vs. Edgar,611,Rashad Evans,Antonio Rogerio Nogueira,rashad evans,antonio rogerio nogueira,no_name_match,,,-350,250,-550,-525,400,450
+2013-02-16,UFC on Fuel TV 7: Barao vs. McDonald,632,Michael McDonald,Renan Barao,michael mcdonald,renan barao,no_name_match,,,180,-260,260,265,-310,-295
+2013-03-16,UFC 158: St-Pierre vs. Diaz,627,T.J. Dillashaw,Issei Tamura,t j dillashaw,issei tamura,no_name_match,,,-405,285,-660,-660,510,540
+2013-04-13,UFC: The Ultimate Fighter 17 Finale,656,Kelvin Gastelum,Urijah Hall,kelvin gastelum,urijah hall,no_name_match,,,220,-300,258,260,-310,-285
+2013-04-20,UFC on FOX 7: Henderson vs. Melendez,634,T.J. Dillashaw,Hugo Viana,t j dillashaw,hugo viana,no_name_match,,,-295,215,-350,-320,290,290
+2013-04-27,UFC 159: Jones vs. Sonnen,633,Gian Villante,Ovince St. Preux,gian villante,ovince st preux,no_name_match,,,135,-175,135,135,-155,-145
+2013-05-18,UFC on FX 8: Belfort vs. Rockhold,648,Chris Camozzi,Ronaldo Souza,chris camozzi,ronaldo souza,no_name_match,,,425,-675,425,500,-600,-575
+2013-05-18,UFC on FX 8: Belfort vs. Rockhold,648,Chris Cariaso,Jussier da Silva,chris cariaso,jussier da silva,no_name_match,,,155,-195,150,155,-170,-165
+2013-05-18,UFC on FX 8: Belfort vs. Rockhold,648,Yuri Alcantara,Iliarde Santos,yuri alcantara,iliarde santos,no_name_match,,,-385,265,-550,-525,400,450
+2013-05-25,UFC 160: Velasquez vs. Silva II,647,Donald Cerrone,K.J. Noons,donald cerrone,k j noons,no_name_match,,,-275,195,-280,-270,220,248
+2013-05-25,UFC 160: Velasquez vs. Silva II,647,Gray Maynard,T.J. Grant,gray maynard,t j grant,no_name_match,,,-245,175,-160,-135,125,130
+2013-06-08,UFC on FUEL TV 10: Nogueira vs. Werdum 2,668,Felipe Arantes,Godofredo Castro,felipe arantes,godofredo castro,no_name_match,,,-160,120,-225,-220,185,200
+2013-06-08,UFC on FUEL TV 10: Nogueira vs. Werdum 2,668,Leo Santos,William Macario,leo santos,william macario,no_name_match,,,-265,185,-160,-150,130,140
+2013-08-03,UFC 163: Aldo vs. Jung,683,Ednaldo Oliveira,Francimar Bodao,ednaldo oliveira,francimar bodao,no_name_match,,,-230,170,-130,-120,100,110
+2013-08-03,UFC 163: Aldo vs. Jung,683,John Lineker,Jose Tome,john lineker,jose tome,no_name_match,,,-410,290,-425,-400,325,355
+2013-08-17,UFC Fight Night 26: Shogun vs. Sonnen,685,Cody Donovan,Ovince St. Preux,cody donovan,ovince st preux,no_name_match,,,225,-305,325,350,-440,-425
+2013-08-17,UFC Fight Night 26: Shogun vs. Sonnen,685,Michael McDonald,Brad Pickett,michael mcdonald,brad pickett,no_name_match,,,-215,165,-320,-300,240,290
+2013-08-17,UFC Fight Night 26: Shogun vs. Sonnen,685,Urijah Faber,Yuri Alcantara,urijah faber,yuri alcantara,no_name_match,,,-210,160,-260,-215,195,200
+2013-09-04,UFC Fight Night 28: Teixeira vs. Bader,705,Joseph Benavidez,Jussier da Silva,joseph benavidez,jussier da silva,no_name_match,,,-350,250,-720,-700,500,580
+2013-09-04,UFC Fight Night 28: Teixeira vs. Bader,705,Yushin Okami,Ronaldo Souza,yushin okami,ronaldo souza,no_name_match,,,160,-210,195,210,-245,-230
+2013-10-09,UFC Fight Night 29: Maia vs. Shields,713,Raphael Assuncao,T.J. Dillashaw,raphael assuncao,t j dillashaw,no_name_match,,,185,-265,180,210,-230,-220
+2013-10-19,UFC 166: Velasquez vs. Dos Santos III,698,C.B. Dollaway,Tim Boetsch,c b dollaway,tim boetsch,no_name_match,,,130,-170,120,135,-150,-145
+2013-10-19,UFC 166: Velasquez vs. Dos Santos III,698,Dustin Pague,Kyogi Horiguchi,dustin pague,kyogi horiguchi,no_name_match,,,100,-140,135,135,-165,-145
+2013-10-19,UFC 166: Velasquez vs. Dos Santos III,698,George Sotiropoulos,K.J. Noons,george sotiropoulos,k j noons,no_name_match,,,175,-245,135,135,-165,-145
+2013-10-19,UFC 166: Velasquez vs. Dos Santos III,698,T.J. Waldburger,Adlan Amagov,t j waldburger,adlan amagov,no_name_match,,,100,-140,170,175,-210,-190
+2013-11-09,UFC Fight Night 32: Belfort vs. Henderson,725,Jose Tome,Dustin Ortiz,jose tome,dustin ortiz,no_name_match,,,-125,-115,-120,-115,-110,105
+2013-11-30,UFC: The Ultimate Fighter 18 Finale,720,Jared Rosholt,Walter Harris,jared rosholt,walter harris,no_name_match,,,-230,170,-255,-245,205,225
+2013-11-30,UFC: The Ultimate Fighter 18 Finale,720,Jessica Rakozczy,Julianna Pena,jessica rakozczy,julianna pena,no_name_match,,,225,-305,250,260,-325,-290
+2013-12-14,UFC on FOX 9: Johnson vs. Benavidez,729,Urijah Faber,Michael McDonald,urijah faber,michael mcdonald,no_name_match,,,-160,120,-160,-150,130,130
+2013-12-28,UFC 168: Weidman vs. Silva II,706,Dennis Siver,Manny Gamburyan,dennis siver,manny gamburyan,no_name_match,,,-210,160,-310,-285,225,280
+2014-01-04,UFC Fight Night 34: Saffiedine vs. Lim,761,David Galera,Royston Wee,david galera,royston wee,no_name_match,,,-160,120,-200,-190,160,175
+2014-01-15,UFC Fight Night 35: Rockhold vs. Philippou,762,Mike Easton,T.J. Dillashaw,mike easton,t j dillashaw,no_name_match,,,170,-230,250,270,-330,-310
+2014-02-01,UFC 169: Barao vs. Faber,737,Rashid Magomedov,Tony Martin,rashid magomedov,tony martin,no_name_match,,,-210,160,-140,-140,110,130
+2014-02-15,UFC Fight Night 36: Machida vs. Mousasi,758,Douglas Silva de Andrade,Zubair Tuhugov,douglas silva de andrade,zubair tuhugov,no_name_match,,,-110,-130,-110,-105,-120,-105
+2014-02-15,UFC Fight Night 36: Machida vs. Mousasi,758,Francis Carmont,Ronaldo Souza,francis carmont,ronaldo souza,no_name_match,,,300,-420,375,435,-500,-500
+2014-02-15,UFC Fight Night 36: Machida vs. Mousasi,758,Yuri Alcantara,Wilson Reis,yuri alcantara,wilson reis,no_name_match,,,-215,165,-215,-210,170,195
+2014-02-22,UFC 170: Rousey vs. McMann,756,Mike Pyle,T.J. Waldburger,mike pyle,t j waldburger,no_name_match,,,-165,125,-185,-165,155,155
+2014-03-01,UFC: The Ultimate Fighter China Finale,778,Lipeng Zhang,Wang Sai,lipeng zhang,wang sai,no_name_match,,,200,-280,260,265,-310,-295
+2014-03-08,UFC Fight Night 37: Gustafsson vs. Manuwa,751,Brad Scott,Claudio Henrique da Silva,brad scott,claudio henrique da silva,no_name_match,,,-190,150,-237,-225,202,205
+2014-03-15,UFC 171: Hendricks vs. Lawler,771,Ovince St. Preux,Nikita Krylov,ovince st preux,nikita krylov,no_name_match,,,-280,200,-550,-500,420,435
+2014-03-15,UFC 171: Hendricks vs. Lawler,771,Renee Forte,Frank Trevino,renee forte,frank trevino,no_name_match,,,-115,-125,-160,-155,140,145
+2014-03-23,UFC Fight Night 38: Shogun vs. Henderson,784,C.B. Dollaway,Cezar Ferreira,c b dollaway,cezar ferreira,no_name_match,,,140,-180,340,340,-410,-380
+2014-04-16,UFC: The Ultimate Fighter Nations Finale,806,Sam Stout,K.J. Noons,sam stout,k j noons,no_name_match,,,-165,125,-105,-101,-119,-105
+2014-04-26,UFC 172: Jones vs. Teixeira,772,Joseph Benavidez,Timothy Elliott,joseph benavidez,timothy elliott,no_name_match,,,-405,285,-510,-450,395,400
+2014-05-10,UFC Fight Night 40: Brown vs. Silva,794,Nik Lentz,Manny Gamburyan,nik lentz,manny gamburyan,no_name_match,,,-315,235,-550,-540,420,460
+2014-05-24,UFC 173: Barao vs. Dillashaw,786,David Michaud,Jingliang Li,david michaud,jingliang li,no_name_match,,,-165,125,-135,-125,115,115
+2014-05-24,UFC 173: Barao vs. Dillashaw,786,Renan Barao,T.J. Dillashaw,renan barao,t j dillashaw,no_name_match,,,-425,305,-1000,-910,675,710
+2014-05-31,UFC Fight Night 41: Munoz vs. Mousasi,799,C.B. Dollaway,Francis Carmont,c b dollaway,francis carmont,no_name_match,,,130,-170,155,155,-180,-165
+2014-06-14,UFC 174: Johnson vs. Bagautinov,807,Ryan Jimmo,Ovince St. Preux,ryan jimmo,ovince st preux,no_name_match,,,130,-170,148,155,-173,-165
+2014-06-28,UFC Fight Night 44: Swanson vs. Stephens,800,Anthony Hamilton,Oleksiy Oliynyk,anthony hamilton,oleksiy oliynyk,no_name_match,,,-150,110,120,130,-140,-140
+2014-06-28,UFC Fight Night 44: Swanson vs. Stephens,800,Colton Smith,Carlos Diego Ferreira,colton smith,carlos diego ferreira,no_name_match,,,250,-350,165,170,-190,-185
+2014-06-28,UFC Fight Night 43: Te Huna vs. Marquardt,823,Daniel Hooker,Ian Entwistle,daniel hooker,ian entwistle,no_name_match,,,125,-165,-120,-115,-105,110
+2014-06-28,UFC Fight Night 43: Te Huna vs. Marquardt,823,Neil Magny,Rodrigo Goiana de Lima,neil magny,rodrigo goiana de lima,no_name_match,,,-270,190,-290,-270,230,260
+2014-07-05,UFC 175: Weidman vs. Machida,805,Kevin Casey,William Bush,kevin casey,william bush,no_name_match,,,100,-140,168,170,-200,-180
+2014-07-06,UFC: The Ultimate Fighter 19 Finale,832,B.J. Penn,Frankie Edgar,b j penn,frankie edgar,no_name_match,,,250,-350,330,345,-415,-370
+2014-07-06,UFC: The Ultimate Fighter 19 Finale,832,Dan Spohn,Patrick Walsh,dan spohn,patrick walsh,no_name_match,,,-230,170,-235,-230,200,210
+2014-07-19,UFC Fight Night 46: McGregor vs. Brandao,827,Josh Sampo,Patrick Holohan,josh sampo,patrick holohan,no_name_match,,,-260,180,-260,-245,220,225
+2014-07-26,UFC on FOX 12: Lawler vs. Brown,829,Akbarh Arreola,Tiago Dos Santos,akbarh arreola,tiago dos santos,no_name_match,,,145,-185,250,275,-305,-300
+2014-07-26,UFC on FOX 12: Lawler vs. Brown,829,Antonio Rogerio Nogueira,Anthony Johnson,antonio rogerio nogueira,anthony johnson,no_name_match,,,325,-475,450,540,-660,-600
+2014-07-26,UFC on FOX 12: Lawler vs. Brown,829,Joanna Jedrzejczyk,Juliana Carneiro Lima,joanna jedrzejczyk,juliana carneiro lima,no_name_match,,,-280,200,-340,-315,280,285
+2014-08-16,UFC Fight Night 47: Bader vs. Saint Preux,845,Ryan Bader,Ovince St. Preux,ryan bader,ovince st preux,no_name_match,,,-210,160,-185,-185,160,170
+2014-08-16,UFC Fight Night 47: Bader vs. Saint Preux,845,Thiago Tavares,Robbie Peralta,thiago tavares,robbie peralta,no_name_match,,,-165,125,-142,-135,122,125
+2014-08-23,UFC Fight Night 48: Bisping vs. Le,835,Colby Covington,Wang Anying,colby covington,wang anying,no_name_match,,,-305,225,-430,-415,345,380
+2014-08-23,UFC Fight Night 48: Bisping vs. Le,835,Ning Guangyou,Yang Jianping,guangyou ning,yang jianping,no_name_match,,,185,-265,185,205,-225,-220
+2014-08-23,UFC Fight Night 48: Bisping vs. Le,835,Wang Sai,Danny Mitchell,wang sai,danny mitchell,no_name_match,,,185,-265,170,175,-200,-190
+2014-08-23,UFC Fight Night 49: Henderson vs. Dos Anjos,846,Beneil Dariush,Tony Martin,beneil dariush,tony martin,no_name_match,,,100,-140,120,130,-140,-140
+2014-08-23,UFC Fight Night 49: Henderson vs. Dos Anjos,846,James Vick,Walmir Lazaro,james vick,walmir lazaro,no_name_match,,,-165,125,-140,-125,115,120
+2014-08-30,UFC 177: Dillashaw vs. Soto,849,Ramsey Nijem,Carlos Diego Ferreira,ramsey nijem,carlos diego ferreira,no_name_match,,,200,-280,160,170,-185,-185
+2014-08-30,UFC 177: Dillashaw vs. Soto,849,T.J. Dillashaw,Joe Soto,t j dillashaw,joe soto,no_name_match,,,-1500,700,-1125,-1100,725,900
+2014-09-05,UFC Fight Night 50: Souza vs. Mousasi,851,Gegard Mousasi,Ronaldo Souza,gegard mousasi,ronaldo souza,no_name_match,,,160,-210,170,170,-200,-185
+2014-09-13,UFC Fight Night 51: Big Foot vs. Arlovski II,850,Jessica Andrade,Larissa Moreira Pacheco,jessica andrade,larissa moreira pacheco,no_name_match,,,-195,155,-110,-110,-110,100
+2014-09-20,UFC Fight Night 52: Hunt vs. Nelson,847,Maximo Blanco,Daniel Hooker,maximo blanco,daniel hooker,no_name_match,,,-215,165,-155,-135,125,135
+2014-09-20,UFC Fight Night 52: Hunt vs. Nelson,847,Takanori Gomi,Miles Jury,takanori gomi,miles jury,no_name_match,,,285,-405,445,505,-605,-575
+2014-09-27,UFC 178: Johnson vs. Cariaso,836,Manny Gamburyan,Cody Gibson,manny gamburyan,cody gibson,no_name_match,,,100,-140,140,145,-160,-155
+2014-10-04,UFC Fight Night 54: MacDonald vs. Saffiedine,861,Nordine Taleb,Jingliang Li,nordine taleb,jingliang li,no_name_match,,,-350,250,-430,-425,355,380
+2014-10-04,UFC Fight Night 54: MacDonald vs. Saffiedine,861,Patrick Holohan,Chris Kelades,patrick holohan,chris kelades,no_name_match,,,-405,285,-500,-500,385,435
+2014-10-25,UFC 179: Aldo vs. Mendes II,855,Beneil Dariush,Carlos Diego Ferreira,beneil dariush,carlos diego ferreira,no_name_match,,,180,-260,210,225,-250,-245
+2014-10-25,UFC 179: Aldo vs. Mendes II,855,Fabricio Camoes,Tony Martin,fabricio camoes,tony martin,no_name_match,,,-165,125,-105,-105,-115,-105
+2014-11-08,UFC Fight Night 56: Shogun vs. St. Preux,893,Claudio Henrique da Silva,Leon Edwards,claudio henrique da silva,leon edwards,no_name_match,,,100,-140,170,195,-215,-200
+2014-11-08,UFC Fight Night 56: Shogun vs. St. Preux,893,Dhiego Lima,Jorge Oliveira,dhiego lima,jorge oliveira,no_name_match,,,-300,220,-500,-440,385,390
+2014-11-08,UFC Fight Night 56: Shogun vs. St. Preux,893,Diego Rivas,Rodolfo Rubio,diego rivas,rodolfo rubio,no_name_match,,,-210,160,-150,-145,125,140
+2014-11-08,UFC Fight Night 56: Shogun vs. St. Preux,893,Mauricio Rua,Ovince St. Preux,mauricio rua,ovince st preux,no_name_match,,,-140,120,-160,-158,138,150
+2014-11-15,UFC 180: Werdum vs. Hunt,824,Gabriel Benitez,Humberto Brown,gabriel benitez,humberto brown,no_name_match,,,-350,250,-600,-525,410,450
+2014-11-15,UFC 180: Werdum vs. Hunt,824,Marco Antonio Beltran,Marlon Vera,marco antonio beltran,marlon vera,no_name_match,,,190,-270,205,210,-250,-225
+2014-11-22,UFC Fight Night 57: Edgar vs. Swanson,892,Doo Ho Choi,Juan Puig,doo ho choi,juan manuel puig,no_name_match,,,-350,250,-525,-420,375,410
+2014-11-22,UFC Fight Night 57: Edgar vs. Swanson,892,Jared Rosholt,Oleksiy Oliynyk,jared rosholt,oleksiy oliynyk,no_name_match,,,-230,170,-420,-375,310,375
+2014-12-12,UFC: The Ultimate Fighter 20 Finale,912,Daron Cruickshank,K.J. Noons,daron cruickshank,k j noons,no_name_match,,,-165,125,-220,-220,185,200
+2014-12-20,UFC Fight Night 58: Machida vs. Dollaway,880,C.B. Dollaway,Lyoto Machida,c b dollaway,lyoto machida,no_name_match,,,400,-600,650,675,-950,-860
+2014-12-20,UFC Fight Night 58: Machida vs. Dollaway,880,Tim Means,Marcio Alexandre Jr.,tim means,marcio alexandre,no_name_match,,,-290,210,-190,-170,160,165
+2014-12-20,UFC Fight Night 58: Machida vs. Dollaway,880,Tom Niinimaki,Renato Carneiro,tom niinimaki,renato carneiro,no_name_match,,,-140,100,105,120,-130,-125
+2015-01-03,UFC 182: Jones vs. Cormier,864,Hector Lombard,Josh Burkman,hector lombard,josh burkman,no_name_match,,,-505,335,-840,-750,550,660
+2015-01-18,UFC Fight Night 59: McGregor vs. Siver,895,Shane Howell,Patrick Holohan,shane howell,patrick holohan,no_name_match,,,205,-285,295,315,-360,-345
+2015-01-18,UFC Fight Night 59: McGregor vs. Siver,895,Urijah Hall,Ron Stallings,urijah hall,ron stallings,no_name_match,,,-900,500,-1000,-900,600,800
+2015-02-14,UFC Fight Night 60: Henderson vs. Thatch,915,Efrain Escudero,Rodrigo Lima,efrain escudero,rodrigo lima,no_name_match,,,-130,-110,144,155,-165,-164
+2015-02-28,UFC 184: Rousey vs. Zingano,896,Alexander Torres,Masio Fullen,alexander torres,masio fullen,no_name_match,,,130,-170,-125,-115,105,105
+2015-03-14,UFC 185: Pettis vs. dos Anjos,925,Jake Lindsey,Joseph Duffey,jake lindsey,joseph duffey,no_name_match,,,285,-405,550,575,-750,-710
+2015-03-21,UFC Fight Night 62: Maia vs. LaFlare,934,Tony Martin,Leonardo Santos,tony martin,leonardo santos,no_name_match,,,140,-180,-160,-160,140,140
+2015-04-04,UFC Fight Night 63: Mendes vs. Lamas,932,Clay Guida,Robbie Peralta,clay guida,robbie peralta,no_name_match,,,-230,170,-250,-245,205,210
+2015-04-04,UFC Fight Night 63: Mendes vs. Lamas,932,Shamil Abdurahimov,Timothy Johnson,shamil abdurahimov,timothy johnson,no_name_match,,,-270,190,-260,-250,210,220
+2015-04-18,UFC on FOX 15: Machida vs. Rockhold,927,Chris Camozzi,Ronaldo Souza,chris camozzi,ronaldo souza,no_name_match,,,550,-1050,900,1050,-1600,-1600
+2015-04-18,UFC on FOX 15: Machida vs. Rockhold,927,Ovince St. Preux,Patrick Cummins,ovince st preux,patrick cummins,no_name_match,,,100,-140,-105,-105,-115,-115
+2015-04-25,UFC 186: Johnson vs. Horiguchi,929,Michael Bisping,C.B. Dollaway,michael bisping,c b dollaway,no_name_match,,,-185,145,-155,-145,125,135
+2015-05-09,UFC Fight Night 65: Hunt vs. Miocic,950,Hatsu Hioki,Daniel Hooker,hatsu hioki,daniel hooker,no_name_match,,,-280,200,-300,-290,245,250
+2015-05-16,UFC Fight Night 66: Edgar vs. Faber,946,Lipeng Zhang,Kajan Johnson,lipeng zhang,kajan johnson,no_name_match,,,100,-140,-115,-110,-110,-105
+2015-05-16,UFC Fight Night 66: Edgar vs. Faber,946,Nolan Ticman,Zhuikui Yao,nolan ticman,zhuikui yao,no_name_match,,,-210,160,-275,-270,230,235
+2015-05-23,UFC 187: Johnson vs. Cormier,945,Dong Hyun Kim,Josh Burkman,dong hyun kim,josh burkman,no_name_match,,,-270,190,-215,-210,175,185
+2015-05-30,UFC Fight Night 67: Alves vs. Condit,957,Elizeu Zaleski,Nicolas Dalby,elizeu zaleski,nicolas dalby,no_name_match,,,250,-350,230,235,-275,-270
+2015-05-30,UFC Fight Night 67: Alves vs. Condit,957,K.J. Noons,Alex Oliveira,k j noons,alex oliveira,no_name_match,,,-125,-115,145,160,-185,-170
+2015-06-20,UFC Fight Night 69: Jedrzejczyk vs. Penne,964,Peter Sobotta,Steven Kennedy,peter sobotta,steven kennedy,no_name_match,,,-230,170,-370,-360,295,310
+2015-07-12,UFC: The Ultimate Fighter 21 Finale: Ellenberger vs. Thompson,971,Mike Graves,Vicente Luque,mike graves,vicente luque,no_name_match,,,-105,-135,160,165,-190,-185
+2015-07-15,UFC Fight Night 71: Mir vs. Duffee,965,Scott Jorgensen,Manny Gamburyan,scott jorgensen,manny gamburyan,no_name_match,,,140,-180,170,170,-200,-195
+2015-07-18,UFC Fight Night 72: Bisping vs. Leites,975,Ivan Jorge,Joseph Duffy,ivan jorge,joseph duffy,no_name_match,,,435,-705,650,665,-1000,-965
+2015-07-25,UFC on FOX 16: Dillashaw vs. Barao 2,967,Renan Barao,T.J. Dillashaw,renan barao,t j dillashaw,no_name_match,,,165,-215,170,170,-200,-200
+2015-08-01,UFC 190: Rousey vs. Correia,960,Mauricio Rua,Antonio Rogerio Nogueira,mauricio rua,antonio rogerio nogueira,no_name_match,,,-190,150,-245,-230,190,210
+2015-08-08,UFC Fight Night 73: Saint Preux vs. Teixeira,979,Glover Teixeira,Ovince St. Preux,glover teixeira,ovince st preux,no_name_match,,,-140,100,120,120,-140,-140
+2015-08-23,UFC Fight Night 74: Holloway vs. Oliveira,984,Patrick Cote,Josh Burkman,patrick cote,josh burkman,no_name_match,,,110,-150,138,150,-170,-158
+2015-09-26,UFC Fight Night 75: Nelson vs. Barnett,1003,Gegard Mousasi,Urijah Hall,gegard mousasi,urijah hall,no_name_match,,,-350,250,-400,-400,325,330
+2015-10-03,UFC 192: Cormier vs. Gustafsson,990,Daniel Hooker,Yair Rodriguez,daniel hooker,yair rodriguez,no_name_match,,,170,-230,225,230,-270,-265
+2015-11-14,UFC 193: Rousey vs. Holm,1002,Richard Walsh,Steven Kennedy,richard walsh,steven kennedy,no_name_match,,,-350,250,-420,-390,325,335
+2015-11-14,UFC 193: Rousey vs. Holm,1002,Robert Whittaker,Urijah Hall,robert whittaker,urijah hall,no_name_match,,,145,-185,135,142,-162,-155
+2015-11-21,UFC Fight Night 78: Magny vs. Gastelum,999,Alvaro Herrera,Vernon Ramos,alvaro herrera mendoza,vernon ramos,no_name_match,,,145,-185,145,150,-170,-170
+2015-11-28,UFC Fight Night 79: Henderson vs. Masvidal,1013,Sam Sicilia,Doo Ho Choi,sam sicilia,doo ho choi,no_name_match,,,160,-210,210,220,-260,-250
+2015-12-12,UFC 194: Aldo vs. McGregor,1005,Court McGee,Marcio Alexandre Jr.,court mcgee,marcio alexandre,no_name_match,,,-175,135,-165,-160,140,145
+2015-12-12,UFC 194: Aldo vs. McGregor,1005,Yoel Romero,Ronaldo Souza,yoel romero,ronaldo souza,no_name_match,,,130,-170,110,120,-140,-130
+2015-12-19,UFC on FOX 17: Dos Anjos vs. Cerrone,1008,Francis Ngannou,Luiz Henrique,francis ngannou,luiz henrique,no_name_match,,,110,-150,-140,-140,120,120
+2015-12-19,UFC on FOX 17: Dos Anjos vs. Cerrone,1008,Nate Marquardt,C.B. Dollaway,nate marquardt,c b dollaway,no_name_match,,,250,-350,350,355,-455,-440

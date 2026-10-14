@@ -1,0 +1,42 @@
+{
+  "close_log_loss": 0.6085742315746854,
+  "close_minus_open_log_loss": {
+    "ci_hi": -0.004177125965358717,
+    "ci_lower": -0.019329860666292754,
+    "observed": -0.011845685669351768
+  },
+  "correlation_edge_vs_move": {
+    "ci_hi": -0.07203678830392994,
+    "ci_level": 0.95,
+    "ci_lower": -0.16372976854696908,
+    "point": -0.11620976169868183
+  },
+  "date_span": [
+    "2010-03-21",
+    "2015-12-19"
+  ],
+  "edge_threshold": 0.05,
+  "model_information_beyond_open": {
+    "coef_logit_model": {
+      "ci_hi": 0.4049667359817167,
+      "ci_level": 0.95,
+      "ci_lower": -0.01240152414975083,
+      "point": 0.17541299108799657
+    }
+  },
+  "model_log_loss": 0.679926257395107,
+  "move_toward_model_when_edge_over_5pp": {
+    "ci_hi": -0.006506942848154174,
+    "ci_level": 0.95,
+    "ci_lower": -0.013974327046309135,
+    "mean_abs_edge": 0.16304026729468457,
+    "n_fights": 1524,
+    "point": -0.01016885286689969
+  },
+  "n_dev_predictions": 2154,
+  "n_events": 198,
+  "n_fights": 1975,
+  "n_with_bfo_lines": 1975,
+  "open_log_loss": 0.620419917244037,
+  "source": "BestFightOdds open and closing-range midpoint (data/raw/bfo_snapshot_*), frozen development configuration's out-of-sample predictions"
+}

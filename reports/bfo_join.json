@@ -1,0 +1,20 @@
+{
+  "date_max": "2015-12-19",
+  "date_min": "2010-01-02",
+  "dev_priced_fights": 2154,
+  "dev_priced_join_rate": 0.9168987929433612,
+  "dev_priced_joined": 1975,
+  "dev_window": [
+    "2010-01-01",
+    "2015-12-31"
+  ],
+  "dropped_date_mismatch": 8,
+  "dropped_incomplete": 0,
+  "join_rate": 0.9030409872190392,
+  "joined": 2049,
+  "joined_alias": 29,
+  "joined_exact": 2020,
+  "lines_in": 2269,
+  "snapshot_dir": "data/raw/bfo_snapshot_2026-10-13",
+  "unmatched_no_name_match": 212
+}

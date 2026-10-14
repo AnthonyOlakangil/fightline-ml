@@ -207,9 +207,9 @@ def render_clv(clv: dict | None, join: dict | None, audit: dict | None) -> str:
         "| Question | Estimate [95% CI] |",
         "|---|---:|",
         f"| Does the close beat the open? (close - open log loss) | {_ci(sanity)} |",
-        f"| Correlation of the model's edge at the open with the line's move | {corr['point']:+.3f} [{corr['ci_lower']:+.3f}, {corr['ci_hi']:+.3f}] |",
+        f"| Correlation of the model's edge at the open with the line's move | {_s(corr['point'], 3)} [{_s(corr['ci_lower'], 3)}, {_s(corr['ci_hi'], 3)}] |",
         f"| Mean move toward the model when it differs from the open by > 5 points ({dmv['n_fights']:,} fights) | {_s(dmv['point'], 4)} [{_s(dmv['ci_lower'], 4)}, {_s(dmv['ci_hi'], 4)}] |",
-        f"| logit(p_model) coefficient for the move's direction, given logit(open) | {coef['point']:+.3f} [{coef['ci_lower']:+.3f}, {coef['ci_hi']:+.3f}] |",
+        f"| logit(p_model) coefficient for the move's direction, given logit(open) | {_s(coef['point'], 3)} [{_s(coef['ci_lower'], 3)}, {_s(coef['ci_hi'], 3)}] |",
     ]
     return _wrap("P8_CLV", lines)
 

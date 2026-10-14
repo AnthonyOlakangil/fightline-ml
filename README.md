@@ -718,8 +718,31 @@ is the frozen configuration's out-of-sample predictions: the 2010–2014 walk-fo
 the one 2015 confirmation.
 
 <!-- P8_CLV:START -->
-*Not yet run: `uv run ufc-predictor clv` writes `reports/clv.json`.*
+BestFightOdds snapshot: 2,269 bouts at 212 UFC events (2010-01-02 → 2015-12-19), every one seen on both fighters' pages with identical prices (2,269). Joined exactly (same date, same pair) to 2,049 fights; 91.7% of priced development-window fights.
+
+On 1,975 fights (198 events, 2010-03-21 → 2015-12-19): open 0.6204, close 0.6086, model 0.6799 log loss.
+
+| Question | Estimate [95% CI] |
+|---|---:|
+| Does the close beat the open? (close - open log loss) | −0.0118 [−0.0193, −0.0042] |
+| Correlation of the model's edge at the open with the line's move | −0.116 [−0.164, −0.072] |
+| Mean move toward the model when it differs from the open by > 5 points (1,524 fights) | −0.0102 [−0.0140, −0.0065] |
+| logit(p_model) coefficient for the move's direction, given logit(open) | +0.175 [−0.012, +0.405] |
 <!-- P8_CLV:END -->
+
+**Reading it.** The market corrects itself between open and close: the close beats the
+open, as it should. But it corrects *away* from the model. Where the model disagreed with
+the opening line, the line tended to move further from the model by the close, not toward
+it. Its disagreements are not information the market priced in later; they are mostly
+error. The regression coefficient is the only measure that leans toward the model, and its
+interval includes zero.
+
+While checking orientation, the BestFightOdds join turned up three development-window
+fights where the closing-odds dataset is wrong. BestFightOdds' pages confirm the prices:
+Rothwell vs. Yvel (2010) and Marin vs. Montano (2015) have the two sides' prices swapped
+upstream, and Santos vs. Cariaso (2013) carries the prices of the next bout on the card.
+They are listed under [Limitations](#limitations) and left unchanged, because evaluation
+run 3's published development-window figures used them.
 
 ### Forward test: predictions committed before each card
 
@@ -1064,6 +1087,11 @@ Research backtest only. Nothing here is betting advice or should be used to wage
   bankroll replay stakes at closing prices, which a bettor would not have had when
   placing the bet, and compounds bets within a card sequentially — both slightly
   optimistic, and irrelevant to a negative result.
+- **Three development-window closing prices are wrong upstream.** BestFightOdds'
+  pages show the closing-odds dataset swaps the sides for Rothwell vs. Yvel (2010) and
+  Marin vs. Montano (2015), and copies the next bout's prices onto Santos vs. Cariaso
+  (2013). They stay as published, since run 3's development-window figures used them; all
+  three fall before the evaluation window.
 - **Overturned results are treated as no contests from the start**, although the
   overturn came months later. That removes a little information; it adds none.
 - **Parlay pricing is not ledgered as an evaluation run**, because it rescores nothing,
