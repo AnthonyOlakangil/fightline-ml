@@ -66,7 +66,10 @@ def stages(adopted: str | None):
                 "kind": "compare",
                 "field": "calibration",
                 "incumbent": inc,
-                "candidates": [_candidate(-0.004, adopted is not None), _candidate(0.002, name="none")],
+                "candidates": [
+                    _candidate(-0.004, adopted is not None),
+                    _candidate(0.002, name="none"),
+                ],
                 "adopted": adopted,
             },
             {"name": "final_retune", "kind": "final_retune", "skipped": "model is logistic"},
