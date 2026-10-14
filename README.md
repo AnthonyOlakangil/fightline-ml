@@ -598,6 +598,164 @@ other asserts that every calibrated probability lies inside the configured bound
 
 ---
 
+## Phase 8: improving the model without touching the evaluation window
+
+The evaluation window is **closed**. It has been scored three times, and any further look
+would turn it into a tuning set. Phase 8 therefore works only inside the development
+window (2010–2015), then tests what survives on cards that had not happened yet.
+
+### Protocol
+
+- **Select on 2010–2014, confirm on 2015 once.** Every candidate is scored walk-forward
+  on 2010–2014, with the same cadence and training rules as evaluation run 3. It is then
+  compared with its stage's incumbent by the pre-registered rule. The survivor is frozen,
+  committed and pushed, and only then scored on 2015, exactly once. The code enforces
+  this:
+  - any Phase 8 scoring path that reaches 2016 raises `EvalWindowClosed`;
+  - selection refuses 2015;
+  - a second confirmation refuses to run
+  (`src/ufc_predictor/experiments/protocol.py`, `confirm.py`).
+- **Pre-registered.** `config/experiments.yaml` (stages, candidates, order, decision rule)
+  was committed in `906ac9c` before any experiment ran. The stage runner refuses to start
+  from a commit that lacks it or has changed it. Every walk-forward run is appended to
+  `reports/dev/experiments.json` with its commit and whether the tree was clean.
+- **Rule.** A candidate replaces the incumbent only if its paired, event-bootstrapped
+  log-loss difference is negative and its Holm-adjusted one-sided p-value within the stage
+  is below 0.10. Otherwise the simpler incumbent stays. Every candidate is reported below,
+  adopted or not.
+- **Disclosure.** Run 3's hyperparameters were tuned on a holdout that included 2015, and
+  earlier diagnostics scored 2015 fights. So 2015 is unseen by every Phase 8 decision, not
+  by the project; that is why stage 0 re-tunes inside 2010–2014 before anything else.
+
+**What was tried.** Five new feature families, all built by the same point-in-time builder
+and covered by the leakage suite:
+- **Opponent-adjusted rates:** each past bout's rate minus what the opponent's earlier
+  opponents had achieved against them.
+- **Recency-weighted rates:** exponentially weighted, with a half-life of three fights.
+- **Style matchups:** takedown threat, striking exchange, knockdown power against the
+  opponent's chin, and a grappler-versus-striker interaction.
+- **Decline signals:** years since UFC debut, finished losses and knockdowns absorbed in
+  the last three bouts, recent-versus-career trends, and days since the last finish loss.
+- **Glicko-2:** checked against Glickman's worked example and an independent
+  implementation.
+
+Beyond the feature families, the stages also tested:
+- the top 25 features, chosen inside each fold's training rows;
+- training only from 2001, or only on the last eight years;
+- orientation symmetry, which makes p(A beats B) + p(B beats A) = 1 exactly;
+- Platt or no calibration against the bounded isotonic calibrator;
+- an L2 logistic regression in place of LightGBM.
+
+Each new family and selection step had an implementer plus a separate leakage reviewer.
+The reviewers recomputed features independently and mutated later and same-night fights.
+
+### Every stage, adopted or not
+
+<!-- P8_STAGES:START -->
+Selection window 2010-01-01 → 2014-12-31, walk-forward, scored on 1,693 priced fights (157 events). Pre-registration commit `906ac9c`; run from `d9fa547`. Rule: adopt a candidate only if its paired log-loss difference is negative and its Holm-adjusted one-sided p-value is below 0.10.
+
+**Stage 0 (re-tune inside 2010-2014).** 216 candidates on a 355-fight holdout (2014-04-26 → 2014-12-20); 1 tied within 0.001 of the best (0.6707); the most regularized of them was kept: depth 4, 7 leaves, min child 20, learning rate 0.05, column sample 0.7, λ 5.0.
+
+| Stage | Candidate | Log loss | Δ vs incumbent [95% CI] | p (one-sided) | Holm p | Adopted |
+|---|---|---:|---:|---:|---:|:---:|
+| 1 features | *incumbent* | 0.6885 | | | | |
+| 1 features | run-3 base (117) + opponent-adjusted | 0.6995 | +0.0110 [−0.0045, +0.0289] | 0.912 | 1.000 | no |
+| 1 features | run-3 base (117) + recency-weighted | 0.6965 | +0.0080 [−0.0032, +0.0203] | 0.909 | 1.000 | no |
+| 1 features | run-3 base (117) + style matchups | 0.6948 | +0.0063 [−0.0035, +0.0167] | 0.889 | 1.000 | no |
+| 1 features | run-3 base (117) + decline signals | 0.6950 | +0.0065 [−0.0043, +0.0187] | 0.861 | 1.000 | no |
+| 1 features | run-3 base (117) + Glicko-2 | 0.6910 | +0.0025 [−0.0095, +0.0153] | 0.648 | 1.000 | no |
+| 1 features | all families | 0.6984 | +0.0099 [−0.0039, +0.0248] | 0.913 | 1.000 | no |
+| 2 selection | *incumbent* | 0.6885 | | | | |
+| 2 selection | top k 25 | 0.6930 | +0.0045 [−0.0053, +0.0142] | 0.822 | 0.822 | no |
+| 3 train window | *incumbent* | 0.6885 | | | | |
+| 3 train window | from 2001 | 0.7001 | +0.0115 [−0.0011, +0.0250] | 0.962 | 1.000 | no |
+| 3 train window | last 8 years | 0.7037 | +0.0152 [+0.0014, +0.0298] | 0.984 | 1.000 | no |
+| 4 symmetry | *incumbent* | 0.6885 | | | | |
+| 4 symmetry | symmetric | 0.6802 | −0.0083 [−0.0195, +0.0024] | 0.066 | 0.066 | **yes** |
+| 5 calibration | *incumbent* | 0.6802 | | | | |
+| 5 calibration | platt | 0.6781 | −0.0020 [−0.0077, +0.0030] | 0.245 | 0.490 | no |
+| 5 calibration | none | 0.6785 | −0.0017 [−0.0073, +0.0033] | 0.286 | 0.490 | no |
+| 6 model | *incumbent* | 0.6802 | | | | |
+| 6 model | logistic | 0.6860 | +0.0058 [−0.0042, +0.0157] | 0.877 | 0.877 | no |
+| final retune | *incumbent* | 0.6802 | | | | |
+| final retune | retuned | 0.6796 | −0.0006 [−0.0063, +0.0048] | 0.436 | 0.436 | no |
+
+**Adopted:** stage 4 symmetry → symmetric.
+**Frozen configuration:** run-3 base (117), all history, orientation-symmetric, LightGBM, bounded isotonic. Selection-window log loss 0.6802 against the vig-free closing line's 0.6037 on the same fights.
+<!-- P8_STAGES:END -->
+
+**Reading it.** None of the new information helped. Every feature family made the
+walk-forward log loss slightly *worse*: more columns for the trees to overfit, built from
+the same public record the base features already summarize. The one adopted change,
+orientation symmetry, adds no information at all. It removes a freedom the model should
+never have had: answering differently depending on which corner a fighter is listed in.
+
+### The 2015 confirmation
+
+<!-- P8_CONFIRM:START -->
+Scored once, from commit `ccd58bf`, on 461 priced 2015 fights (41 events). Log loss: frozen 0.6785, stage-0 baseline 0.6909, vig-free closing line 0.6319.
+
+| Comparison (2015) | Δ log loss [95% CI] | p (one-sided) |
+|---|---:|---:|
+| frozen - baseline | −0.0125 [−0.0276, +0.0017] | 0.041 |
+| frozen - market | +0.0465 [+0.0090, +0.0828] | 0.992 |
+| baseline - market | +0.0590 [+0.0148, +0.1015] | 0.995 |
+
+The interval on frozen - baseline is 0.0294 wide: wide enough to catch a large overfit to 2010-2014, too wide to certify a small gain.
+<!-- P8_CONFIRM:END -->
+
+### Closing-line value: does the line move toward the model?
+
+The closing-odds dataset has no opening prices. BestFightOdds fighter pages carry both an
+`Open` price and a `Closing range`, so the development window's UFC events were crawled
+once:
+- `robots.txt` allows all agents, and the terms page holds only an accuracy disclaimer;
+- one request every 5 seconds, every response cached, the raw pages never committed;
+- the cleaned snapshot is committed with its `SOURCE.md` (`data/raw/bfo_snapshot_2026-10-13/`).
+
+Both prices come from that one source, de-vigged across the two fighters. The model side
+is the frozen configuration's out-of-sample predictions: the 2010–2014 walk-forward plus
+the one 2015 confirmation.
+
+<!-- P8_CLV:START -->
+*Not yet run: `uv run ufc-predictor clv` writes `reports/clv.json`.*
+<!-- P8_CLV:END -->
+
+### Forward test: predictions committed before each card
+
+A GitHub Actions job (`.github/workflows/forward.yml`) runs every three hours. It reads
+ESPN's public schedule and acts on each card:
+
+- **Predicting.** 24–72 hours before a card it trains the frozen configuration on every
+  decisive bout known so far: the UFCStats snapshot, plus ESPN results for cards since.
+  It writes `reports/forward/<event>/predictions.csv` with Kalshi's mid and the sportsbook
+  median at that moment, then commits and pushes. A card that reaches 24 hours out
+  without committed predictions is recorded as missed, never predicted late.
+- **Settling.** After a card, the job scores only bouts held between the committed pair.
+  Replacements, cancellations, draws and no contests are void. The market comparison uses
+  Kalshi's mid at each bout's card-segment start, read from Kalshi's public price
+  history. Settlement checks in git that the predictions file was added at least 24 hours
+  before the card and never changed afterwards. The run's GitHub Actions URL is a second,
+  server-side timestamp.
+- **Alerts.** Any failure, or a missed card, opens an issue.
+
+<!-- P8_FORWARD:START -->
+*No card predicted yet. The schedule predicts each card 24-72 hours before it starts.*
+<!-- P8_FORWARD:END -->
+
+**What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
+separate a model from the market, whatever the log losses say. What the forward test
+shows is a pipeline whose predictions demonstrably existed before the fights.
+
+**Limitations.**
+- UFCStats is unreachable, so bouts after the snapshot carry only a winner, method and
+  round. Per-round rate features use the last statistics available.
+- ESPN has no title-bout flag, so a five-round bout on a numbered UFC event is treated as
+  a title bout.
+- Kalshi's undercard markets can be thin; their volumes are recorded with each price.
+
+---
+
 ## Interface
 
 ### CLI
@@ -606,6 +764,14 @@ other asserts that every calibrated probability lies inside the configured bound
 uv run ufc-predictor predict --event "Adesanya vs. Pyfer"   # write a prediction log
 uv run ufc-predictor settle reports/predictions/<log>.csv   # fill results, score it
 uv run ufc-predictor export-app                             # artefacts for the demo
+
+# Phase 8 (development window only; see "Phase 8" above)
+uv run ufc-predictor experiments     # pre-registered stages -> reports/dev/stages.json
+uv run ufc-predictor confirm         # the once-only 2015 confirmation (refuses a rerun)
+uv run ufc-predictor bfo             # BestFightOdds crawl (cached) -> dated snapshot
+uv run ufc-predictor bfo-join        # join opening/closing lines to fights
+uv run ufc-predictor clv             # closing-line value -> reports/clv.json
+uv run ufc-predictor forward run-due # what the scheduled forward test runs
 ```
 
 `predict` writes a timestamped CSV — event, fighter pair, model probability, vig-free
@@ -614,11 +780,11 @@ recording the git SHA, the seed, and how the probabilities were produced. `settl
 in results, computes per-fight log loss, and reports the model against the market on that
 card.
 
-**Upcoming fights and odds are never invented.** `predict` will only write a log for an
-event that exists in the committed snapshot. No live source of upcoming cards is
-reachable: UFCStats answers with a JavaScript proof-of-work challenge, and the odds
-project's `upcoming.csv` has been stale since 2026-04-04. Every log in this repository is
-therefore a **replay** of a completed event, labelled `mode: replay`.
+**Upcoming fights and odds are never invented.** `predict` only writes a log for an event
+in the committed snapshot, so every log under `reports/predictions/` is a **replay** of a
+completed event, labelled `mode: replay`. Live cards go through the separate
+[forward test](#forward-test-predictions-committed-before-each-card) instead, which reads
+ESPN's schedule and Kalshi's prices and commits its predictions before each card.
 
 > **What a replay log does not prove.** The predictions themselves are honest — for any
 > event inside the backtest they come from a model trained only on strictly earlier

@@ -9,7 +9,13 @@ every number the README states is produced by code and checked by
 * ``TUNING``      -- the hyperparameter search, from ``tuning.json``;
 * ``DEVCARDS``    -- the dev-window sanity table, from ``model_cards.json``;
 * ``LEAK``        -- evidence for the attribute leak and how every headline figure moved
-  between evaluation run 1 and run 2, from ``archive/eval_run_1/`` and the current files.
+  between evaluation run 1 and run 2, from ``archive/eval_run_1/`` and the current files;
+* ``P8_*``        -- the Phase 8 sections, rendered by ``readme_phase8``.
+
+    uv run python -m ufc_predictor.backtest.readme_sections   # rewrite every section
+
+The forward-test workflow runs that after each scheduled step, so the README's forward
+table follows ``reports/forward/`` without re-scoring anything.
 """
 
 from __future__ import annotations
@@ -427,7 +433,10 @@ def render_all(cfg: Config | None = None) -> dict[str, str]:
     r = cfg.paths.reports_dir
     metrics = _load(r / "metrics.json")
     diagnostics = _load(r / "leakage_diagnostics.json")
+    from ufc_predictor.backtest import readme_phase8
+
     return {
+        **readme_phase8.render_all(cfg),
         "HEADLINE": render_headline(metrics),
         "DIAGNOSTICS": render_diagnostics(diagnostics),
         "TUNING": render_tuning(_load(r / "tuning.json")),
@@ -471,3 +480,7 @@ def inject_all(cfg: Config | None = None) -> None:
     for name, block in render_all(cfg).items():
         text = text.replace(extract(text, name), block)
     readme.write_text(text, encoding="utf-8")
+
+
+if __name__ == "__main__":  # pragma: no cover
+    inject_all()

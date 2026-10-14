@@ -54,6 +54,12 @@ jobs:
           set -o pipefail
           uv run ufc-predictor forward run-due 2>&1 | tee run-due.log
 
+      # The README's forward table is generated from reports/forward/; refresh it so the
+      # README-section test keeps passing (nothing is re-scored).
+      - name: Refresh the README's generated sections
+        if: always()
+        run: uv run python -m ufc_predictor.backtest.readme_sections
+
       # Runs even when a step above failed: predictions made before a later step failed
       # must still be committed while they are early.
       - name: Commit and push forward-test records
@@ -61,7 +67,7 @@ jobs:
         run: |
           git config user.name "Anthony Olakangil"
           git config user.email "151782021+AnthonyOlakangil@users.noreply.github.com"
-          for path in reports/forward data/raw/espn_results; do
+          for path in reports/forward data/raw/espn_results README.md; do
             if [ -e "$path" ]; then git add "$path"; fi
           done
           if git diff --cached --quiet; then

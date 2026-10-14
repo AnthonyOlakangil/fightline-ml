@@ -15,7 +15,20 @@ from ufc_predictor.backtest import readme_sections
 from ufc_predictor.config import get_config
 
 REPO_ROOT = get_config().paths.raw_dir.parent.parent
-SECTIONS = ("HEADLINE", "DIAGNOSTICS", "TUNING", "DEVCARDS", "LEAK", "POSTHOC", "RUNS", "CALBOUND")
+SECTIONS = (
+    "HEADLINE",
+    "DIAGNOSTICS",
+    "TUNING",
+    "DEVCARDS",
+    "LEAK",
+    "POSTHOC",
+    "RUNS",
+    "CALBOUND",
+    "P8_STAGES",
+    "P8_CONFIRM",
+    "P8_CLV",
+    "P8_FORWARD",
+)
 
 
 @pytest.fixture(scope="module")
