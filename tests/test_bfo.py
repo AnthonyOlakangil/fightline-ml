@@ -73,6 +73,33 @@ def test_a_missing_price_is_missing_not_zero():
     assert shogun["close_lo_opponent"] == 195
 
 
+def test_the_rumored_matchups_section_label_is_skipped():
+    """Pages with unbooked matchups carry a section label row before them."""
+    label = (
+        '<tr class="event-header rumored-header"><td colspan="8" scope="row">Rumored &amp; '
+        "future matchups <span>· not yet officially booked</span></td></tr>"
+    )
+    html = fighter_html()
+    first_block = html.index('<tr class="event-header')
+    rows = parse_fighter_page(html[:first_block] + label + html[first_block:])
+    assert len(rows) == 6
+
+
+def test_the_undated_future_events_block_is_kept_undated():
+    """BestFightOdds files unbooked bouts under a "Future Events" pseudo-event with no date."""
+    html = fighter_html()
+    start = html.index('<tr class="event-header')
+    end = html.index('<tr class="event-header', start + 1)
+    block = html[start:end].replace(
+        '<a href="/events/ufc-140-jones-vs-machida-451">UFC 140: Jones vs. Machida</a> Dec 10th 2011',
+        '<a href="/events/future-events-197">Future Events</a>',
+    )
+    rows = parse_fighter_page(html[:start] + block + html[start:])
+    future = rows.loc[rows["event_id"] == 197]
+    assert len(future) == 1 and future["date"].isna().all()
+    assert rows.loc[rows["event_id"] != 197, "date"].notna().all()
+
+
 def test_unexpected_page_shape_raises():
     with pytest.raises(ValueError, match="BestFightOdds page shape"):
         parse_fighter_page("<html><body>maintenance</body></html>")
@@ -104,6 +131,17 @@ def test_event_page_pairs_fighters_by_matchup():
     first = bouts.iloc[0]
     assert (first["fighter_a"], first["fighter_b"]) == ("Dan Hardy", "Georges St-Pierre")
     assert first["fighter_b_url"] == "/fighters/georges-st-pierre-80"
+
+
+def test_event_page_skips_the_event_props_row():
+    """Event pages carry an "Event props" row (id ``mu-e<n>``) that is not a bout."""
+    html = (FIXTURES / "event_page.html").read_text(encoding="utf-8")
+    props = (
+        '<tr class="eventprop" id="mu-e1013"><th scope="row"><a data-mu="1013" href="#">'
+        'Event props</a></th></tr><tr style="display: none;"></tr>'
+    )
+    bouts = parse_event_page(html.replace("</table>", props + "</table>"))
+    assert list(bouts["matchup_id"]) == [2192, 2294, 2324]
 
 
 def test_event_page_without_an_odds_table_raises():

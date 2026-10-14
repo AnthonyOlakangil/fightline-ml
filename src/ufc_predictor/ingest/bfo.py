@@ -162,6 +162,9 @@ def parse_fighter_page(html: str) -> pd.DataFrame:
     i = 1
     while i < len(rows):
         row = rows[i]
+        if "rumored-header" in (row.get("class") or []):
+            i += 1  # a section label ("Rumored & future matchups"); its bouts follow as usual
+            continue
         if "event-header" not in (row.get("class") or []):
             raise ValueError(
                 "BestFightOdds page shape changed: expected an event header row, got "
@@ -187,7 +190,9 @@ def parse_fighter_page(html: str) -> pd.DataFrame:
                 "event": event_link.get_text(" ", strip=True),
                 "event_id": _trailing_id(event_link["href"], "event link"),
                 "event_url": event_link["href"],
-                "date": _parse_date(date_text),
+                # BestFightOdds' "Future Events" pseudo-event carries no date; it is never
+                # one of the crawled, dated events, so it is left undated, not guessed.
+                "date": _parse_date(date_text) if date_text.strip() else None,
                 "open_fighter": own[0],
                 "open_opponent": opp[0],
                 "close_lo_fighter": own[1],
@@ -222,8 +227,8 @@ def parse_event_page(html: str) -> pd.DataFrame:
     bouts: list[dict] = []
     for i, row in enumerate(rows):
         rid = row.get("id") or ""
-        if not rid.startswith("mu-"):
-            continue
+        if not re.fullmatch(r"mu-\d+", rid):
+            continue  # not a bout: e.g. the "Event props" row, id mu-e<n>
         a = row.find("a", href=re.compile(r"^/fighters/"))
         b = rows[i + 1].find("a", href=re.compile(r"^/fighters/")) if i + 1 < len(rows) else None
         if a is None or b is None:
@@ -362,6 +367,8 @@ def crawl(cfg: Config | None = None, *, verbose: bool = True) -> tuple[pd.DataFr
     frames = [parse_fighter_page(get(base + u)) for u in fighter_urls]
     raw = pd.concat(frames, ignore_index=True)
     in_scope = raw.loc[raw["event_id"].isin(set(events["event_id"]))]
+    if in_scope["date"].isna().any():
+        raise ValueError("a bout at a crawled UFC event has no date on its fighter page")
     lines, confirmed = dedupe_bouts(in_scope)
     lines = lines.sort_values(["date", "event_id", "fighter", "opponent"], kind="stable")
     lines = lines.reset_index(drop=True)

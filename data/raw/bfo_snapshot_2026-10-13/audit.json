@@ -1,0 +1,16 @@
+{
+  "bouts": 2269,
+  "bouts_confirmed_by_both_pages": 2269,
+  "bouts_listed_on_event_pages": 2269,
+  "bouts_with_complete_open_and_close": 2269,
+  "date_max": "2015-12-19",
+  "date_min": "2010-01-02",
+  "fighter_page_rows": 12799,
+  "fighter_pages": 1076,
+  "rows_at_crawled_events": 4538,
+  "ufc_events": 212,
+  "window": [
+    "2010-01-01",
+    "2015-12-31"
+  ]
+}
