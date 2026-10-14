@@ -11,6 +11,7 @@ import pytest
 
 from ufc_predictor.config import get_config
 from ufc_predictor.experiments import runner, stages
+from ufc_predictor.experiments.protocol import load_preregistration
 from ufc_predictor.experiments.runner import ExperimentSpec
 
 
@@ -65,6 +66,22 @@ def test_paired_test_is_one_sided_and_event_resampled():
     worse = stages.paired_test(inc + 0.02, inc, events, n_resamples=2000, seed=1)
     assert worse["p_one_sided"] == 1.0
     assert t["n_events"] == 100
+
+
+def test_candidate_specs_follow_the_preregistration():
+    pre = load_preregistration()
+    by_name = {s["name"]: s for s in pre["stages"]}
+    inc = ExperimentSpec()
+    feats = stages.candidate_specs(by_name["stage_1_features"], inc)
+    assert feats["base+glicko"].features == ("base", "glicko")
+    assert set(feats["all"].features) == set(stages.FEATURE_FAMILIES)
+    assert stages.candidate_specs(by_name["stage_2_selection"], inc)["top_k_25"].top_k == 25
+    windows = stages.candidate_specs(by_name["stage_3_train_window"], inc)
+    assert {s.train_window for s in windows.values()} == {"from_2001", "last_8_years"}
+    assert stages.candidate_specs(by_name["stage_4_symmetry"], inc)["symmetric"].symmetric
+    cal = stages.candidate_specs(by_name["stage_5_calibration"], inc)
+    assert {s.calibration for s in cal.values()} == {"platt", "none"}
+    assert stages.candidate_specs(by_name["stage_6_model"], inc)["logistic"].model == "logistic"
 
 
 def test_retune_holdout_is_the_tail_of_2010_2014_and_never_2015():
