@@ -1,0 +1,91 @@
+{
+  "git_commit": "ccd58bfa1fa8678f948a78910bcdb82d81e2c86a",
+  "frozen_spec": {
+    "features": [
+      "base"
+    ],
+    "top_k": null,
+    "train_window": "all_history",
+    "symmetric": true,
+    "calibration": "isotonic_bounded",
+    "model": "lightgbm",
+    "lightgbm_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "n_estimators": 2000,
+      "num_leaves": 7,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    }
+  },
+  "baseline_spec": {
+    "features": [
+      "base"
+    ],
+    "top_k": null,
+    "train_window": "all_history",
+    "symmetric": false,
+    "calibration": "isotonic_bounded",
+    "model": "lightgbm",
+    "lightgbm_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "n_estimators": 2000,
+      "num_leaves": 7,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "verbosity": -1
+    }
+  },
+  "note": "Scored once. No decision depends on it; the frozen configuration stands.",
+  "n_fights": 461,
+  "n_events": 41,
+  "date_span": [
+    "2015-01-03",
+    "2015-12-19"
+  ],
+  "log_loss": {
+    "frozen": 0.6784690703225285,
+    "baseline": 0.6909417933509333,
+    "market": 0.6319401296993739
+  },
+  "frozen_minus_baseline": {
+    "observed": -0.012472723028404947,
+    "ci_lower": -0.027634926999286376,
+    "ci_hi": 0.0017416613337243696,
+    "ci_level": 0.95,
+    "p_one_sided": 0.0407,
+    "n_fights": 461,
+    "n_events": 41,
+    "n_resamples": 10000
+  },
+  "frozen_minus_market": {
+    "observed": 0.04652894062315455,
+    "ci_lower": 0.009017964810566407,
+    "ci_hi": 0.08284829046860136,
+    "ci_level": 0.95,
+    "p_one_sided": 0.9916,
+    "n_fights": 461,
+    "n_events": 41,
+    "n_resamples": 10000
+  },
+  "baseline_minus_market": {
+    "observed": 0.0590016636515595,
+    "ci_lower": 0.01477060679351175,
+    "ci_hi": 0.10147590454089973,
+    "ci_level": 0.95,
+    "p_one_sided": 0.995,
+    "n_fights": 461,
+    "n_events": 41,
+    "n_resamples": 10000
+  }
+}
