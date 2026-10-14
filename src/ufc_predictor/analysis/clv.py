@@ -169,8 +169,10 @@ def analyse(frame: pd.DataFrame, cfg: Config) -> dict:
 def run(cfg: Config | None = None) -> dict:
     """Join BestFightOdds lines to the frozen configuration's dev predictions; write clv.json."""
     cfg = cfg or get_config()
+    from ufc_predictor.ingest import bfo_join
     from ufc_predictor.storage import db
 
+    bfo_join.run(cfg, verbose=False)  # rebuilt from the committed snapshot every time
     lines = db.read_table(cfg.paths.processed_dir, "bfo_lines")
     dev = cfg.paths.reports_dir / "dev"
     preds = pd.concat(
