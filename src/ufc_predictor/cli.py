@@ -185,6 +185,14 @@ def experiments() -> None:
     run_all()
 
 
+@app.command()
+def clv() -> None:
+    """Closing-line value on the development window (BestFightOdds open vs close)."""
+    from ufc_predictor.analysis.clv import run
+
+    run()
+
+
 forward_app = typer.Typer(
     no_args_is_help=True,
     help="Forward test: predictions committed before each card, scored after it. "
