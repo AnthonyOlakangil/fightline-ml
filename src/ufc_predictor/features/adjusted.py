@@ -51,33 +51,61 @@ MIRROR: dict[str, tuple[str, bool]] = {
 ADJUSTED_COLS: list[str] = [f"adj_{m}_career_{s}" for m in MIRROR for s in SLOTS]
 RECENCY_COLS: list[str] = [f"ewm_{m}_{s}" for m in MIRROR for s in SLOTS]
 
+#: The history columns each rate metric is computed from (besides the bout's duration).
+#: Keyed in ``pit.RATE_METRICS`` order (a test asserts the two never drift apart).
+SOURCES: dict[str, tuple[str, ...]] = {
+    "sig_str_landed_pm": ("own_sig_str_landed",),
+    "sig_str_absorbed_pm": ("opp_sig_str_landed",),
+    "sig_str_acc": ("own_sig_str_landed", "own_sig_str_att"),
+    "sig_str_def": ("opp_sig_str_landed", "opp_sig_str_att"),
+    "td_landed_p15": ("own_td_landed",),
+    "td_acc": ("own_td_landed", "own_td_att"),
+    "td_def": ("opp_td_landed", "opp_td_att"),
+    "sub_att_p15": ("own_sub_att",),
+    "kd_p15": ("own_kd",),
+    "ctrl_pm": ("own_ctrl_sec",),
+}
+
+#: Each absorbed aggregate: (the opponent's history column, scale to the stated unit).
+ABSORBED: dict[str, tuple[str, float]] = {
+    "td_absorbed_p15": ("opp_td_landed", 15.0),
+    "sub_att_absorbed_p15": ("opp_sub_att", 15.0),
+    "kd_absorbed_p15": ("opp_kd", 15.0),
+    "ctrl_absorbed_pm": ("opp_ctrl_sec", 1.0),
+}
+
+
+def bout_rates(rates: Mapping[str, float], rec: Mapping) -> dict[str, float]:
+    """One bout's rate metrics, NaN wherever the bout lacks a source column.
+
+    ``rates`` is ``pit._rate_block`` over the single bout ``rec``, keyed by bare metric
+    name. That block sums a NaN count as nothing, which over one bout turns "not
+    recorded" into 0 -- 360 fighter-bouts from 1994-99 have round statistics but no
+    control time. Here such a metric is NaN, so the bout drops out of it.
+    """
+    return {
+        metric: np.nan if any(pd.isna(rec.get(c)) for c in SOURCES[metric]) else value
+        for metric, value in rates.items()
+    }
+
 
 def absorbed_rates(records: Sequence[Mapping]) -> dict[str, float]:
     """Career rates of what a fighter's opponents did to them, as a ratio of sums.
 
     The four "absorbed" quantities ``pit._rate_block`` has no counterpart for:
     takedowns, submission attempts and knockdowns conceded per 15 minutes, and control
-    time conceded per minute. Same denominator as ``_rate_block``: bouts with round
-    statistics and a known duration. NaN when there are none, never 0.
+    time conceded per minute. Each sums over bouts with round statistics, a known
+    duration and a recorded count, in its numerator and its denominator alike, so a
+    bout without control time is left out of the control aggregate rather than counted
+    as conceding none. NaN when no bout qualifies, never 0.
     """
-    with_stats = [r for r in records if r["has_stats"]]
-    total_sec = sum(r["duration_sec"] for r in with_stats if pd.notna(r["duration_sec"]))
-    minutes = total_sec / 60.0 if total_sec else 0.0
-    if not with_stats or minutes <= 0:
-        return dict.fromkeys(
-            ("td_absorbed_p15", "sub_att_absorbed_p15", "kd_absorbed_p15", "ctrl_absorbed_pm"),
-            np.nan,
-        )
-
-    def s(key: str) -> float:
-        return float(sum(r[key] for r in with_stats if pd.notna(r.get(key))))
-
-    return {
-        "td_absorbed_p15": s("opp_td_landed") * 15.0 / minutes,
-        "sub_att_absorbed_p15": s("opp_sub_att") * 15.0 / minutes,
-        "kd_absorbed_p15": s("opp_kd") * 15.0 / minutes,
-        "ctrl_absorbed_pm": s("opp_ctrl_sec") / minutes,
-    }
+    timed = [r for r in records if r["has_stats"] and pd.notna(r["duration_sec"])]
+    out: dict[str, float] = {}
+    for name, (key, scale) in ABSORBED.items():
+        used = [r for r in timed if pd.notna(r.get(key))]
+        minutes = sum(r["duration_sec"] for r in used) / 60.0
+        out[name] = float(sum(r[key] for r in used)) * scale / minutes if minutes > 0 else np.nan
+    return out
 
 
 def opponent_baseline(

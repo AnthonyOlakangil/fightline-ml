@@ -50,9 +50,11 @@ from collections.abc import Sequence
 import numpy as np
 import pandas as pd
 
-from ufc_predictor.features import adjusted
+from ufc_predictor.features import adjusted, decline, styles
 from ufc_predictor.features.adjusted import ADJUSTED_COLS, RECENCY_COLS
+from ufc_predictor.features.decline import DECLINE_COLS
 from ufc_predictor.features.elo import build_elo
+from ufc_predictor.features.styles import STYLE_COLS
 
 # Seconds in a championship/standard round. Durations are reconstructed as
 # (finish_round - 1) * ROUND_SECONDS + finish_time_sec, which is also correct for the
@@ -126,6 +128,8 @@ FEATURE_FAMILIES: dict[str, list[str]] = {
     "base": FEATURE_COLS,  # the 117 run-3 features, unchanged
     "adjusted": ADJUSTED_COLS,  # opponent-adjusted career rates (features/adjusted.py)
     "recency": RECENCY_COLS,  # recency-weighted rates (features/adjusted.py)
+    "style": STYLE_COLS,  # style-matchup interactions (features/styles.py)
+    "decline": DECLINE_COLS,  # tenure, recent finishes and form trends (features/decline.py)
 }
 ALL_FEATURE_COLS: list[str] = [c for cols in FEATURE_FAMILIES.values() for c in cols]
 
@@ -241,7 +245,9 @@ class _FighterState:
         "bouts",
         "fights",
         "finishes",
+        "first_date",
         "last_date",
+        "last_finish_loss",
         "loss_streak",
         "n",
         "win_streak",
@@ -253,6 +259,9 @@ class _FighterState:
         # Filled only when the adjusted/recency families are requested.
         self.bouts: list[tuple[dict[str, float], dict[str, float]]] = []
         self.fights: deque[dict] = deque(maxlen=64)
+        # Kept outside the bounded deque, so they hold whatever the career's length.
+        self.first_date: dt.date | None = None
+        self.last_finish_loss: dt.date | None = None
         self.last_date: dt.date | None = None
         self.n = 0
         self.wins = 0.0
@@ -263,6 +272,8 @@ class _FighterState:
     def add(self, rec: dict) -> None:
         self.fights.append(rec)
         self.n += 1
+        if self.first_date is None:
+            self.first_date = rec["date"]
         self.last_date = rec["date"]
         won = rec["won"]
         if won == 1.0:
@@ -274,6 +285,8 @@ class _FighterState:
         elif won == 0.0:
             self.loss_streak += 1
             self.win_streak = 0
+            if decline.is_finish_loss(rec):
+                self.last_finish_loss = rec["date"]
         # Draws/NCs count as experience and reset neither streak.
 
 
@@ -396,6 +409,8 @@ def build_features(
     ]
     # The adjusted and recency families share one per-bout record, kept only if needed.
     track_bouts = bool(requested & {"adjusted", "recency"})
+    track_style = "style" in requested
+    track_decline = "decline" in requested
 
     history = fighter_fight_history(fights, fight_stats)
     by_date: dict[dt.date, list[dict]] = defaultdict(list)
@@ -412,6 +427,8 @@ def build_features(
         # Each fighter's pre-date mirror quantities, frozen into their opponents' bout
         # records in step 2. Taken here, before anything on this date is folded in.
         baselines: dict[str, dict[str, float]] = {}
+        # Each fighter's pre-date career rates and absorbed aggregates, for "style".
+        profiles: dict[str, dict[str, float]] = {}
         for row in day.itertuples(index=False):
             feat: dict = {
                 "fight_id": row.fight_id,
@@ -434,16 +451,37 @@ def build_features(
                 if fid not in cache:
                     state = states[fid]
                     cache[fid] = _snapshot(state, event_date, windows)
+                    career = _bare(cache[fid], CAREER)
+                    if track_bouts or track_style:
+                        absorbed = adjusted.absorbed_rates(state.fights)
                     if track_bouts:
                         cache[fid].update(
                             adjusted.family_snapshot(state.bouts, recency_half_life_fights)
                         )
-                        baselines[fid] = adjusted.opponent_baseline(
-                            _bare(cache[fid], CAREER), adjusted.absorbed_rates(state.fights)
+                        baselines[fid] = adjusted.opponent_baseline(career, absorbed)
+                    if track_style:
+                        profiles[fid] = {**career, **absorbed}
+                    if track_decline:
+                        last = list(state.fights)[-decline.LAST_N :]
+                        recent = _bare(_rate_block(last, "last"), "last")
+                        cache[fid].update(
+                            decline.decline_snapshot(
+                                last,
+                                recent,
+                                career,
+                                event_date,
+                                state.first_date,
+                                state.last_finish_loss,
+                            )
                         )
                 snap = cache[fid]
                 for key, value in snap.items():
                     feat[f"{key}_{slot}"] = value
+
+            if track_style:
+                # Both sides' pre-date profiles: a card-mate's or tonight's other bout's
+                # result cannot reach either.
+                feat.update(styles.matchup(profiles[row.fighter_1], profiles[row.fighter_2]))
 
             rows.append(feat)
 
@@ -452,9 +490,8 @@ def build_features(
             if track_bouts:
                 # The opponent's baseline is the step-1, pre-date one: no card-mate's
                 # result and no other bout of the opponent's tonight can reach it.
-                states[rec["fighter_id"]].bouts.append(
-                    (_bare(_rate_block([rec], BOUT), BOUT), baselines[rec["opponent_id"]])
-                )
+                rates = adjusted.bout_rates(_bare(_rate_block([rec], BOUT), BOUT), rec)
+                states[rec["fighter_id"]].bouts.append((rates, baselines[rec["opponent_id"]]))
             states[rec["fighter_id"]].add(rec)
 
     feats = pd.DataFrame(rows)

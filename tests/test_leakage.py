@@ -157,13 +157,16 @@ def test_mutating_a_later_fight_leaves_earlier_features_byte_identical(tables, c
     changed = [c for c in earlier_a.columns if not earlier_a[c].equals(earlier_b[c])]
     assert changed == ["label"], f"unexpected columns changed in the past: {changed}"
 
-    # (c) The mutation does propagate forward, so the builder is genuinely in play.
-    after_base = base.loc[base["date"] > cutoff, cols]
-    after_mut = mutated.loc[mutated["date"] > cutoff, cols]
-    assert frame_digest(after_base) != frame_digest(after_mut), (
-        "mutating a fight changed no later features either; the test is not exercising "
-        "the feature builder at all"
-    )
+    # (c) The mutation does propagate forward through every family, so the builder is
+    # genuinely in play and no family can pass by being disconnected from history.
+    after_base = base.loc[base["date"] > cutoff]
+    after_mut = mutated.loc[mutated["date"] > cutoff]
+    for family, family_cols in FEATURE_FAMILIES.items():
+        fcols = ["fight_id", *family_cols]
+        assert frame_digest(after_base[fcols]) != frame_digest(after_mut[fcols]), (
+            f"mutating a fight changed no later {family!r} feature; the test is not "
+            "exercising that family at all"
+        )
 
 
 def test_mutating_the_very_last_event_changes_no_feature_row(tables, cfg):
@@ -194,7 +197,9 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
     """Two fights on one card are simultaneous for modelling purposes.
 
     Elo and rolling statistics must advance only after the whole event is processed, so
-    flipping the result of one bout must not alter any other bout on that same date.
+    flipping the result of one bout, and scrambling its round statistics, must not alter
+    any other bout on that same date. The scramble matters: columns built from statistics
+    alone never see a winner flip, so without it they could leak across a card unnoticed.
     """
     fights, stats, fighters = tables["fights"], tables["fight_stats"], tables["fighters"]
     kwargs = build_kwargs(cfg)
@@ -213,7 +218,20 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
         if victim["winner_id"] == victim["fighter_1"]
         else mutated_fights.at[idx, "fighter_1"]
     )
-    mutated = build_features(mutated_fights, stats, fighters, **kwargs)
+    mutated_stats = stats.copy()
+    smask = mutated_stats["fight_id"] == victim["fight_id"]
+    assert smask.any(), "the victim bout must carry round stats for this test to bite"
+    for col in (
+        "sig_str_landed",
+        "sig_str_att",
+        "td_landed",
+        "td_att",
+        "sub_att",
+        "kd",
+        "ctrl_sec",
+    ):
+        mutated_stats.loc[smask, col] = mutated_stats.loc[smask, col].fillna(0) * 7 + 99
+    mutated = build_features(mutated_fights, mutated_stats, fighters, **kwargs)
 
     others = [f for f in same_day["fight_id"] if f != victim["fight_id"]]
     assert len(others) >= 9
@@ -225,8 +243,9 @@ def test_fights_on_the_same_card_cannot_see_each_other(tables, cfg):
     )
 
 
-# Families whose paired columns describe one fighter's own state, not the matchup.
-PER_FIGHTER_FAMILIES = ("base", "adjusted", "recency")
+# Families whose paired columns describe one fighter's own state, not the matchup. ("style"
+# is the exception: its interactions depend on the opponent, so differ between bouts.)
+PER_FIGHTER_FAMILIES = ("base", "adjusted", "recency", "decline")
 
 
 def _same(a, b) -> bool:
