@@ -27,7 +27,7 @@ TIMEOUT = 120
 def _artifacts_ready() -> bool:
     return all(
         (ARTIFACTS / f).is_file()
-        for f in ("summary.json", "predictions.parquet", "fighters.parquet", "model.joblib")
+        for f in ("summary.json", "predictions.parquet", "fighters.parquet", "model.json")
     )
 
 
@@ -115,12 +115,20 @@ def test_app_only_imports_packages_its_requirements_declare():
         for line in (Path(APP).parent / "requirements.txt").read_text(encoding="utf-8").splitlines()
         if line.strip() and not line.strip().startswith("#")
     }
-    declared |= {"scikit_learn", "sklearn"}
     stdlib = {"datetime", "json", "math", "pathlib", "__future__", "altair", "ast"}
     for mod in _imported_modules(APP):
         assert mod.lower() in declared | stdlib, (
             f"app imports {mod!r}, which app/requirements.txt does not declare"
         )
+
+
+def test_the_model_artefact_is_plain_data_not_a_pickle():
+    """A pickle of a project class cannot load where the project is not installed."""
+    payload = json.loads((ARTIFACTS / "model.json").read_text(encoding="utf-8"))
+    assert payload["format"] == "lightgbm-booster+isotonic/1"
+    assert payload["booster"].startswith("tree")
+    assert len(payload["isotonic_x"]) == len(payload["isotonic_y"]) > 1
+    assert not list(ARTIFACTS.glob("*.joblib")) and not list(ARTIFACTS.glob("*.pkl"))
 
 
 def test_app_never_trains_at_startup():
@@ -146,17 +154,17 @@ def test_requirements_are_minimal_and_exclude_research_only_packages():
         if ln.strip() and not ln.strip().startswith("#")
     ]
     req = "\n".join(lines)
-    for heavy in ("duckdb", "matplotlib", "typer", "requests", "beautifulsoup4"):
+    for heavy in ("duckdb", "matplotlib", "typer", "requests", "beautifulsoup4", "scikit-learn"):
         assert heavy not in req, f"{heavy} is not needed by the demo"
-    for needed in ("streamlit", "pandas", "lightgbm", "scikit-learn"):
+    for needed in ("streamlit", "pandas", "lightgbm"):
         assert needed in req
     assert len(lines) <= 10, f"{len(lines)} dependencies is not minimal"
 
 
 def test_requirements_pin_exactly_what_the_lock_resolves():
-    """The deployed app unpickles a model trained under uv.lock. A floating `>=` would
-    let the deploy host install a newer scikit-learn or LightGBM than the pickle was
-    written with, so every line must be an exact pin that agrees with the lock."""
+    """The deployed app loads a LightGBM model text written under uv.lock. A floating
+    `>=` would let the deploy host install a different LightGBM than the one that wrote
+    it, so every line must be an exact pin that agrees with the lock."""
     import tomllib
 
     lock = tomllib.loads((Path(APP).parent.parent / "uv.lock").read_text(encoding="utf-8"))
@@ -266,6 +274,50 @@ def test_hypothetical_matchup_is_marked_as_having_no_market_price():
     assert "never fought" in text
     assert "no market price" in text
     assert "none is invented" in text
+
+
+def _hypothetical_pair() -> tuple[str, str]:
+    import pandas as pd
+
+    fighters = pd.read_parquet(ARTIFACTS / "fighters.parquet")
+    preds = pd.read_parquet(ARTIFACTS / "predictions.parquet")
+    met = {
+        frozenset((str(a).lower(), str(b).lower()))
+        for a, b in zip(preds["name_1"], preds["name_2"], strict=True)
+    }
+    names = sorted(fighters["display_name"].dropna().unique())
+    for a in names[:40]:
+        for b in names[-40:]:
+            if a != b and frozenset((a.lower(), b.lower())) not in met:
+                return a, b
+    raise AssertionError("could not construct a hypothetical pairing")
+
+
+@requires_artifacts
+def test_a_hypothetical_matchup_scores_without_the_training_package(monkeypatch):
+    """The deployed app has only app/requirements.txt, so nothing it loads may need
+    ``ufc_predictor``. When the model was a pickle of the project's own class, Streamlit
+    Cloud failed with "No module named 'ufc_predictor'" -- shown as an st.error, which
+    the exception checks above cannot see."""
+    import sys
+
+    import streamlit as st
+
+    st.cache_resource.clear()  # an earlier test's loaded model must not mask a failure
+    for name in [m for m in list(sys.modules) if m.split(".")[0] == "ufc_predictor"]:
+        monkeypatch.setitem(sys.modules, name, None)
+    monkeypatch.setitem(sys.modules, "ufc_predictor", None)
+
+    a, b = _hypothetical_pair()
+    at = AppTest.from_file(APP, default_timeout=TIMEOUT)
+    at.run()
+    at.radio[0].set_value("Matchup").run()
+    at.selectbox[0].set_value(a).run()
+    at.selectbox[1].set_value(b).run()
+    st.cache_resource.clear()
+    assert not at.exception, [str(e.value) for e in at.exception]
+    assert not at.error, [str(e.value) for e in at.error]
+    assert any(str(m.value).endswith("%") for m in at.metric), "no probability was shown"
 
 
 @requires_artifacts
@@ -395,3 +447,28 @@ def test_streamlit_config_does_not_hardcode_a_theme():
     assert "base" not in parsed.get("theme", {}), (
         "a hardcoded theme base would stop dark mode following the viewer's system"
     )
+
+
+def test_exported_scoring_reproduces_the_fitted_model(tmp_path):
+    """export_model refuses to write a model.json that scores differently from the fit."""
+    from ufc_predictor.config import get_config
+    from ufc_predictor.export_app import export_model, model_payload, score_payload
+    from ufc_predictor.models.registry import build_model
+    from ufc_predictor.storage import db
+
+    cfg = get_config()
+    try:
+        feats = db.read_table(cfg.paths.processed_dir, "features")
+    except FileNotFoundError:
+        pytest.skip("processed tables absent; run `make data && make features`")
+    rows = feats.loc[feats["label"].notna() & (feats["date"] <= cfg.windows.selection_end)]
+    rows = rows.sort_values(["date", "fight_id"], kind="stable")
+    model = build_model("lightgbm", cfg).fit(rows, rows["label"].astype(int))
+    payload = export_model(model, rows, tmp_path / "model.json")
+    assert json.loads((tmp_path / "model.json").read_text()) == payload
+
+    tampered = model_payload(model)
+    tampered["isotonic_y"] = [y * 0.9 for y in tampered["isotonic_y"]]
+    import numpy as np
+
+    assert np.max(np.abs(score_payload(tampered, rows) - model.predict_proba(rows))) > 1e-3

@@ -1,9 +1,9 @@
 # Minimal runtime for the deployed demo.
 #
 # The app loads precomputed artefacts and never trains, scrapes, or re-scores, so it
-# needs far less than the research project: no duckdb, matplotlib, typer, requests or
-# beautifulsoup4. lightgbm and scikit-learn appear only because the saved model and its
-# isotonic calibrator must be unpickled to score a hypothetical matchup.
+# needs far less than the research project: no duckdb, matplotlib, typer, requests,
+# beautifulsoup4 or scikit-learn. lightgbm loads the saved model's text to score a
+# hypothetical matchup; the calibrator is a table of thresholds, applied with numpy.
 #
 # Versions are pinned to exactly what uv.lock resolves: the model is a pickle, and an
 # unpickle across scikit-learn/LightGBM versions is not guaranteed to load or to score
@@ -12,6 +12,4 @@ streamlit==1.65.0
 pandas==3.0.6
 pyarrow==25.0.1
 numpy==2.4.6
-joblib==1.6.0
 lightgbm==4.7.0
-scikit-learn==1.9.1

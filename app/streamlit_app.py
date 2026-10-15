@@ -55,17 +55,37 @@ def load_fighters() -> pd.DataFrame:
     return pd.read_parquet(ARTIFACTS / "fighters.parquet")
 
 
-@st.cache_resource(show_spinner=False)
-def load_model():
-    import joblib
+class ExportedModel:
+    """The demo's LightGBM, scored from plain data: LightGBM's model text, then the
+    isotonic calibrator's thresholds, then the same clipping the backtest applies.
 
-    return joblib.load(ARTIFACTS / "model.joblib")
+    Not a pickle: unpickling the project's own model class needs the training package,
+    which this deployed app deliberately does not install.
+    """
+
+    def __init__(self, payload: dict) -> None:
+        import lightgbm as lgb
+
+        self.feature_cols = list(payload["feature_cols"])
+        self._booster = lgb.Booster(model_str=payload["booster"])
+        self._x = np.asarray(payload["isotonic_x"], dtype=float)
+        self._y = np.asarray(payload["isotonic_y"], dtype=float)
+        self._eps = float(payload["prob_eps"])
+
+    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
+        raw = self._booster.predict(X.loc[:, self.feature_cols].to_numpy(dtype=float))
+        return np.clip(np.interp(raw, self._x, self._y), self._eps, 1.0 - self._eps)
+
+
+@st.cache_resource(show_spinner=False)
+def load_model() -> ExportedModel:
+    return ExportedModel(json.loads((ARTIFACTS / "model.json").read_text(encoding="utf-8")))
 
 
 def artifacts_present() -> bool:
     return all(
         (ARTIFACTS / f).is_file()
-        for f in ("summary.json", "predictions.parquet", "fighters.parquet", "model.joblib")
+        for f in ("summary.json", "predictions.parquet", "fighters.parquet", "model.json")
     )
 
 

@@ -3,8 +3,12 @@
 The app must start instantly and must never fit a model, so everything it needs is
 produced here and written to ``app/artifacts/``:
 
-* ``model.joblib`` -- one LightGBM fitted on all decisive fights, for hypothetical
-  matchups the app is asked about.
+* ``model.json`` -- one LightGBM fitted on all decisive fights, for hypothetical
+  matchups the app is asked about. It is LightGBM's own model text plus the isotonic
+  calibrator's thresholds and the feature list, not a pickle: unpickling the project's
+  ``LightGBMModel`` needs this package, which the deployed app does not install
+  (Streamlit Cloud failed with "No module named 'ufc_predictor'"). ``export_model``
+  checks that scoring from the JSON reproduces the fitted model before writing it.
 * ``fighters.parquet`` -- each fighter's most recent point-in-time feature snapshot,
   so a hypothetical pairing can be assembled without recomputing history.
 * ``summary.json`` -- headline numbers lifted from ``metrics.json`` and
@@ -21,16 +25,59 @@ import datetime as dt
 import json
 from pathlib import Path
 
-import joblib
 import numpy as np
 import pandas as pd
 
 from ufc_predictor.config import Config, get_config
 from ufc_predictor.features.pit import FEATURE_COLS, RATE_METRICS, _windows
+from ufc_predictor.models.base import PROB_EPS
+from ufc_predictor.models.lgbm import LightGBMModel
 from ufc_predictor.models.registry import build_model
 from ufc_predictor.storage import db
 
 ARTIFACT_DIR = "app/artifacts"
+
+MODEL_FORMAT = "lightgbm-booster+isotonic/1"
+
+
+def model_payload(model: LightGBMModel) -> dict:
+    """The fitted model as plain data: booster text, calibrator thresholds, feature list."""
+    calibrator = getattr(model._calibrator, "_iso", model._calibrator)
+    if calibrator is None:
+        raise ValueError("the exported model must be calibrated, as evaluation run 3's is")
+    return {
+        "format": MODEL_FORMAT,
+        "feature_cols": list(model.feature_cols),
+        "booster": model._booster.booster_.model_to_string(),
+        "isotonic_x": [float(v) for v in calibrator.X_thresholds_],
+        "isotonic_y": [float(v) for v in calibrator.y_thresholds_],
+        "prob_eps": PROB_EPS,
+    }
+
+
+def score_payload(payload: dict, X: pd.DataFrame) -> np.ndarray:
+    """P(fighter_1 wins) from the exported payload, as the app computes it."""
+    import lightgbm as lgb
+
+    booster = lgb.Booster(model_str=payload["booster"])
+    raw = booster.predict(X.loc[:, payload["feature_cols"]].to_numpy(dtype=float))
+    p = np.interp(raw, payload["isotonic_x"], payload["isotonic_y"])
+    return np.clip(p, payload["prob_eps"], 1.0 - payload["prob_eps"])
+
+
+def export_model(model: LightGBMModel, X: pd.DataFrame, path: Path) -> dict:
+    """Write ``model.json`` after checking it scores ``X`` exactly as ``model`` does.
+
+    Raises:
+        RuntimeError: if the exported scoring differs from the fitted model.
+    """
+    payload = model_payload(model)
+    gap = float(np.max(np.abs(score_payload(payload, X) - model.predict_proba(X))))
+    if gap > 1e-9:
+        raise RuntimeError(f"exported model disagrees with the fitted one by {gap:.2e}")
+    Path(path).write_text(json.dumps(payload) + "\n", encoding="utf-8")
+    return payload
+
 
 #: Per-fighter feature stems that exist as `<stem>_1` / `<stem>_2` in the model matrix.
 PER_FIGHTER_STEMS = [
@@ -148,7 +195,7 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
     train = feats.loc[feats["label"].notna()].sort_values(["date", "fight_id"], kind="stable")
     model = build_model("lightgbm", cfg)
     model.fit(train, train["label"].astype(int))
-    joblib.dump(model, out / "model.joblib")
+    export_model(model, train, out / "model.json")
 
     snapshots = build_fighter_snapshots(cfg)
     snapshots.to_parquet(out / "fighters.parquet", index=False)
@@ -224,7 +271,7 @@ def run(cfg: Config | None = None, *, verbose: bool = True) -> dict:
 
     if verbose:
         print(f"\nExported demo artefacts to {out}/")
-        print(f"  model.joblib        fitted on {len(train):,} decisive fights")
+        print(f"  model.json          fitted on {len(train):,} decisive fights")
         print(f"  fighters.parquet    {len(snapshots):,} fighter snapshots")
         print(f"  predictions.parquet {len(preds):,} out-of-sample predictions")
         print("  summary.json        headline metrics (no large report parsing at runtime)\n")
