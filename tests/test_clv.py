@@ -79,3 +79,48 @@ def test_missing_open_or_close_is_refused_not_filled(cfg):
     frame.loc[3, "open_p1"] = np.nan
     with pytest.raises(ValueError, match="open"):
         clv.analyse(frame, cfg)
+
+
+def test_post_hoc_controls_separate_compression_from_information(cfg):
+    """A model compressed toward 0.5 shows a negative raw edge-move correlation when
+    favourites firm between open and close, even with no information. The post-hoc
+    controls (added after reports/review_phase8.md, I1) expose that: a constant-0.5
+    forecaster scores as negative or worse, and the partial correlation given the open
+    is what carries the model's own information."""
+    rng = np.random.default_rng(3)
+    n_events, per = 150, 10
+    n = n_events * per
+    open_p = rng.uniform(0.2, 0.8, n)
+    move = 0.08 * (open_p - 0.5) + rng.normal(0, 0.02, n)  # favourites firm; no model signal
+    frame = synthetic()
+    frame["open_p1"] = open_p
+    frame["close_p1"] = np.clip(open_p + move, 0.02, 0.98)
+    frame["p_model"] = (
+        0.5 + 0.25 * (open_p - 0.5) + rng.normal(0, 0.02, n)
+    )  # compressed, uninformed
+    out = clv.analyse(frame, cfg)
+    controls = out["post_hoc_controls"]
+    assert "post hoc" in controls["note"]
+    assert out["correlation_edge_vs_move"]["point"] < -0.3  # the raw measure looks damning
+    assert (
+        controls["constant_half"]["correlation_edge_vs_move"]["point"]
+        <= out["correlation_edge_vs_move"]["point"] + 0.05
+    )
+    partial = controls["partial_correlation_edge_vs_move_given_open"]
+    assert partial["ci_lower"] < 0 < partial["ci_hi"]  # no information once the open is held fixed
+
+
+def test_closing_odds_disagreements_list_large_gaps_only():
+    frame = pd.DataFrame(
+        {
+            "fight_id": ["a", "b", "c"],
+            "date": [dt.date(2010, 6, 12)] * 3,
+            "close_p1": [0.60, 0.40, 0.70],
+            "p1_market": [0.61, 0.66, 0.30],
+        }
+    )
+    out = clv.closing_odds_disagreements(frame, threshold=0.10)
+    assert [d["fight_id"] for d in out] == ["b", "c"]
+    assert out[0]["bfo_close_p1"] == pytest.approx(0.40) and out[0]["dataset_p1"] == pytest.approx(
+        0.66
+    )

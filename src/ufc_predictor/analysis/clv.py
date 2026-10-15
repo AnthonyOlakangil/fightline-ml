@@ -82,13 +82,27 @@ class _Events:
             boot = (self.weights @ s) / (self.weights @ c)
         return self.interval(values[mask].mean(), boot)
 
-    def correlation(self, x: np.ndarray, y: np.ndarray) -> dict:
+    def _corr_boot(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         W = self.weights
         n, sx, sy = W @ self.sums(np.ones_like(x)), W @ self.sums(x), W @ self.sums(y)
         sxx, syy, sxy = W @ self.sums(x * x), W @ self.sums(y * y), W @ self.sums(x * y)
         with np.errstate(invalid="ignore", divide="ignore"):
-            boot = (n * sxy - sx * sy) / np.sqrt((n * sxx - sx**2) * (n * syy - sy**2))
-        return self.interval(np.corrcoef(x, y)[0, 1], boot)
+            return (n * sxy - sx * sy) / np.sqrt((n * sxx - sx**2) * (n * syy - sy**2))
+
+    def correlation(self, x: np.ndarray, y: np.ndarray) -> dict:
+        return self.interval(np.corrcoef(x, y)[0, 1], self._corr_boot(x, y))
+
+    def partial_correlation(self, x: np.ndarray, y: np.ndarray, z: np.ndarray) -> dict:
+        """corr(x, y) holding z fixed (linear), resampling events."""
+
+        def partial(rxy, rxz, ryz):
+            with np.errstate(invalid="ignore", divide="ignore"):
+                return (rxy - rxz * ryz) / np.sqrt((1 - rxz**2) * (1 - ryz**2))
+
+        c = np.corrcoef(np.vstack([x, y, z]))
+        point = partial(c[0, 1], c[0, 2], c[1, 2])
+        boot = partial(self._corr_boot(x, y), self._corr_boot(x, z), self._corr_boot(y, z))
+        return self.interval(point, boot)
 
     def refit(self, frame: pd.DataFrame, stat) -> dict:
         rows = [np.flatnonzero(self.codes == k) for k in range(self.n)]
@@ -147,6 +161,22 @@ def analyse(frame: pd.DataFrame, cfg: Config) -> dict:
     )
 
     coef = events.refit(f, _coef)
+
+    # Post hoc (reports/review_phase8.md, finding I1): not pre-specified. The model is
+    # compressed toward 0.5 and favourites' prices tend to firm between open and close,
+    # so (b) and (c) can be negative with no information at all. Two controls: the same
+    # measures for a forecaster that always says 0.5, and the edge-move correlation
+    # holding the opening price fixed.
+    edge0 = 0.5 - f["open_p1"].to_numpy()
+    big0 = np.abs(edge0) > EDGE_THRESHOLD
+    constant = {
+        "correlation_edge_vs_move": events.correlation(edge0, move),
+        "move_toward_model_when_edge_over_5pp": {
+            **events.mean(move * np.sign(edge0), mask=big0),
+            "n_fights": int(big0.sum()),
+        },
+    }
+    partial = events.partial_correlation(edge, move, _logit(f["open_p1"].to_numpy()))
     return {
         "n_fights": len(f),
         "n_events": int(f["event_id"].nunique()),
@@ -163,7 +193,29 @@ def analyse(frame: pd.DataFrame, cfg: Config) -> dict:
         "move_toward_model_when_edge_over_5pp": directional,
         "model_information_beyond_open": {"coef_logit_model": coef},
         "edge_threshold": EDGE_THRESHOLD,
+        "post_hoc_controls": {
+            "note": "post hoc, added after reports/review_phase8.md (finding I1); not "
+            "pre-specified",
+            "constant_half": constant,
+            "partial_correlation_edge_vs_move_given_open": partial,
+        },
     }
+
+
+def closing_odds_disagreements(frame: pd.DataFrame, *, threshold: float = 0.10) -> list[dict]:
+    """Fights where BestFightOdds' closing price and the closing-odds dataset differ by more
+    than ``threshold`` in fighter_1's vig-free probability, in date order."""
+    gap = (frame["close_p1"] - frame["p1_market"]).abs()
+    rows = frame.loc[gap > threshold].sort_values(["date", "fight_id"], kind="stable")
+    keep = [c for c in ("fight_id", "date", "name_1", "name_2") if c in rows.columns]
+    return [
+        {
+            **{k: (str(v) if k == "date" else v) for k, v in r[keep].items()},
+            "bfo_close_p1": float(r["close_p1"]),
+            "dataset_p1": float(r["p1_market"]),
+        }
+        for _, r in rows.iterrows()
+    ]
 
 
 def run(cfg: Config | None = None) -> dict:
@@ -196,6 +248,17 @@ def run(cfg: Config | None = None) -> dict:
         "n_with_bfo_lines": len(frame),
         **analyse(frame, cfg),
     }
+    # Found while checking orientation (reports/review_phase8.md, M8d): fights where
+    # BestFightOdds and the closing-odds dataset disagree. Listed, not corrected.
+    odds = db.read_table(cfg.paths.processed_dir, "odds")
+    fights = db.read_table(cfg.paths.processed_dir, "fights")
+    check = (
+        lines[["fight_id", "close_p1"]]
+        .merge(odds[["fight_id", "p1_market"]], on="fight_id", how="inner")
+        .merge(fights[["fight_id", "date", "name_1", "name_2"]], on="fight_id", how="left")
+    )
+    out["closing_odds_disagreements"] = closing_odds_disagreements(check)
+    out["closing_odds_compared"] = len(check)
     path = cfg.paths.reports_dir / "clv.json"
     path.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return out

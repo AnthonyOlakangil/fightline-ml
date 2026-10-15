@@ -127,8 +127,12 @@ def render_stages(st: dict | None) -> str:
         inc = stage["incumbent"]
         lines.append(f"| {label} | *incumbent* | {inc['log_loss']:.4f} | | | | |")
         for cand in stage["candidates"]:
+            name = _candidate_label(stage, cand) if "field" in stage else cand["name"]
+            if stage.get("field") == "train_window":
+                floor = cand.get("folds_floor_extended") or 0
+                name += f" (1,000-fight floor in {floor} fold{'' if floor == 1 else 's'})"
             lines.append(
-                f"| {label} | {_candidate_label(stage, cand) if 'field' in stage else cand['name']} | "
+                f"| {label} | {name} | "
                 f"{cand['log_loss']:.4f} | {_ci(cand)} | {_p(cand['p_one_sided'])} | "
                 f"{_p(cand['p_holm'])} | {'**yes**' if cand['adopted'] else 'no'} |"
             )
@@ -192,7 +196,8 @@ def render_clv(clv: dict | None, join: dict | None, audit: dict | None) -> str:
             f"({audit['date_min']} → {audit['date_max']}), every one seen on both fighters' pages "
             f"with identical prices ({audit['bouts_confirmed_by_both_pages']:,})."
             + (
-                f" Joined exactly (same date, same pair) to {join['joined']:,} fights; "
+                f" Joined on the same date and the same pair to {join['joined']:,} fights "
+                f"({join['joined_alias']} through the hand-reviewed alias table); "
                 f"{join['dev_priced_join_rate']:.1%} of priced development-window fights."
                 if join
                 else ""
@@ -211,6 +216,30 @@ def render_clv(clv: dict | None, join: dict | None, audit: dict | None) -> str:
         f"| Mean move toward the model when it differs from the open by > 5 points ({dmv['n_fights']:,} fights) | {_s(dmv['point'], 4)} [{_s(dmv['ci_lower'], 4)}, {_s(dmv['ci_hi'], 4)}] |",
         f"| logit(p_model) coefficient for the move's direction, given logit(open) | {_s(coef['point'], 3)} [{_s(coef['ci_lower'], 3)}, {_s(coef['ci_hi'], 3)}] |",
     ]
+    ph = clv.get("post_hoc_controls")
+    if ph:
+        c0 = ph["constant_half"]["correlation_edge_vs_move"]
+        d0 = ph["constant_half"]["move_toward_model_when_edge_over_5pp"]
+        pc = ph["partial_correlation_edge_vs_move_given_open"]
+        lines += [
+            f"| *Post hoc:* that correlation for a forecaster that always says 50% | {_s(c0['point'], 3)} [{_s(c0['ci_lower'], 3)}, {_s(c0['ci_hi'], 3)}] |",
+            f"| *Post hoc:* that mean move for the same forecaster ({d0['n_fights']:,} fights) | {_s(d0['point'])} [{_s(d0['ci_lower'])}, {_s(d0['ci_hi'])}] |",
+            f"| *Post hoc:* the model's edge-move correlation holding the opening price fixed | {_s(pc['point'], 3)} [{_s(pc['ci_lower'], 3)}, {_s(pc['ci_hi'], 3)}] |",
+        ]
+    gaps = clv.get("closing_odds_disagreements")
+    if gaps is not None:
+        lines += [
+            "",
+            "BestFightOdds' closing price and the closing-odds dataset differ by more than 10 "
+            f"points on {len(gaps)} of the {clv['closing_odds_compared']:,} fights both price "
+            "(fighter_1's vig-free probability, BestFightOdds / dataset): "
+            + "; ".join(
+                f"{g['name_1'].title()} vs. {g['name_2'].title()}, {g['date']} "
+                f"({g['bfo_close_p1']:.2f} / {g['dataset_p1']:.2f})"
+                for g in gaps
+            )
+            + ".",
+        ]
     return _wrap("P8_CLV", lines)
 
 
@@ -223,8 +252,9 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
             ],
         )
     rows = [
-        "| Card | Predicted | Settled | Scored bouts | Model log loss | Kalshi close log loss | Commitment verified |",
-        "|---|---|---|---:|---:|---:|:---:|",
+        "| Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close "
+        "| Model / Kalshi close on those bouts | Commitment verified |",
+        "|---|---|---|---:|---:|---:|---:|:---:|",
     ]
     by_event: dict[str, dict] = {}
     for e in ledger:
@@ -238,33 +268,34 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
             if "predict" in acts
             else ("missed" if "missed" in acts else "")
         )
-        if s:
-            rows.append(
-                f"| {name} | {pred} | yes | {s['n_scored']} | "
-                f"{s['model_log_loss']:.4f} | "
-                + (
-                    f"{s['kalshi_close_log_loss']:.4f}"
-                    if s.get("kalshi_close_log_loss") is not None
-                    else "—"
-                )
-                + f" | {'yes' if s['verified'] else '**no**'} |"
-            )
-        else:
-            rows.append(f"| {name} | {pred} | no | | | | |")
+        if not s:
+            rows.append(f"| {name} | {pred} | no | | | | | |")
+            continue
+        model = f"{s['model_log_loss']:.4f}" if s.get("model_log_loss") is not None else "-"
+        paired = (
+            f"{s['model_log_loss_on_kalshi_close_bouts']:.4f} / {s['kalshi_close_log_loss']:.4f}"
+            if s.get("kalshi_close_log_loss") is not None
+            else "-"
+        )
+        rows.append(
+            f"| {name} | {pred} | yes | {s['n_scored']} | {model} | "
+            f"{s['n_with_kalshi_close']} | {paired} | {'yes' if s['verified'] else '**no**'} |"
+        )
     pooled = (summary or {}).get("pooled_verified")
     tail = []
     if pooled and pooled.get("n_scored"):
-        tail = [
-            "",
+        line = (
             f"Pooled over verified cards: {pooled['n_scored']} scored bouts; model "
             f"{pooled['model_log_loss']:.4f}"
-            + (
-                f", Kalshi close {pooled['kalshi_close_log_loss']:.4f} on {pooled['n_with_kalshi_close']} bouts "
-                f"(model - Kalshi {_s(pooled['model_minus_kalshi_close'])})."
-                if pooled.get("kalshi_close_log_loss") is not None
-                else "."
-            ),
-        ]
+        )
+        if pooled.get("kalshi_close_log_loss") is not None:
+            line += (
+                f". On the {pooled['n_with_kalshi_close']} bouts with a Kalshi close: model "
+                f"{pooled['model_log_loss_on_kalshi_close_bouts']:.4f}, Kalshi "
+                f"{pooled['kalshi_close_log_loss']:.4f} (model - Kalshi "
+                f"{_s(pooled['model_minus_kalshi_close'])})"
+            )
+        tail = ["", line + "."]
     return _wrap("P8_FORWARD", rows + tail)
 
 

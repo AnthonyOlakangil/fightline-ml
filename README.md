@@ -611,7 +611,8 @@ window (2010–2015), then tests what survives on cards that had not happened ye
   compared with its stage's incumbent by the pre-registered rule. The survivor is frozen,
   committed and pushed, and only then scored on 2015, exactly once. The code enforces
   this:
-  - any Phase 8 scoring path that reaches 2016 raises `EvalWindowClosed`;
+  - any Phase 8 scoring path that reaches 2016 raises `EvalWindowClosed`, except the
+    forward test, which scores only cards held after the freeze;
   - selection refuses 2015;
   - a second confirmation refuses to run
   (`src/ufc_predictor/experiments/protocol.py`, `confirm.py`).
@@ -622,10 +623,14 @@ window (2010–2015), then tests what survives on cards that had not happened ye
 - **Rule.** A candidate replaces the incumbent only if its paired, event-bootstrapped
   log-loss difference is negative and its Holm-adjusted one-sided p-value within the stage
   is below 0.10. Otherwise the simpler incumbent stays. Every candidate is reported below,
-  adopted or not.
+  adopted or not. The 0.10 level applies stage by stage: nothing controls the error rate
+  across all seven stages together.
 - **Disclosure.** Run 3's hyperparameters were tuned on a holdout that included 2015, and
   earlier diagnostics scored 2015 fights. So 2015 is unseen by every Phase 8 decision, not
   by the project; that is why stage 0 re-tunes inside 2010–2014 before anything else.
+  Stage 0's tuning holdout is the last fifth of that same selection window, and its
+  parameters were then held fixed for every candidate (as pre-registered). That tilts each
+  comparison slightly toward the incumbent, which can only make adoption harder.
 
 **What was tried.** Five new feature families, all built by the same point-in-time builder
 and covered by the leakage suite:
@@ -668,8 +673,8 @@ Selection window 2010-01-01 → 2014-12-31, walk-forward, scored on 1,693 priced
 | 2 selection | *incumbent* | 0.6885 | | | | |
 | 2 selection | top k 25 | 0.6930 | +0.0045 [−0.0053, +0.0142] | 0.822 | 0.822 | no |
 | 3 train window | *incumbent* | 0.6885 | | | | |
-| 3 train window | from 2001 | 0.7001 | +0.0115 [−0.0011, +0.0250] | 0.962 | 1.000 | no |
-| 3 train window | last 8 years | 0.7037 | +0.0152 [+0.0014, +0.0298] | 0.984 | 1.000 | no |
+| 3 train window | from 2001 (1,000-fight floor in 0 folds) | 0.7001 | +0.0115 [−0.0011, +0.0250] | 0.962 | 1.000 | no |
+| 3 train window | last 8 years (1,000-fight floor in 1 fold) | 0.7037 | +0.0152 [+0.0014, +0.0298] | 0.984 | 1.000 | no |
 | 4 symmetry | *incumbent* | 0.6885 | | | | |
 | 4 symmetry | symmetric | 0.6802 | −0.0083 [−0.0195, +0.0024] | 0.066 | 0.066 | **yes** |
 | 5 calibration | *incumbent* | 0.6802 | | | | |
@@ -685,8 +690,10 @@ Selection window 2010-01-01 → 2014-12-31, walk-forward, scored on 1,693 priced
 <!-- P8_STAGES:END -->
 
 **Reading it.** None of the new information helped. Every feature family made the
-walk-forward log loss slightly *worse*: more columns for the trees to overfit, built from
-the same public record the base features already summarize. The one adopted change,
+walk-forward log loss slightly *worse*. A plausible reason, not tested here, is more
+columns for the trees to overfit, all built from the same public record the base features
+already summarize; the tuning tilt above also works against every candidate. The one
+adopted change,
 orientation symmetry, adds no information at all. It removes a freedom the model should
 never have had: answering differently depending on which corner a fighter is listed in.
 
@@ -714,11 +721,13 @@ once:
 - the cleaned snapshot is committed with its `SOURCE.md` (`data/raw/bfo_snapshot_2026-10-13/`).
 
 Both prices come from that one source, de-vigged across the two fighters. The model side
-is the frozen configuration's out-of-sample predictions: the 2010–2014 walk-forward plus
-the one 2015 confirmation.
+is the frozen configuration's walk-forward predictions: the 2010–2014 selection run plus
+the one 2015 confirmation. Every fight is predicted by a model trained only on earlier
+fights, but the 2010–2014 configuration (its hyperparameters and the symmetry choice) was
+itself selected on those outcomes.
 
 <!-- P8_CLV:START -->
-BestFightOdds snapshot: 2,269 bouts at 212 UFC events (2010-01-02 → 2015-12-19), every one seen on both fighters' pages with identical prices (2,269). Joined exactly (same date, same pair) to 2,049 fights; 91.7% of priced development-window fights.
+BestFightOdds snapshot: 2,269 bouts at 212 UFC events (2010-01-02 → 2015-12-19), every one seen on both fighters' pages with identical prices (2,269). Joined on the same date and the same pair to 2,049 fights (29 through the hand-reviewed alias table); 91.7% of priced development-window fights.
 
 On 1,975 fights (198 events, 2010-03-21 → 2015-12-19): open 0.6204, close 0.6086, model 0.6799 log loss.
 
@@ -728,21 +737,28 @@ On 1,975 fights (198 events, 2010-03-21 → 2015-12-19): open 0.6204, close 0.60
 | Correlation of the model's edge at the open with the line's move | −0.116 [−0.164, −0.072] |
 | Mean move toward the model when it differs from the open by > 5 points (1,524 fights) | −0.0102 [−0.0140, −0.0065] |
 | logit(p_model) coefficient for the move's direction, given logit(open) | +0.175 [−0.012, +0.405] |
+| *Post hoc:* that correlation for a forecaster that always says 50% | −0.205 [−0.257, −0.155] |
+| *Post hoc:* that mean move for the same forecaster (1,655 fights) | −0.0147 [−0.0189, −0.0107] |
+| *Post hoc:* the model's edge-move correlation holding the opening price fixed | +0.052 [+0.011, +0.092] |
+
+BestFightOdds' closing price and the closing-odds dataset differ by more than 10 points on 3 of the 1,981 fights both price (fighter_1's vig-free probability, BestFightOdds / dataset): Ben Rothwell vs. Gilbert Yvel, 2010-06-12 (0.64 / 0.36); Iliarde Santos vs. Chris Cariaso, 2013-10-09 (0.60 / 0.76); Enrique Marin vs. Erick Montano, 2015-11-21 (0.66 / 0.33).
 <!-- P8_CLV:END -->
 
-**Reading it.** The market corrects itself between open and close: the close beats the
-open, as it should. But it corrects *away* from the model. Where the model disagreed with
-the opening line, the line tended to move further from the model by the close, not toward
-it. Its disagreements are not information the market priced in later; they are mostly
-error. The regression coefficient is the only measure that leans toward the model, and its
-interval includes zero.
+**Reading it.** The close beats the open, as it should. The two raw measures (the
+correlation and the mean move) are negative, but they are not evidence against the model.
+The model is compressed toward 50% and favourites' prices tend to firm between open and
+close, so a forecaster with no information, one that always says 50%, scores *more*
+negative on both (post-hoc rows, added after the review in `reports/review_phase8.md`).
+The pre-registered test that holds the opening price fixed, the regression coefficient,
+leans toward the model, but its interval includes zero. The post-hoc partial correlation
+with the open held fixed is small and positive. So the pre-registered analysis shows no
+closing-line value. The post-hoc control hints at a little information beyond the open,
+which a future pre-registered test would have to confirm before anyone relied on it.
 
-While checking orientation, the BestFightOdds join turned up three development-window
-fights where the closing-odds dataset is wrong. BestFightOdds' pages confirm the prices:
-Rothwell vs. Yvel (2010) and Marin vs. Montano (2015) have the two sides' prices swapped
-upstream, and Santos vs. Cariaso (2013) carries the prices of the next bout on the card.
-They are listed under [Limitations](#limitations) and left unchanged, because evaluation
-run 3's published development-window figures used them.
+The fights listed under the table are ones where BestFightOdds contradicts the
+closing-odds dataset. BestFightOdds' own fighter pages confirm its prices. They are
+[left as published](#limitations), because evaluation run 3's development-window figures
+used them.
 
 ### Forward test: predictions committed before each card
 
@@ -763,9 +779,9 @@ ESPN's public schedule and acts on each card:
 - **Alerts.** Any failure, or a missed card, opens an issue.
 
 <!-- P8_FORWARD:START -->
-| Card | Predicted | Settled | Scored bouts | Model log loss | Kalshi close log loss | Commitment verified |
-|---|---|---|---:|---:|---:|:---:|
-| UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | |
+| Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close | Model / Kalshi close on those bouts | Commitment verified |
+|---|---|---|---:|---:|---:|---:|:---:|
+| UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | | |
 <!-- P8_FORWARD:END -->
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
@@ -778,6 +794,13 @@ shows is a pipeline whose predictions demonstrably existed before the fights.
 - ESPN has no title-bout flag, so a five-round bout on a numbered UFC event is treated as
   a title bout.
 - Kalshi's undercard markets can be thin; their volumes are recorded with each price.
+- In the symmetric model, a fold's early-stopping and calibration rows are cut at a row
+  position, not a date, so up to 2% of them are mirror images of the fold's own training
+  rows. The effect stays within the fold and does not reach across time. It is left in
+  place because changing it would change the frozen, already confirmed configuration.
+- "Commitment verified" means three things: the predictions file was added at least 24
+  hours before the card and never changed; the commit names a GitHub Actions run of this
+  repository; and GitHub's API reports that run started before the deadline.
 
 ---
 
@@ -1089,17 +1112,22 @@ Research backtest only. Nothing here is betting advice or should be used to wage
   bankroll replay stakes at closing prices, which a bettor would not have had when
   placing the bet, and compounds bets within a card sequentially — both slightly
   optimistic, and irrelevant to a negative result.
-- **Three development-window closing prices are wrong upstream.** BestFightOdds'
-  pages show the closing-odds dataset swaps the sides for Rothwell vs. Yvel (2010) and
-  Marin vs. Montano (2015), and copies the next bout's prices onto Santos vs. Cariaso
-  (2013). They stay as published, since run 3's development-window figures used them; all
-  three fall before the evaluation window.
+- **A few development-window closing prices are wrong upstream.** Checked against
+  BestFightOdds, the closing-odds dataset swaps the two sides or copies a neighbouring
+  bout's prices for the fights listed in the
+  [closing-line value section](#closing-line-value-does-the-line-move-toward-the-model).
+  They stay as published, since run 3's development-window figures used them, and all
+  fall before the evaluation window.
 - **Overturned results are treated as no contests from the start**, although the
-  overturn came months later. That removes a little information; it adds none.
+  overturn came months later. Between the fight and the ruling, a forecaster would have
+  seen a win, so this is a small look-ahead in records, streaks and ratings, affecting a
+  few dozen bouts.
 - **Parlay pricing is not ledgered as an evaluation run**, because it rescores nothing,
   but each pricing records its commit and whether the working tree was clean.
-- **No live predictions.** UFCStats is behind an anti-bot challenge and no current odds
-  feed is reachable, so every prediction log is a replay that cannot prove foresight.
+- **Replay logs prove no foresight.** Every log under `reports/predictions/` is a replay
+  of a completed event. Live predictions come only from the
+  [forward test](#forward-test-predictions-committed-before-each-card), which began on
+  2026-10-14 and has few cards so far.
 - **The demo's hypothetical matchups** use a model fitted on all the data, and its "never
   fought" label ignores pairs whose only meeting was unpriced (review finding 10).
 - Coverage limits in the data itself are listed under
