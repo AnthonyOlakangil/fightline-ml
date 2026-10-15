@@ -38,3 +38,19 @@ def test_records_are_committed_even_after_a_failure_and_failures_alert():
     assert "README.md" in commit["run"]
     alert = next(s for s in steps if "issue" in s.get("name", ""))
     assert alert["if"] == "failure()" and "@AnthonyOlakangil" in alert["run"]
+
+
+def test_new_predictions_are_sealed_by_an_artifact_before_they_are_committed():
+    steps = load()["jobs"]["run-due"]["steps"]
+    names = [s.get("name", "") for s in steps]
+    seal = next(i for i, s in enumerate(steps) if s.get("id") == "seal")
+    upload = next(i for i, s in enumerate(steps) if "upload-artifact" in str(s.get("uses", "")))
+    commit = next(i for i, n in enumerate(names) if n.startswith("Commit"))
+    assert seal < upload < commit
+    assert steps[seal]["if"] == "always()" and "sha256sum" in steps[seal]["run"]
+    assert (
+        "forward-seal-" in steps[seal]["run"]
+        and "git ls-files --error-unmatch" in steps[seal]["run"]
+    )
+    assert steps[upload]["with"]["name"] == "${{ steps.seal.outputs.name }}"
+    assert "steps.seal.outputs.name != ''" in steps[upload]["if"]

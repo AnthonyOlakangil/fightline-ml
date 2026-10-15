@@ -112,6 +112,7 @@ def test_forward_table_marks_unverified_cards():
             {
                 "event_id": "1",
                 "verified": False,
+                "sealed": True,
                 "n_scored": 11,
                 "model_log_loss": 0.66,
                 "n_with_kalshi_close": 9,
@@ -123,7 +124,7 @@ def test_forward_table_marks_unverified_cards():
     }
     text = r8.render_forward(summary, ledger)
     assert (
-        "| UFC 333 | 2026-10-22 17:17 UTC | yes | 11 | 0.6600 | 9 | 0.6500 / 0.6200 | **no** |"
+        "| UFC 333 | 2026-10-22 17:17 UTC | yes | 11 | 0.6600 | 9 | 0.6500 / 0.6200 | **no** | yes |"
         in text
     )
     assert "| 2 | missed | no |" in text

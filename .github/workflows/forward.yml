@@ -63,6 +63,41 @@ jobs:
         if: always()
         run: uv run python -m ufc_predictor.backtest.readme_sections
 
+      # The seal: an artifact whose name is the SHA-256 of a manifest listing each new
+      # predictions file's SHA-256. GitHub records the artifact's name and creation time
+      # itself, and nobody can add an artifact to a past run, so settlement can check that
+      # these exact predictions existed before the deadline (forward/run.py, _seal_check).
+      - name: Seal new predictions
+        id: seal
+        if: always()
+        run: |
+          manifest="reports/forward/seals/${GITHUB_RUN_ID}.txt"
+          mkdir -p reports/forward/seals
+          : > "${manifest}.tmp"
+          for f in reports/forward/*/predictions.csv; do
+            [ -e "$f" ] || continue
+            if ! git ls-files --error-unmatch "$f" > /dev/null 2>&1; then
+              echo "$(basename "$(dirname "$f")") $(sha256sum "$f" | cut -d' ' -f1)" >> "${manifest}.tmp"
+            fi
+          done
+          if [ -s "${manifest}.tmp" ]; then
+            sort "${manifest}.tmp" > "$manifest"
+            echo "name=forward-seal-$(sha256sum "$manifest" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+            echo "path=$manifest" >> "$GITHUB_OUTPUT"
+            cat "$manifest"
+          else
+            echo "no new predictions to seal"
+          fi
+          rm -f "${manifest}.tmp"
+
+      - name: Upload the seal
+        if: always() && steps.seal.outputs.name != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.seal.outputs.name }}
+          path: ${{ steps.seal.outputs.path }}
+          if-no-files-found: error
+
       # Runs even when a step above failed: predictions made before a later step failed
       # must still be committed while they are early.
       - name: Commit and push forward-test records

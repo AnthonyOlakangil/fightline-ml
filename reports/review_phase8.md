@@ -404,3 +404,14 @@ SHA-256. The first card could not carry it retroactively.
 Wording nits from the re-review were also fixed: the tuning tilt now applies to stages
 1-6 only, with the final re-tune going the other way, and "out-of-sample" is removed from
 `clv.py`.
+
+### M5 follow-up (2026-10-15)
+
+Added at the user's request: the forward workflow now **seals** each card's predictions
+before committing them. It uploads an artifact named `forward-seal-<sha256 of a manifest
+of the predictions files' SHA-256s>`. Settlement recomputes both hashes and requires that
+artifact in the named run, created before the deadline (`forward/run.py`, `_seal_check`).
+GitHub records an artifact's name and creation time itself, and nobody can add one to a
+past run, so this closes the forgery path left open above for every card from UFC 333 on.
+The first card, UFC Fight Night: Buckley vs. Malott, was predicted before the seal existed
+and will show as not sealed.

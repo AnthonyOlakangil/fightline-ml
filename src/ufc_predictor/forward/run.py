@@ -435,6 +435,66 @@ def _actions_run_check(
     }
 
 
+SEAL_PREFIX = "forward-seal-"
+
+
+def _seal_check(
+    fetcher, cfg: Config, meta: dict, deadline: dt.datetime, root: Path, event_id: str, path: Path
+) -> dict:
+    """The tamper-evident check: GitHub's own record that this exact file existed in time.
+
+    The workflow writes ``reports/forward/seals/<run id>.txt`` (one ``<event> <sha256>``
+    line per card it predicted) and uploads it as an artifact named
+    ``forward-seal-<sha256 of that manifest>``. An artifact's name and creation time are
+    recorded by GitHub when the run uploads it and cannot be added to a past run, so an
+    artifact created before the deadline whose name commits to a manifest that commits
+    to these exact predictions shows the file existed before the deadline.
+    """
+    run_id = meta.get("actions_run_id")
+    if not run_id:
+        return {"verified": False, "reason": "no GitHub Actions run recorded, so no seal"}
+    manifest = root / cfg.forward["reports_dir"] / "seals" / f"{run_id}.txt"
+    if not manifest.is_file():
+        return {
+            "verified": False,
+            "reason": "no seal for this run (cards predicted before the seal was introduced)",
+        }
+    sealed = dict(
+        line.split(maxsplit=1)
+        for line in manifest.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    )
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    if sealed.get(event_id, "").strip() != digest:
+        return {
+            "verified": False,
+            "reason": "the sealed hash does not match the committed predictions",
+        }
+    name = SEAL_PREFIX + hashlib.sha256(manifest.read_bytes()).hexdigest()
+    repo = str(cfg.forward["github_repository"])
+    token = os.environ.get("GITHUB_TOKEN")
+    listing = fetcher.json(
+        f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100",
+        headers={"Authorization": f"Bearer {token}"} if token else None,
+    )
+    match = [a for a in listing.get("artifacts", []) if a.get("name") == name]
+    if not match:
+        return {"verified": False, "reason": f"no artifact named {name} in run {run_id}"}
+    created = dt.datetime.fromisoformat(match[0]["created_at"].replace("Z", "+00:00"))
+    if created > deadline:
+        return {
+            "verified": False,
+            "reason": f"seal created {created.isoformat()}, after the deadline {deadline.isoformat()}",
+        }
+    return {
+        "verified": True,
+        "reason": "ok",
+        "artifact": name,
+        "created_at": created.isoformat(),
+        "predictions_sha256": digest,
+    }
+
+
 def _quotes(preds: pd.DataFrame, cfg: Config, fetcher, snapshot: dict) -> tuple[dict, dict]:
     lookback = dt.timedelta(minutes=int(cfg.forward["close_lookback_minutes"]))
     quotes: dict = {}
@@ -485,6 +545,7 @@ def settle(
     meta_path = reports_dir / event_id / "meta.json"
     meta = json.loads(meta_path.read_text()) if meta_path.is_file() else {}
     commitment["actions_run"] = _actions_run_check(fetcher, cfg, meta, deadline, root, rel)
+    commitment["seal"] = _seal_check(fetcher, cfg, meta, deadline, root, event_id, path)
     commitment["verified"] = bool(
         commitment["committed_in_time"]
         and commitment["unchanged_since"]
@@ -544,6 +605,7 @@ def _write_summary(reports_dir: Path) -> None:
                 "event_id": s["event_id"],
                 "event_name": s["event_name"],
                 "verified": s["commitment"]["verified"],
+                "sealed": s["commitment"].get("seal", {}).get("verified", False),
                 **s["summary"],
             }
         )

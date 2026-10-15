@@ -253,8 +253,8 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
         )
     rows = [
         "| Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close "
-        "| Model / Kalshi close on those bouts | Commitment verified |",
-        "|---|---|---|---:|---:|---:|---:|:---:|",
+        "| Model / Kalshi close on those bouts | Commitment verified | Sealed |",
+        "|---|---|---|---:|---:|---:|---:|:---:|:---:|",
     ]
     by_event: dict[str, dict] = {}
     for e in ledger:
@@ -269,7 +269,7 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
             else ("missed" if "missed" in acts else "")
         )
         if not s:
-            rows.append(f"| {name} | {pred} | no | | | | | |")
+            rows.append(f"| {name} | {pred} | no | | | | | | |")
             continue
         model = f"{s['model_log_loss']:.4f}" if s.get("model_log_loss") is not None else "-"
         paired = (
@@ -279,7 +279,8 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
         )
         rows.append(
             f"| {name} | {pred} | yes | {s['n_scored']} | {model} | "
-            f"{s['n_with_kalshi_close']} | {paired} | {'yes' if s['verified'] else '**no**'} |"
+            f"{s['n_with_kalshi_close']} | {paired} | {'yes' if s['verified'] else '**no**'} | "
+            f"{'yes' if s.get('sealed') else 'no'} |"
         )
     pooled = (summary or {}).get("pooled_verified")
     tail = []

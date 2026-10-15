@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import datetime as dt
+import hashlib
 import json
 import os
 import subprocess
@@ -36,7 +37,9 @@ class FixtureFetcher:
     def text(self, url: str, headers=None) -> str:
         if url not in self.routes:
             raise AssertionError(f"unexpected URL {url}")
-        return (FIXTURES / self.routes[url]).read_text(encoding="utf-8")
+        route = self.routes[url]
+        path = route if isinstance(route, Path) and route.is_absolute() else FIXTURES / route
+        return path.read_text(encoding="utf-8")
 
     def json(self, url: str, headers=None):
         return json.loads(self.text(url))
@@ -339,3 +342,81 @@ def test_run_due_predicts_inside_the_window(cfg, root, monkeypatch):
     report = run.run_due(cfg, now=now, fetcher=FixtureFetcher(ROUTES), root=root)
     assert ("predict", "600060773") in calls
     assert report["missed"] == []
+
+
+# ---------------------------------------------------------------------------
+# The seal: an artifact named after the predictions' hash, created by GitHub
+# ---------------------------------------------------------------------------
+
+
+def _seal(root, cfg, event_id, run_id, tmp_path, *, created_at, digest=None, name=None):
+    """Write the run's seal manifest and an artifacts listing for that run."""
+    preds = root / cfg.forward["reports_dir"] / event_id / "predictions.csv"
+    digest = digest or hashlib.sha256(preds.read_bytes()).hexdigest()
+    manifest = root / cfg.forward["reports_dir"] / "seals" / f"{run_id}.txt"
+    manifest.parent.mkdir(parents=True, exist_ok=True)
+    manifest.write_text(f"{event_id} {digest}\n")
+    _git(root, "add", ".")
+    _git(root, "commit", "-q", "-m", "seal", when=created_at)
+    name = name or "forward-seal-" + hashlib.sha256(manifest.read_bytes()).hexdigest()
+    listing = tmp_path / f"artifacts_{run_id}.json"
+    listing.write_text(
+        json.dumps(
+            {
+                "total_count": 1,
+                "artifacts": [
+                    {
+                        "id": 1,
+                        "name": name,
+                        "created_at": created_at.isoformat().replace("+00:00", "Z"),
+                        "expired": False,
+                        "workflow_run": {"id": run_id},
+                    }
+                ],
+            }
+        )
+    )
+    return {
+        f"https://api.github.com/repos/{REPO}/actions/runs/{run_id}/artifacts?per_page=100": listing
+    }
+
+
+@pytest.mark.parametrize(
+    ("case", "sealed", "reason"),
+    [
+        ("ok", True, "ok"),
+        ("late", False, "after the deadline"),
+        ("wrong_hash", False, "does not match"),
+        ("wrong_name", False, "no artifact"),
+        ("no_manifest", False, "no seal"),
+    ],
+)
+def test_the_seal_ties_the_run_to_the_exact_predictions(cfg, root, tmp_path, case, sealed, reason):
+    start = dt.datetime(2026, 10, 10, 21, tzinfo=UTC)
+    deadline = start - dt.timedelta(hours=24)
+    _write_predictions(root, cfg, "600061541", GATTO, start - dt.timedelta(hours=30))
+    routes = dict(ROUTES)
+    if case != "no_manifest":
+        routes |= _seal(
+            root,
+            cfg,
+            "600061541",
+            EARLY_RUN,
+            tmp_path,
+            created_at=deadline + dt.timedelta(hours=2)
+            if case == "late"
+            else start - dt.timedelta(hours=30),
+            digest="0" * 64 if case == "wrong_hash" else None,
+            name="forward-seal-somethingelse" if case == "wrong_name" else None,
+        )
+    out = run.settle(
+        "600061541",
+        cfg,
+        now=start + dt.timedelta(hours=12),
+        fetcher=FixtureFetcher(routes),
+        root=root,
+    )
+    seal = out["commitment"]["seal"]
+    assert seal["verified"] is sealed and reason in seal["reason"]
+    summary = json.loads((root / cfg.forward["reports_dir"] / "summary.json").read_text())
+    assert summary["events"][0]["sealed"] is sealed

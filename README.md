@@ -778,14 +778,20 @@ ESPN's public schedule and acts on each card:
   history. Settlement checks in git that the predictions file was added at least 24 hours
   before the card and never changed afterwards. It also checks, through GitHub's API, that
   the Actions run named in that commit belongs to this repository and started before the
-  deadline. Each run's page on GitHub, linked from the ledger, shows what that run
-  committed.
+  deadline.
+- **Sealing.** Before committing, the job uploads an artifact named after the SHA-256 of a
+  manifest that lists each new predictions file's SHA-256. GitHub records an artifact's
+  name and creation time itself, and an artifact cannot be added to a past run. So a seal
+  created before the deadline proves those exact predictions existed in time, even
+  against the repository's owner. Settlement recomputes the hashes and checks the
+  artifact. Cards predicted before 2026-10-15, when the seal was added, show as not
+  sealed.
 - **Alerts.** Any failure, or a missed card, opens an issue.
 
 <!-- P8_FORWARD:START -->
-| Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close | Model / Kalshi close on those bouts | Commitment verified |
-|---|---|---|---:|---:|---:|---:|:---:|
-| UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | | |
+| Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close | Model / Kalshi close on those bouts | Commitment verified | Sealed |
+|---|---|---|---:|---:|---:|---:|:---:|:---:|
+| UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | | | |
 <!-- P8_FORWARD:END -->
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
@@ -806,10 +812,9 @@ the linked Actions runs record when it did.
 - "Commitment verified" means three things: the predictions file was added at least 24
   hours before the card and never changed; the commit names a GitHub Actions run of this
   repository; and GitHub's API reports that run started before the deadline. The commit
-  date is set by whoever makes the commit, and nothing here proves that the named run made
-  this particular commit. So the check would not stop the repository's owner from forging
-  a commitment. A reader who wants that assurance should open the run's page and confirm
-  it pushed the file (`reports/review_phase8.md`, M5).
+  date is set by whoever makes the commit, so this check on its own would not stop the
+  repository's owner from forging a commitment (`reports/review_phase8.md`, M5). The
+  "Sealed" column is the check that would.
 
 ---
 
