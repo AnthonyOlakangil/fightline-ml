@@ -21,6 +21,7 @@ Three things are measured:
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 import math
 from collections.abc import Sequence
@@ -56,13 +57,19 @@ def build(
     )
 
 
-def dev_only_split(feats: pd.DataFrame, cfg: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Chronological 70/30 split of labelled fights up to ``dev_end``.
+def dev_only_split(
+    feats: pd.DataFrame, cfg: Config, *, through: dt.date | None = None
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Chronological 70/30 split of labelled fights up to ``through`` (default ``dev_end``).
+
+    Phase 8's leakage tests pass ``selection_end`` so that no check built on the new
+    feature families ever scores a 2015 outcome outside the once-only confirmation.
 
     Raises:
         RuntimeError: if the test portion reaches past the dev window.
     """
-    usable = feats.loc[feats["label"].notna() & (feats["date"] <= cfg.windows.dev_end)]
+    end = min(through or cfg.windows.dev_end, cfg.windows.dev_end)
+    usable = feats.loc[feats["label"].notna() & (feats["date"] <= end)]
     usable = usable.sort_values("date", kind="stable")
     split = int(len(usable) * 0.7)
     train, test = usable.iloc[:split], usable.iloc[split:]

@@ -581,8 +581,8 @@ def test_model_cannot_beat_chance_on_shuffled_outcomes(tables, cfg):
             cfg,
             families=tuple(FEATURE_FAMILIES),
         )
-        train, test = diagnostics.dev_only_split(feats, cfg)
-        assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
+        train, test = diagnostics.dev_only_split(feats, cfg, through=cfg.windows.selection_end)
+        assert test["date"].max() <= cfg.windows.selection_end, "diagnostic reached 2015 or later"
 
         p = diagnostics.fit_predict_dev(train, test, cfg, feature_cols=ALL_FEATURE_COLS)
         y = test["label"].astype(int)
@@ -611,8 +611,8 @@ def test_model_does_find_signal_on_real_outcomes(tables, cfg):
     from sklearn.metrics import roc_auc_score
 
     feats = diagnostics.build(tables["fights"], tables, cfg, families=tuple(FEATURE_FAMILIES))
-    train, test = diagnostics.dev_only_split(feats, cfg)
-    assert test["date"].max() <= cfg.windows.dev_end, "diagnostic reached the eval window"
+    train, test = diagnostics.dev_only_split(feats, cfg, through=cfg.windows.selection_end)
+    assert test["date"].max() <= cfg.windows.selection_end, "diagnostic reached 2015 or later"
 
     p = diagnostics.fit_predict_dev(train, test, cfg, feature_cols=ALL_FEATURE_COLS)
     auc = roc_auc_score(test["label"].astype(int), p)
