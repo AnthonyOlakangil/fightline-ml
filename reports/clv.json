@@ -89,5 +89,5 @@
       "point": 0.05168882958319077
     }
   },
-  "source": "BestFightOdds open and closing-range midpoint (data/raw/bfo_snapshot_*), frozen development configuration's out-of-sample predictions"
+  "source": "BestFightOdds open and closing-range midpoint (data/raw/bfo_snapshot_*), frozen development configuration's walk-forward predictions (each fight predicted by a model trained on earlier fights; the configuration itself was selected on 2010-2014)"
 }

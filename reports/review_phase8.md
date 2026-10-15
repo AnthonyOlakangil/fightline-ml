@@ -386,3 +386,21 @@ evidence is never checked.**
 | M9 | No action needed. |
 
 Process note, outside leakage: commit `58330b2` mixes Task 7a's staged feature code with the controller's forward-test files under one subject. It is left as pushed, because pushed history is not rewritten, and is disclosed to the user.
+
+### Re-review of the fix wave (scoped, 2026-10-14)
+
+All findings were addressed or accepted as disclosed, except **M5, which is partly fixed**.
+The Actions-run check confirms that the named run is real, belongs to this repository, was
+scheduled or dispatched, and started before the deadline. Nothing ties that run to the
+commit, though, so a backdated commit naming an earlier real run would still pass. GitHub's
+events API cannot supply a push time either: it is incomplete and delayed.
+
+The README now says exactly what "verified" checks and that it would not stop the
+repository's owner from forging a commitment. The "server-side timestamp" claim is gone.
+A tamper-evident seal is left as a follow-up for the user to decide on: for example, an
+Actions artifact, created before the deadline, whose name contains the predictions file's
+SHA-256. The first card could not carry it retroactively.
+
+Wording nits from the re-review were also fixed: the tuning tilt now applies to stages
+1-6 only, with the final re-tune going the other way, and "out-of-sample" is removed from
+`clv.py`.

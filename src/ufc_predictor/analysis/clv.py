@@ -10,7 +10,7 @@ is noise the market correctly ignored.
 
 Both prices come from BestFightOdds (opening price and the midpoint of the closing range,
 each de-vigged across the two fighters), so they share one definition. The model's
-probabilities are the frozen development configuration's out-of-sample walk-forward
+probabilities are the frozen development configuration's walk-forward
 predictions: 2010-2014 from the selection runs and 2015 from the once-only confirmation.
 Nothing from 2016 on is read: :func:`analyse` raises on any such date.
 
@@ -243,7 +243,8 @@ def run(cfg: Config | None = None) -> dict:
     )
     out = {
         "source": "BestFightOdds open and closing-range midpoint (data/raw/bfo_snapshot_*), "
-        "frozen development configuration's out-of-sample predictions",
+        "frozen development configuration's walk-forward predictions (each fight predicted by a "
+        "model trained on earlier fights; the configuration itself was selected on 2010-2014)",
         "n_dev_predictions": len(preds),
         "n_with_bfo_lines": len(frame),
         **analyse(frame, cfg),

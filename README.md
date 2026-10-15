@@ -629,8 +629,10 @@ window (2010–2015), then tests what survives on cards that had not happened ye
   earlier diagnostics scored 2015 fights. So 2015 is unseen by every Phase 8 decision, not
   by the project; that is why stage 0 re-tunes inside 2010–2014 before anything else.
   Stage 0's tuning holdout is the last fifth of that same selection window, and its
-  parameters were then held fixed for every candidate (as pre-registered). That tilts each
-  comparison slightly toward the incumbent, which can only make adoption harder.
+  parameters were then held fixed for every candidate (as pre-registered). That tilts the
+  comparisons in stages 1-6 slightly toward the incumbent, which makes adopting a
+  candidate harder. The final re-tune tilts the other way, since its candidate is tuned on
+  that same holdout; it was not adopted.
 
 **What was tried.** Five new feature families, all built by the same point-in-time builder
 and covered by the leakage suite:
@@ -692,7 +694,7 @@ Selection window 2010-01-01 → 2014-12-31, walk-forward, scored on 1,693 priced
 **Reading it.** None of the new information helped. Every feature family made the
 walk-forward log loss slightly *worse*. A plausible reason, not tested here, is more
 columns for the trees to overfit, all built from the same public record the base features
-already summarize; the tuning tilt above also works against every candidate. The one
+already summarize; the tuning tilt above also works against the stage 1-6 candidates. The one
 adopted change,
 orientation symmetry, adds no information at all. It removes a freedom the model should
 never have had: answering differently depending on which corner a fighter is listed in.
@@ -774,8 +776,10 @@ ESPN's public schedule and acts on each card:
   Replacements, cancellations, draws and no contests are void. The market comparison uses
   Kalshi's mid at each bout's card-segment start, read from Kalshi's public price
   history. Settlement checks in git that the predictions file was added at least 24 hours
-  before the card and never changed afterwards. The run's GitHub Actions URL is a second,
-  server-side timestamp.
+  before the card and never changed afterwards. It also checks, through GitHub's API, that
+  the Actions run named in that commit belongs to this repository and started before the
+  deadline. Each run's page on GitHub, linked from the ledger, shows what that run
+  committed.
 - **Alerts.** Any failure, or a missed card, opens an issue.
 
 <!-- P8_FORWARD:START -->
@@ -786,7 +790,8 @@ ESPN's public schedule and acts on each card:
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
 separate a model from the market, whatever the log losses say. What the forward test
-shows is a pipeline whose predictions demonstrably existed before the fights.
+shows is a pipeline that commits its predictions before the fights. The commit history and
+the linked Actions runs record when it did.
 
 **Limitations.**
 - UFCStats is unreachable, so bouts after the snapshot carry only a winner, method and
@@ -800,7 +805,11 @@ shows is a pipeline whose predictions demonstrably existed before the fights.
   place because changing it would change the frozen, already confirmed configuration.
 - "Commitment verified" means three things: the predictions file was added at least 24
   hours before the card and never changed; the commit names a GitHub Actions run of this
-  repository; and GitHub's API reports that run started before the deadline.
+  repository; and GitHub's API reports that run started before the deadline. The commit
+  date is set by whoever makes the commit, and nothing here proves that the named run made
+  this particular commit. So the check would not stop the repository's owner from forging
+  a commitment. A reader who wants that assurance should open the run's page and confirm
+  it pushed the file (`reports/review_phase8.md`, M5).
 
 ---
 
