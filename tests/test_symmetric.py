@@ -87,3 +87,48 @@ def test_symmetric_training_rows_stay_in_date_order(selection_frame, cfg):
     )
     m.fit(train, train["label"])  # LightGBMModel raises on unsorted rows
     assert m.n_training_rows_ == 2 * len(train)
+
+
+@pytest.mark.slow
+def test_swapping_the_fighters_rebuilds_exactly_the_mirror(cfg):
+    """mirror() is only meaningful if it is what the builder produces for the swapped bout.
+
+    Rebuild every feature family with fighter_1/fighter_2 (and their names) swapped on
+    every bout, and compare with mirror() of the original build, column by column.
+    """
+    from ufc_predictor.experiments.runner import family_kwargs
+    from ufc_predictor.features.pit import ALL_FEATURE_COLS, FEATURE_FAMILIES, build_features
+
+    try:
+        tables = {
+            t: db.read_table(cfg.paths.processed_dir, t)
+            for t in ("fights", "fight_stats", "fighters")
+        }
+    except FileNotFoundError:
+        pytest.skip("processed tables absent; run `make data`")
+    kwargs = {
+        "rolling_windows": tuple(cfg.features["rolling_windows"]),
+        "elo_params": cfg.elo,
+        "families": tuple(FEATURE_FAMILIES),
+        **family_kwargs(cfg),
+    }
+    fights = tables["fights"]
+    swapped = fights.copy()
+    swapped[["fighter_1", "fighter_2"]] = fights[["fighter_2", "fighter_1"]].to_numpy()
+    swapped[["name_1", "name_2"]] = fights[["name_2", "name_1"]].to_numpy()
+    a = build_features(fights, tables["fight_stats"], tables["fighters"], **kwargs)
+    b = build_features(swapped, tables["fight_stats"], tables["fighters"], **kwargs)
+    a = a.set_index("fight_id").sort_index()
+    b = b.set_index("fight_id").sort_index()
+    expected = mirror(a[ALL_FEATURE_COLS])
+    bad = []
+    for col in ALL_FEATURE_COLS:
+        x = pd.to_numeric(expected[col], errors="coerce").to_numpy(dtype=float)
+        y = pd.to_numeric(b[col], errors="coerce").to_numpy(dtype=float)
+        if not np.allclose(x, y, rtol=0, atol=1e-9, equal_nan=True):
+            bad.append(col)
+    assert not bad, f"columns that are not orientation-equivariant: {bad[:10]}"
+    # And the label flips.
+    lab_a, lab_b = a["label"], b["label"]
+    both = lab_a.notna()
+    assert ((lab_a[both] + lab_b[both]) == 1.0).all()
