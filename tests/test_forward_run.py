@@ -33,16 +33,22 @@ class FixtureFetcher:
     def __init__(self, routes: dict[str, str]):
         self.routes = routes
 
-    def text(self, url: str) -> str:
+    def text(self, url: str, headers=None) -> str:
         if url not in self.routes:
             raise AssertionError(f"unexpected URL {url}")
         return (FIXTURES / self.routes[url]).read_text(encoding="utf-8")
 
-    def json(self, url: str):
+    def json(self, url: str, headers=None):
         return json.loads(self.text(url))
 
 
+REPO = "AnthonyOlakangil/fightline-ml"
+EARLY_RUN = 1000000001  # constructed fixture: a scheduled run before the Oct 10 card's deadline
+REAL_RUN = 38654969288  # the real run that predicted the Oct 17 card on 2026-10-14
+
 ROUTES = {
+    f"https://api.github.com/repos/{REPO}/actions/runs/{EARLY_RUN}": "github/run_constructed_early.json",
+    f"https://api.github.com/repos/{REPO}/actions/runs/{REAL_RUN}": "github/run_38654969288.json",
     espn.SCOREBOARD_URL: "espn/scoreboard_calendar.json",
     espn.SCOREBOARD_URL + "?dates=20261017-20261018": "espn/scoreboard_20261017-20261018.json",
     espn.SCOREBOARD_URL + "?dates=20261010-20261011": "espn/scoreboard_20261010-20261011.json",
@@ -158,15 +164,19 @@ def test_predict_never_overwrites_committed_predictions(cfg, root):
         )
 
 
-def _write_predictions(root, cfg, event_id, rows, committed_at):
+def _write_predictions(root, cfg, event_id, rows, committed_at, run_id=EARLY_RUN):
     d = root / cfg.forward["reports_dir"] / event_id
     d.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(d / "predictions.csv", index=False)
+    url = f"https://github.com/{REPO}/actions/runs/{run_id}" if run_id else None
+    meta = {"actions_run_id": str(run_id), "actions_run_url": url} if run_id else {}
+    (d / "meta.json").write_text(json.dumps(meta))
     (root / cfg.forward["reports_dir"] / "ledger.json").write_text(
         json.dumps([{"event_id": event_id, "action": "predict"}])
     )
     _git(root, "add", ".")
-    _git(root, "commit", "-q", "-m", "predict", when=committed_at)
+    message = "predict" + (f"\n\nForward-test run {url}" if url else "")
+    _git(root, "commit", "-q", "-m", message, when=committed_at)
 
 
 def test_settle_scores_committed_bouts_and_reads_the_kalshi_close(cfg, root):
@@ -215,6 +225,82 @@ def test_settle_scores_committed_bouts_and_reads_the_kalshi_close(cfg, root):
     assert out["summary"]["n_scored"] == 1
     saved = root / cfg.forward["results_dir"] / "600061541.json"
     assert saved.is_file()  # results now feed later cards' history
+
+
+GATTO = [
+    {
+        "competition_id": "401924511",
+        "fighter_a": "Melissa Gatto",
+        "fighter_b": "Ernesta Kareckaite",
+        "segment_start_utc": dt.datetime(2026, 10, 10, 21, tzinfo=UTC).isoformat(),
+        "p_model_a": 0.5,
+        "kalshi_p_a": float("nan"),
+        "kalshi_ticker_a": None,
+        "kalshi_ticker_b": None,
+    }
+]
+
+
+@pytest.mark.parametrize(
+    ("run_id", "reason"),
+    [(None, "no GitHub Actions run"), (REAL_RUN, "started")],
+)
+def test_settle_needs_a_server_side_actions_run_before_the_deadline(cfg, root, run_id, reason):
+    """A commit date can be set by whoever commits; the Actions run's start cannot."""
+    start = dt.datetime(2026, 10, 10, 21, tzinfo=UTC)
+    _write_predictions(root, cfg, "600061541", GATTO, start - dt.timedelta(hours=30), run_id=run_id)
+    out = run.settle(
+        "600061541",
+        cfg,
+        now=start + dt.timedelta(hours=12),
+        fetcher=FixtureFetcher(ROUTES),
+        root=root,
+    )
+    assert out["commitment"]["committed_in_time"] is True
+    assert out["commitment"]["actions_run"]["verified"] is False
+    assert reason in out["commitment"]["actions_run"]["reason"]
+    assert out["commitment"]["verified"] is False
+
+
+def test_a_close_snapshot_committed_after_the_start_is_not_used(cfg, root):
+    start = dt.datetime(2026, 10, 10, 21, tzinfo=UTC)
+    rows = [dict(GATTO[0], kalshi_ticker_a="TA", kalshi_ticker_b="TB")]
+    _write_predictions(root, cfg, "600061541", rows, start - dt.timedelta(hours=30))
+    snap = root / cfg.forward["reports_dir"] / "600061541" / "prices_close.json"
+    snap.write_text(
+        json.dumps(
+            {
+                "kalshi": {
+                    "401924511": {
+                        "kalshi_bid_a": 0.4,
+                        "kalshi_ask_a": 0.42,
+                        "kalshi_bid_b": 0.58,
+                        "kalshi_ask_b": 0.6,
+                    }
+                }
+            }
+        )
+    )
+    _git(root, "add", ".")
+    _git(root, "commit", "-q", "-m", "late snapshot", when=start + dt.timedelta(hours=1))
+    lookback = dt.timedelta(minutes=int(cfg.forward["close_lookback_minutes"]))
+    routes = dict(ROUTES)
+    for t in (
+        "TA",
+        "TB",
+    ):  # candlesticks with no usable quote, so only the snapshot could supply one
+        routes[kalshi.candlesticks_url(t, start - lookback, start, period_minutes=1)] = (
+            "kalshi/candlesticks_empty.json"
+        )
+    out = run.settle(
+        "600061541",
+        cfg,
+        now=start + dt.timedelta(hours=12),
+        fetcher=FixtureFetcher(routes),
+        root=root,
+    )
+    assert out["close_snapshot_used"] is False
+    assert all(q is None for q in out["close_quotes"].values())
 
 
 def test_settle_flags_predictions_committed_too_late(cfg, root):

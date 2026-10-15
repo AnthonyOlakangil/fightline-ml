@@ -31,6 +31,8 @@ def test_records_are_committed_even_after_a_failure_and_failures_alert():
     commit = next(s for s in steps if s.get("name", "").startswith("Commit"))
     assert commit["if"] == "always()" and "git push" in commit["run"]
     assert "--force" not in commit["run"]
+    due = next(s for s in steps if s.get("id") == "due")
+    assert due["env"]["GITHUB_TOKEN"] == "${{ github.token }}"  # settlement queries the API
     refresh = next(s for s in steps if s.get("name", "").startswith("Refresh"))
     assert refresh["if"] == "always()" and "readme_sections" in refresh["run"]
     assert "README.md" in commit["run"]

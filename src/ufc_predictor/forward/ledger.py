@@ -57,6 +57,12 @@ def first_commit_time(repo: Path, relpath: str) -> dt.datetime | None:
     return dt.datetime.fromisoformat(out[-1]).astimezone(dt.UTC) if out else None
 
 
+def adding_commit_message(repo: Path, relpath: str) -> str | None:
+    """The full message of the commit that added ``relpath``."""
+    shas = _git(repo, "log", "--diff-filter=A", "--format=%H", "--", relpath).split()
+    return _git(repo, "log", "-1", "--format=%B", shas[-1]) if shas else None
+
+
 def committed_before(repo: Path, relpath: str, deadline: dt.datetime) -> bool:
     added = first_commit_time(repo, relpath)
     return added is not None and added <= deadline

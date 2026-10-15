@@ -1,0 +1,5 @@
+{
+ "candlesticks": [],
+ "ticker": "TA",
+ "_note": "CONSTRUCTED for tests: a market with no candles in the window."
+}

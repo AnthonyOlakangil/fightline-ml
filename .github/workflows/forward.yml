@@ -50,6 +50,9 @@ jobs:
 
       - name: Run whatever is due
         id: due
+        env:
+          # Settlement asks GitHub's API about the run that made each prediction.
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
           uv run ufc-predictor forward run-due 2>&1 | tee run-due.log

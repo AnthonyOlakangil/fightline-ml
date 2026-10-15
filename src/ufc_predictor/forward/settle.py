@@ -105,6 +105,7 @@ def summarize(settled: pd.DataFrame) -> dict:
         "model_log_loss": mean(scored["ll_model"]),
         "n_with_kalshi_close": len(with_close),
         "kalshi_close_log_loss": mean(with_close["ll_kalshi_close"]),
+        "model_log_loss_on_kalshi_close_bouts": mean(with_close["ll_model"]),
         "model_minus_kalshi_close": mean(with_close["ll_model"] - with_close["ll_kalshi_close"]),
         "n_with_kalshi_at_prediction": len(with_pred),
         "model_minus_kalshi_at_prediction": mean(

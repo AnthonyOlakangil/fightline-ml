@@ -196,6 +196,7 @@ forward:
   horizon_days: 10                        # how far ahead the schedule looks
   history_days: 21                        # how far back it looks for unsettled cards
   close_lookback_minutes: 120             # Kalshi candlesticks read before each segment start
+  github_repository: AnthonyOlakangil/fightline-ml  # whose Actions runs vouch for predictions
 
 # ---------------------------------------------------------------------------
 # Simulation / parlay pricing (research backtest only - not betting advice)

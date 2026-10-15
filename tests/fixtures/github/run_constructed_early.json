@@ -1,0 +1,17 @@
+{
+ "id": 1000000001,
+ "name": "Forward test",
+ "event": "schedule",
+ "status": "completed",
+ "conclusion": "success",
+ "created_at": "2026-10-08T15:17:00Z",
+ "run_started_at": "2026-10-08T15:17:00Z",
+ "updated_at": "2026-10-08T15:18:00Z",
+ "head_sha": "7b2355ccf90911bc19030d160f97cc75c139f929",
+ "html_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/1000000001",
+ "run_attempt": 1,
+ "repository": {
+  "full_name": "AnthonyOlakangil/fightline-ml"
+ },
+ "_note": "CONSTRUCTED for tests from run_38654969288.json: a scheduled run before the 2026-10-10 card's deadline."
+}

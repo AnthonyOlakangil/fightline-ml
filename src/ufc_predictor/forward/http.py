@@ -29,7 +29,7 @@ class Fetcher:
         self._bodies: dict[str, str] = {}
         self._last_request = 0.0
 
-    def text(self, url: str) -> str:
+    def text(self, url: str, headers: dict | None = None) -> str:
         """The body of ``url``; a second call for the same URL reuses the first response.
 
         Raises:
@@ -40,15 +40,17 @@ class Fetcher:
         wait = self.delay_s - (time.monotonic() - self._last_request)
         if wait > 0:
             time.sleep(wait)
-        resp = requests.get(url, headers={"User-Agent": self.user_agent}, timeout=30)
+        resp = requests.get(
+            url, headers={"User-Agent": self.user_agent, **(headers or {})}, timeout=30
+        )
         self._last_request = time.monotonic()
         resp.raise_for_status()
         self._bodies[url] = resp.text
         self._record(url, resp.text)
         return resp.text
 
-    def json(self, url: str) -> Any:
-        return json.loads(self.text(url))
+    def json(self, url: str, headers: dict | None = None) -> Any:
+        return json.loads(self.text(url, headers))
 
     def _record(self, url: str, body: str) -> None:
         self.run_dir.mkdir(parents=True, exist_ok=True)

@@ -101,3 +101,6 @@ def test_summary_counts_and_compares_on_common_bouts():
     assert s["model_minus_kalshi_close"] == pytest.approx(
         (both["ll_model"] - both["ll_kalshi_close"]).mean()
     )
+    assert s["model_log_loss_on_kalshi_close_bouts"] == pytest.approx(
+        both.loc[both["ll_kalshi_close"].notna(), "ll_model"].mean()
+    )

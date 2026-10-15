@@ -286,6 +286,7 @@ def predict(
         raise ForwardError(f"predictions for {event_id} already exist; they are never overwritten")
     spec = spec or frozen_spec(cfg)
 
+    code = git_state(ignore=OUTPUT_DIRS)  # before sync_results writes new results files
     sync_results(fetcher, cfg, before=card.date, root=root)
     target, info = _model_probabilities(card, spec, cfg, results_dir)
     kalshi_by_bout, kalshi_raw = _kalshi_rows(card, fetcher)
@@ -323,7 +324,6 @@ def predict(
     out_dir.mkdir(parents=True, exist_ok=True)
     frame.to_csv(path, index=False)
 
-    code = git_state(ignore=OUTPUT_DIRS)
     meta = {
         "event_id": event_id,
         "event_name": card.name,
@@ -393,6 +393,48 @@ def close(event_id: str, cfg: Config, *, now: dt.datetime, fetcher, root: Path =
     return path
 
 
+def _actions_run_check(
+    fetcher, cfg: Config, meta: dict, deadline: dt.datetime, root: Path, rel: str
+) -> dict:
+    """Server-side evidence that the predictions came from this repository's scheduled job.
+
+    A commit's date is whatever its committer set; a GitHub Actions run's start time is
+    recorded by GitHub. The run named in ``meta.json`` must belong to this repository, be
+    a scheduled or manually dispatched run, have started before the deadline, and be the
+    run named in the message of the commit that added the predictions.
+    """
+    run_id, url = meta.get("actions_run_id"), meta.get("actions_run_url")
+    if not run_id or not url:
+        return {"verified": False, "reason": "no GitHub Actions run recorded for the predictions"}
+    repo = str(cfg.forward["github_repository"])
+    token = os.environ.get("GITHUB_TOKEN")
+    data = fetcher.json(
+        f"https://api.github.com/repos/{repo}/actions/runs/{run_id}",
+        headers={"Authorization": f"Bearer {token}"} if token else None,
+    )
+    started = dt.datetime.fromisoformat(data["run_started_at"].replace("Z", "+00:00"))
+    message = ledger.adding_commit_message(root, rel)
+    problems = []
+    if data.get("repository", {}).get("full_name") != repo:
+        problems.append(f"run belongs to {data.get('repository', {}).get('full_name')}, not {repo}")
+    if data.get("event") not in ("schedule", "workflow_dispatch"):
+        problems.append(f"run was triggered by {data.get('event')}")
+    if started > deadline:
+        problems.append(
+            f"run started {started.isoformat()}, after the deadline {deadline.isoformat()}"
+        )
+    if url not in (message or ""):
+        problems.append("the commit that added the predictions does not name this run")
+    return {
+        "verified": not problems,
+        "reason": "; ".join(problems) if problems else "ok",
+        "run_id": str(run_id),
+        "run_url": url,
+        "run_started_at": started.isoformat(),
+        "event": data.get("event"),
+    }
+
+
 def _quotes(preds: pd.DataFrame, cfg: Config, fetcher, snapshot: dict) -> tuple[dict, dict]:
     lookback = dt.timedelta(minutes=int(cfg.forward["close_lookback_minutes"]))
     quotes: dict = {}
@@ -440,10 +482,24 @@ def settle(
         "committed_in_time": ledger.committed_before(root, rel, deadline),
         "unchanged_since": ledger.unchanged_since_added(root, rel) if added else False,
     }
-    commitment["verified"] = bool(commitment["committed_in_time"] and commitment["unchanged_since"])
+    meta_path = reports_dir / event_id / "meta.json"
+    meta = json.loads(meta_path.read_text()) if meta_path.is_file() else {}
+    commitment["actions_run"] = _actions_run_check(fetcher, cfg, meta, deadline, root, rel)
+    commitment["verified"] = bool(
+        commitment["committed_in_time"]
+        and commitment["unchanged_since"]
+        and commitment["actions_run"]["verified"]
+    )
 
+    # The pre-start price snapshot is a fallback only if it was committed before the start.
     snap_path = reports_dir / event_id / "prices_close.json"
-    snapshot = json.loads(snap_path.read_text())["kalshi"] if snap_path.is_file() else {}
+    snap_added = (
+        ledger.first_commit_time(root, str(snap_path.relative_to(root)))
+        if snap_path.is_file()
+        else None
+    )
+    use_snapshot = snap_added is not None and snap_added <= card.start_utc
+    snapshot = json.loads(snap_path.read_text())["kalshi"] if use_snapshot else {}
     quotes, source = _quotes(preds, cfg, fetcher, snapshot)
     settled = settle_mod.settle_bouts(preds, results, quotes)
     summary = settle_mod.summarize(settled)
@@ -455,6 +511,8 @@ def settle(
         "settled_at_utc": now.isoformat(),
         "commitment": commitment,
         "close_price_source": source,
+        "close_snapshot_used": use_snapshot,
+        "close_quotes": {k: list(v) if v else None for k, v in quotes.items()},
         "summary": summary,
         "bouts": json.loads(settled.to_json(orient="records")),
         **_actions_run(),
