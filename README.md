@@ -1,7 +1,16 @@
-# ufc-predictor
+# fightline-ml
 
-A reproducible UFC fight-outcome model, evaluated walk-forward against the vig-free
-betting market, with a Monte-Carlo parlay pricer.
+<!-- SUMMARY:START -->
+**Can a model built from the public UFC fight record beat the betting market?** A LightGBM model on point-in-time features was scored walk-forward against the vig-free closing line on 4,636 held-out fights (2016-2026). **It does not:** 0.6796 log loss against the market's 0.6063, a gap of +0.0734 [95% CI +0.0640, +0.0828]. An adversarial review caught the first evaluation leaking each fighter's future career; removing the leak widened the market's margin from +0.0710 to +0.0853. Ranking parlays by the model's own edge exposed selection bias: the top picks promised +632% and returned −51%. Pre-registered improvements on 2010-2015 kept only orientation symmetry, and development is closed. A live forward test commits predictions to GitHub at least 24 hours before each card (1 predicted, 0 settled so far).
+<!-- SUMMARY:END -->
+
+**[Live demo](https://fightline-ml.streamlit.app/)** ·
+[Results](#results) ·
+[The leak, and every evaluation run](#evaluation-runs-1-2-and-3) ·
+[Parlay selection bias](#parlay-pricing--how-much-of-the-edge-was-real) ·
+[Phase 8 and the forward test](#phase-8-improving-the-model-without-touching-the-evaluation-window) ·
+[Limitations](#limitations) ·
+[Quickstart](#quickstart)
 
 > **Research backtest only. This is not betting advice, and nothing here should be used
 > to wager.** The project exists to answer a measurement question honestly, not to
@@ -604,6 +613,10 @@ The evaluation window is **closed**. It has been scored three times, and any fur
 would turn it into a tuning set. Phase 8 therefore works only inside the development
 window (2010–2015), then tests what survives on cards that had not happened yet.
 
+**Model development is closed after Phase 8.** The frozen configuration below is final;
+no further model changes will be made. Only the forward test continues, scoring each new
+card as it happens.
+
 ### Protocol
 
 - **Select on 2010–2014, confirm on 2015 once.** Every candidate is scored walk-forward
@@ -860,6 +873,10 @@ ESPN's schedule and Kalshi's prices and commits its predictions before each card
 
 ### Streamlit demo
 
+**Live at [fightline-ml.streamlit.app](https://fightline-ml.streamlit.app/)**, deployed on
+Streamlit Community Cloud with Python 3.11 from this repository's `main` branch. To run it
+locally:
+
 ```bash
 make app
 ```
@@ -872,8 +889,12 @@ edge against realised return, framed as a demonstration of selection bias).
 The app **loads precomputed artefacts only** — it never trains, scrapes or re-scores, so
 it starts instantly and cannot disagree with the committed results. Its dependencies live
 in `app/requirements.txt` and are a strict subset of the research project's: no DuckDB,
-matplotlib, Typer, requests or BeautifulSoup. A test parses the app's imports with `ast`
-and fails if anything undeclared creeps in.
+matplotlib, Typer, requests, BeautifulSoup or scikit-learn. A test parses the app's imports
+with `ast` and fails if anything undeclared creeps in. The matchup model ships as plain
+data (LightGBM's model text plus the calibrator's thresholds), not a pickle. The first
+deployment showed why that matters: a pickle of the project's own model class cannot load
+where the project is not installed. A test now scores a matchup with the training package
+blocked.
 
 Verified with Streamlit's own `AppTest` harness (tests covering all four pages, the
 persistent banner, the hypothetical-matchup labelling and the selection-bias framing) plus

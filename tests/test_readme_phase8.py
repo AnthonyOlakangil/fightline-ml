@@ -128,3 +128,56 @@ def test_forward_table_marks_unverified_cards():
         in text
     )
     assert "| 2 | missed | no |" in text
+
+
+def _metrics(observed, lo, hi):
+    return {
+        "results": {
+            "eval": {"market": {"n": 4636, "log_loss": 0.6063}, "lightgbm": {"log_loss": 0.6796}}
+        },
+        "paired_vs_market": {
+            "eval": {"lightgbm": {"observed": observed, "ci_lower": lo, "ci_hi": hi}}
+        },
+        "windows": {"eval": ["2016-01-01", "2026-10-03"]},
+    }
+
+
+def _run(observed):
+    return {"paired_vs_market": {"eval": {"lightgbm": {"observed": observed}}}}
+
+
+PARLAY = {
+    "by_source": {
+        "lightgbm": {
+            "predicted_vs_realized": {
+                "all_top_ranked": {"mean_predicted_ev": 6.3207, "realized_roi": -0.5057}
+            }
+        }
+    }
+}
+
+
+def test_summary_states_the_result_the_leak_the_parlays_and_the_forward_test():
+    ledger = [{"event_id": "1", "action": "predict"}, {"event_id": "1", "action": "settle"}]
+    text = r8.render_summary(
+        _metrics(0.0734, 0.0640, 0.0828),
+        _run(0.0710),
+        _run(0.0853),
+        PARLAY,
+        stages(None),
+        ledger,
+        {"events": [{"event_id": "1"}]},
+    )
+    assert "**It does not:**" in text and "+0.0734 [95% CI +0.0640, +0.0828]" in text
+    assert "from +0.0710 to +0.0853" in text
+    assert "promised +632% and returned \u221251%" in text
+    assert "kept nothing" in text  # stages(None) adopts nothing
+    assert "(1 predicted, 1 settled so far)" in text
+    assert len(text.split()) < 150
+
+
+def test_summary_says_so_if_the_model_ever_beats_the_market():
+    text = r8.render_summary(
+        _metrics(-0.01, -0.02, -0.001), _run(0.0), _run(0.0), PARLAY, None, [], None
+    )
+    assert "**It does:**" in text and "development is closed" not in text

@@ -16,6 +16,7 @@ from ufc_predictor.config import get_config
 
 REPO_ROOT = get_config().paths.raw_dir.parent.parent
 SECTIONS = (
+    "SUMMARY",
     "HEADLINE",
     "DIAGNOSTICS",
     "TUNING",

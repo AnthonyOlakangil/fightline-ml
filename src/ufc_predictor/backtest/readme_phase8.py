@@ -300,6 +300,75 @@ def render_forward(summary: dict | None, ledger: list | None) -> str:
     return _wrap("P8_FORWARD", rows + tail)
 
 
+DEMO_URL = "https://fightline-ml.streamlit.app/"
+ADOPTED_LABELS = {
+    "stage_1_features": "new features",
+    "stage_2_selection": "feature selection",
+    "stage_3_train_window": "a shorter training window",
+    "stage_4_symmetry": "orientation symmetry",
+    "stage_5_calibration": "a different calibrator",
+    "stage_6_model": "a logistic model",
+    "final_retune": "a final re-tune",
+}
+
+
+def render_summary(
+    metrics: dict,
+    run1: dict,
+    run2: dict,
+    parlay: dict,
+    stages: dict | None,
+    ledger: list | None,
+    forward_summary: dict | None,
+) -> str:
+    """The README's opening paragraph: question, method, result, review, parlays, forward test."""
+    ev = metrics["results"]["eval"]
+    p = metrics["paired_vs_market"]["eval"]["lightgbm"]
+    leaky = run1["paired_vs_market"]["eval"]["lightgbm"]["observed"]
+    clean = run2["paired_vs_market"]["eval"]["lightgbm"]["observed"]
+    pv = parlay["by_source"]["lightgbm"]["predicted_vs_realized"]["all_top_ranked"]
+    beats = p["ci_hi"] < 0
+    adopted = [
+        ADOPTED_LABELS.get(s["name"], s["name"])
+        for s in (stages or {}).get("stages", [])
+        if s.get("adopted")
+    ]
+    n_pred = sum(1 for e in ledger or [] if e["action"] == "predict")
+    n_settled = len((forward_summary or {}).get("events", []))
+    phase8 = (
+        f"Pre-registered improvements on 2010-2015 kept only {' and '.join(adopted)}, and "
+        "development is closed. "
+        if adopted
+        else "Pre-registered improvements on 2010-2015 kept nothing, and development is closed. "
+        if stages
+        else ""
+    )
+
+    def pct(x: float) -> str:
+        return f"{x:+.0%}".replace("-", MINUS)
+
+    return _wrap(
+        "SUMMARY",
+        [
+            "**Can a model built from the public UFC fight record beat the betting market?** "
+            "A LightGBM model on point-in-time features was scored walk-forward against the "
+            f"vig-free closing line on {ev['market']['n']:,} held-out fights "
+            f"({metrics['windows']['eval'][0][:4]}-{metrics['windows']['eval'][1][:4]}). "
+            + ("**It does:** " if beats else "**It does not:** ")
+            + f"{ev['lightgbm']['log_loss']:.4f} log loss against the market's "
+            f"{ev['market']['log_loss']:.4f}, a gap of {_s(p['observed'])} "
+            f"[95% CI {_s(p['ci_lower'])}, {_s(p['ci_hi'])}]. An adversarial review caught the "
+            "first evaluation leaking each fighter's future career; removing the leak widened "
+            f"the market's margin from {_s(leaky)} to {_s(clean)}. Ranking parlays by the "
+            "model's own edge exposed selection bias: the top picks promised "
+            f"{pct(pv['mean_predicted_ev'])} and returned {pct(pv['realized_roi'])}. "
+            + phase8
+            + "A live forward test commits predictions to GitHub at least 24 hours before each "
+            f"card ({n_pred} predicted, {n_settled} settled so far).",
+        ],
+    )
+
+
 def _maybe(path: Path):
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
 
@@ -308,7 +377,17 @@ def render_all(cfg: Config | None = None) -> dict[str, str]:
     cfg = cfg or get_config()
     r = cfg.paths.reports_dir
     audit = _maybe(REPO_ROOT / cfg.bfo["snapshot_dir"] / "audit.json")
+    forward_dir = REPO_ROOT / cfg.forward["reports_dir"]
     return {
+        "SUMMARY": render_summary(
+            _maybe(r / "metrics.json"),
+            _maybe(r / "archive" / "eval_run_1" / "metrics.json"),
+            _maybe(r / "archive" / "eval_run_2" / "metrics.json"),
+            _maybe(r / "parlay_metrics.json"),
+            _maybe(r / "dev" / "stages.json"),
+            _maybe(forward_dir / "ledger.json"),
+            _maybe(forward_dir / "summary.json"),
+        ),
         "P8_STAGES": render_stages(_maybe(r / "dev" / "stages.json")),
         "P8_CONFIRM": render_confirmation(_maybe(r / "dev" / "confirmation.json")),
         "P8_CLV": render_clv(_maybe(r / "clv.json"), _maybe(r / "bfo_join.json"), audit),
