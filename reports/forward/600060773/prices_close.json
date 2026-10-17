@@ -1,0 +1,203 @@
+{
+ "taken_at_utc": "2026-10-17T20:37:28.525040+00:00",
+ "kalshi": {
+  "401919643": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17CHOYOU",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17CHOYOU-CHO",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17CHOYOU-YOU",
+   "kalshi_bid_a": 0.53,
+   "kalshi_ask_a": 0.54,
+   "kalshi_bid_b": 0.46,
+   "kalshi_ask_b": 0.47,
+   "kalshi_volume": 151587.51,
+   "kalshi_p_a": 0.535
+  },
+  "401908373": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17CROCHA",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17CROCHA-CRO",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17CROCHA-CHA",
+   "kalshi_bid_a": 0.75,
+   "kalshi_ask_a": 0.76,
+   "kalshi_bid_b": 0.24,
+   "kalshi_ask_b": 0.25,
+   "kalshi_volume": 64008.75,
+   "kalshi_p_a": 0.755
+  },
+  "401914039": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17ANHKOS",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17ANHKOS-ANH",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17ANHKOS-KOS",
+   "kalshi_bid_a": 0.38,
+   "kalshi_ask_a": 0.39,
+   "kalshi_bid_b": 0.61,
+   "kalshi_ask_b": 0.62,
+   "kalshi_volume": 44002.39,
+   "kalshi_p_a": 0.385
+  },
+  "401929675": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17CHOSTI",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17CHOSTI-CHO",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17CHOSTI-STI",
+   "kalshi_bid_a": 0.69,
+   "kalshi_ask_a": 0.7,
+   "kalshi_bid_b": 0.3,
+   "kalshi_ask_b": 0.31,
+   "kalshi_volume": 51743.270000000004,
+   "kalshi_p_a": 0.695
+  },
+  "401929676": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17MAHFAG",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17MAHFAG-MAH",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17MAHFAG-FAG",
+   "kalshi_bid_a": 0.45,
+   "kalshi_ask_a": 0.46,
+   "kalshi_bid_b": 0.54,
+   "kalshi_ask_b": 0.55,
+   "kalshi_volume": 62394.68,
+   "kalshi_p_a": 0.455
+  },
+  "401911807": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17LEBGAL",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17LEBGAL-LEB",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17LEBGAL-GAL",
+   "kalshi_bid_a": 0.14,
+   "kalshi_ask_a": 0.15,
+   "kalshi_bid_b": 0.85,
+   "kalshi_ask_b": 0.86,
+   "kalshi_volume": 97139.4,
+   "kalshi_p_a": 0.14500000000000002
+  },
+  "401908371": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17BOSDIN",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17BOSDIN-BOS",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17BOSDIN-DIN",
+   "kalshi_bid_a": 0.34,
+   "kalshi_ask_a": 0.35,
+   "kalshi_bid_b": 0.65,
+   "kalshi_ask_b": 0.66,
+   "kalshi_volume": 21208.37,
+   "kalshi_p_a": 0.345
+  },
+  "401905374": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17NALLAN",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17NALLAN-NAL",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17NALLAN-LAN",
+   "kalshi_bid_a": 0.72,
+   "kalshi_ask_a": 0.73,
+   "kalshi_bid_b": 0.27,
+   "kalshi_ask_b": 0.28,
+   "kalshi_volume": 146261.69,
+   "kalshi_p_a": 0.725
+  },
+  "401909783": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17JOUCUA",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17JOUCUA-JOU",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17JOUCUA-CUA",
+   "kalshi_bid_a": 0.61,
+   "kalshi_ask_a": 0.62,
+   "kalshi_bid_b": 0.38,
+   "kalshi_ask_b": 0.39,
+   "kalshi_volume": 26219.93,
+   "kalshi_p_a": 0.615
+  },
+  "401908372": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17BARDAU",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17BARDAU-BAR",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17BARDAU-DAU",
+   "kalshi_bid_a": 0.35,
+   "kalshi_ask_a": 0.36,
+   "kalshi_bid_b": 0.64,
+   "kalshi_ask_b": 0.65,
+   "kalshi_volume": 72893.67,
+   "kalshi_p_a": 0.355
+  },
+  "401923630": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17NELPER",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17NELPER-NEL",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17NELPER-PER",
+   "kalshi_bid_a": 0.25,
+   "kalshi_ask_a": 0.26,
+   "kalshi_bid_b": 0.74,
+   "kalshi_ask_b": 0.75,
+   "kalshi_volume": 27916.09,
+   "kalshi_p_a": 0.255
+  },
+  "401897729": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17BLAJAS",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17BLAJAS-BLA",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17BLAJAS-JAS",
+   "kalshi_bid_a": 0.75,
+   "kalshi_ask_a": 0.76,
+   "kalshi_bid_b": 0.24,
+   "kalshi_ask_b": 0.25,
+   "kalshi_volume": 46802.67,
+   "kalshi_p_a": 0.755
+  },
+  "401897388": {
+   "kalshi_event": "KXUFCFIGHT-26OCT17BUCMAL",
+   "kalshi_ticker_a": "KXUFCFIGHT-26OCT17BUCMAL-BUC",
+   "kalshi_ticker_b": "KXUFCFIGHT-26OCT17BUCMAL-MAL",
+   "kalshi_bid_a": 0.45,
+   "kalshi_ask_a": 0.46,
+   "kalshi_bid_b": 0.55,
+   "kalshi_ask_b": 0.56,
+   "kalshi_volume": 390657.38,
+   "kalshi_p_a": 0.4504950495049505
+  }
+ },
+ "bfo": {
+  "401919643": {
+   "bfo_p_a": 0.5369611539091952,
+   "bfo_n_books": 5
+  },
+  "401908373": {
+   "bfo_p_a": 0.7395079594790158,
+   "bfo_n_books": 5
+  },
+  "401914039": {
+   "bfo_p_a": 0.40488285692622644,
+   "bfo_n_books": 5
+  },
+  "401929675": {
+   "bfo_p_a": 0.6945010183299388,
+   "bfo_n_books": 5
+  },
+  "401929676": {
+   "bfo_p_a": 0.45326664582682086,
+   "bfo_n_books": 5
+  },
+  "401911807": {
+   "bfo_p_a": 0.1646090534979424,
+   "bfo_n_books": 5
+  },
+  "401908371": {
+   "bfo_p_a": 0.3484712230215828,
+   "bfo_n_books": 5
+  },
+  "401905374": {
+   "bfo_p_a": 0.7033507531509375,
+   "bfo_n_books": 5
+  },
+  "401909783": {
+   "bfo_p_a": 0.6072831131738665,
+   "bfo_n_books": 5
+  },
+  "401908372": {
+   "bfo_p_a": 0.3614457831325302,
+   "bfo_n_books": 5
+  },
+  "401923630": {
+   "bfo_p_a": 0.2530282637954239,
+   "bfo_n_books": 5
+  },
+  "401897729": {
+   "bfo_p_a": 0.7293934681181959,
+   "bfo_n_books": 5
+  },
+  "401897388": {
+   "bfo_p_a": 0.47368421052631576,
+   "bfo_n_books": 5
+  }
+ },
+ "bfo_status": "ok"
+}

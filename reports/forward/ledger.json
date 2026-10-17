@@ -8,5 +8,12 @@
     "n_bouts": 13,
     "actions_run_id": "38654969288",
     "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/38654969288"
+  },
+  {
+    "event_id": "600060773",
+    "action": "close",
+    "at_utc": "2026-10-17T20:37:28.525040+00:00",
+    "actions_run_id": "39067481595",
+    "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/39067481595"
   }
 ]
