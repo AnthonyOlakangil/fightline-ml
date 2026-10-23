@@ -805,6 +805,7 @@ ESPN's public schedule and acts on each card:
 | Card | Predicted | Settled | Scored bouts | Model log loss | Bouts with a Kalshi close | Model / Kalshi close on those bouts | Commitment verified | Sealed |
 |---|---|---|---:|---:|---:|---:|:---:|:---:|
 | UFC Fight Night: Buckley vs. Malott | 2026-10-14 23:35 UTC | no | | | | | | |
+| 600061267 | missed | no | | | | | | |
 <!-- P8_FORWARD:END -->
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
