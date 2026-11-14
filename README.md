@@ -808,6 +808,7 @@ ESPN's public schedule and acts on each card:
 | 600061267 | missed | no | | | | | | |
 | 600061420 | missed | no | | | | | | |
 | 600061268 | missed | no | | | | | | |
+| 600061400 | missed | no | | | | | | |
 <!-- P8_FORWARD:END -->
 
 **What it can and cannot show.** A card has about 13 bouts. A handful of cards cannot
