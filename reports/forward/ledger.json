@@ -43,5 +43,12 @@
     "at_utc": "2026-11-14T01:27:09.465936+00:00",
     "actions_run_id": "43540645287",
     "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/43540645287"
+  },
+  {
+    "event_id": "600061665",
+    "action": "missed",
+    "at_utc": "2026-11-20T20:21:18.568006+00:00",
+    "actions_run_id": "44810556393",
+    "actions_run_url": "https://github.com/AnthonyOlakangil/fightline-ml/actions/runs/44810556393"
   }
 ]
